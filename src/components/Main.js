@@ -8,12 +8,15 @@ class Main extends Component {
   constructor(props){
     super(props)
 
+    this.onEditToolBox = this.onEditToolBox.bind(this)
+
     this.state ={
       videoInitialized: false,
       timecode: Positions.filmTimecode,
+      editMode: true
     }
-  }
 
+  }
 
   updateHighlightedLogo(currentTime) {
       console.log(currentTime);
@@ -48,6 +51,9 @@ class Main extends Component {
    }
   }
 
+  onEditToolBox() {
+    this.setState({editMode: !this.state.editMode})
+  }
 
   render() {
     /*var video = document.createElement('video-player');
@@ -78,9 +84,9 @@ class Main extends Component {
           <div className="right">
             <div className="tool-box">
               <div id="edit-tool-box">
-                <i class="fas fa-edit"></i>
+                <i class="fas fa-edit" onClick={this.onEditToolBox}></i>
               </div>
-              <ToolBox />
+              <ToolBox editMode={this.state.editMode}/>
             </div>
           </div>
 
