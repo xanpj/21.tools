@@ -13,7 +13,7 @@ class Main extends Component {
     this.state ={
       videoInitialized: false,
       timecode: Positions.filmTimecode,
-      editMode: true
+      editMode: false
     }
 
   }

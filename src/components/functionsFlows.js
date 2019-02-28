@@ -101,6 +101,12 @@ function initContainers(toolContent){
     }
   })
 }
+
+export function toggleDraggable(instance, selector, draggable){
+  instance.draggable(jsPlumb.getSelector(selector));
+  instance.setDraggable(jsPlumb.getSelector(selector), draggable);
+}
+
 export function initFlows(toolContent) {
   initContainers(toolContent)
 
@@ -120,8 +126,6 @@ export function initFlows(toolContent) {
     instance.bind("connectionDetached", function (info, originalEvent) {
         alert(info.connection, true);
     });
-
-    instance.draggable(jsPlumb.getSelector(".tool-box-el"));
 
     var exampleDropOptions = {
         tolerance: "touch",
@@ -168,4 +172,6 @@ export function initFlows(toolContent) {
             ]
     var e1 = instance.addEndpoint('container_2', { anchor: anchors }, exampleEndpoint);
     var e1 = instance.addEndpoint("container_3", { anchor: anchors }, exampleEndpoint);
-    }
+
+    return instance
+  }

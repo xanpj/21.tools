@@ -7,18 +7,21 @@ const LOGO_SIZE = 30;
 class ToolBox extends Component {
   constructor(props){
     super(props)
+
+    this.state = {
+      flowInstance: null
+    }
   }
 
   toggleEditable(editMode){
-    const toolBoxOuter = document.getElementById("ToolBox")
-    console.log(editMode)
-    let toggleEditable = (el) => {editMode ? ToolBoxInteractions.MakeUnDraggable(el) : ToolBoxInteractions.MakeDraggable(el)}
-    let toggleEditableReverse = (el) => {editMode ? ToolBoxInteractions.MakeDraggable(el) : ToolBoxInteractions.MakeUnDraggable(el)}
-    //toggleEditableReverse(toolBoxOuter)
-    const toolBoxInner = document.getElementById("tool-logos")
-    //Array.from(toolBoxInner.children).forEach(el => (el.classList.contains("tool-box-logo-el")) ? toggleEditable(el) : null)
+    const instance = this.state.flowInstance
+    if(instance !== null){
+      const selector = ".tool-box-el"
+      FlowActions.toggleDraggable(instance, selector, editMode)
+    }
+
     const toolBoxFrame = document.getElementsByClassName("tool-box")[0]
-    editMode ? toolBoxFrame.classList.remove("editmode") : toolBoxFrame.classList.add("editmode")
+    editMode ? toolBoxFrame.classList.add("editmode") :  toolBoxFrame.classList.remove("editmode")
   }
 
   componentWillReceiveProps(nextProps) {
@@ -31,8 +34,11 @@ class ToolBox extends Component {
     ToolBoxInteractions.MakeDraggable(toolBoxOuter);
     ToolBoxInteractions.MakeZoomable(toolBoxOuter,4,0.2)
     const toolContent = Positions.film
+    const self = this
     window.jsPlumb.ready(function() {
-      FlowActions.initFlows(toolContent)
+      self.setState({
+        flowInstance: FlowActions.initFlows(toolContent)
+      })
     });
   }
 
