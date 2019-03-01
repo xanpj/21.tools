@@ -17,7 +17,7 @@ class ToolBox extends Component {
     const instance = this.state.flowInstance
     if(instance !== null){
       const selector = ".tool-box-el"
-      FlowActions.toggleDraggable(instance, selector, editMode)
+      FlowActions.toggleDraggable(instance, selector, editMode, Positions.film)
     }
 
     const toolBoxFrame = document.getElementsByClassName("tool-box")[0]

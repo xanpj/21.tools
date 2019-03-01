@@ -1,6 +1,72 @@
 const jsPlumb = window.jsPlumb
 const LOGO_SIZE = 30
 
+const anchors = [
+            [0.5, 0, 0, 0],
+            [0, 0.5, 0, 0],
+            [1, 0.5, 0, 0],
+            [0.5, 1, 0, 0],
+        ]
+
+
+const instanceConfig = {
+  /*dragOptions: { cursor: 'pointer', zIndex: 2000 },
+  paintStyle: { stroke: '#000' },
+  endpointHoverStyle: { fill: "black" },
+  hoverPaintStyle: { stroke: "black" },
+  endpointStyle: { width: 20, height: 16, stroke: '#000' },
+  endpoint: "Rectangle",
+  anchors: anchors,
+  container: "canvas",
+  dragOptions: {
+    drag: function(el) {
+      console.log(el.el.id)
+    }
+  }*/
+}
+
+const dropOptions = {
+    tolerance: "touch",
+    hoverClass: "dropHover",
+    activeClass: "dragActive"
+};
+const endpointConfig = {
+    endpoint: ["Dot", { radius: 3 }],
+    isSource: true,
+    scope: "uno",
+    //paintStyle: { fill: "#000", opacity: 1.0 },
+    connectorStyle: {
+        strokeWidth: 1,
+        stroke: "#000",
+        dashstyle: "solid",
+    },
+
+    //dragOptions: { cursor: 'pointer', zIndex: 2000 },
+    anchors: ["TopCenter", "TopCenter"],
+    endpointStyle: { fill: '#000' },
+    endpointHoverStyle: { fill: "red" },
+    hoverPaintStyle: { stroke: "red" },
+    container: "canvas",
+    deleteEndpointsOnDetach:false,
+    ConnectionsDetachable: false,
+
+    maxConnections: -1,
+    connector: "Straight",
+    isTarget: true,
+    dropOptions: dropOptions,
+    /*dragOptions: {
+      drag: function(el) {
+        console.log(el.el.id)
+      }
+    },*/
+    onMaxConnections: function (info) {
+        alert("Cannot drop connection " + info.connection.id + " : maxConnections has been reached on Endpoint " + info.endpoint.id);
+      }
+};
+
+const endpointConfigEditable = {...endpointConfig, endpoint: ["Dot", { radius: 5 }]}
+
+
 function makeFlow(init_id, init_coords, outer_id, outer_coords){
   var firstInstance = jsPlumb.getInstance();
 }
@@ -30,10 +96,7 @@ function getContainerCoords(toolContent, el){
       var right_parsed = left_parsed + (width_parsed)
       var top_parsed = isContainerOrGroup ? parseInt(document.getElementById(el.id).style.top.replace("px", "")) : parseInt(el.top.replace("px", ""))
       var bottom_parsed = isContainerOrGroup ? parseInt(document.getElementById(el.id).style.top.replace("px", "")) : parseInt(el.top.replace("px", ""))
-        console.log(el.id)
-        console.log({
-          width_parsed,height_parsed,left_parsed,right_parsed,top_parsed,bottom_parsed
-        })
+
       leftX = (leftX === null || (left_parsed < leftX)) ? left_parsed : leftX
       rightX = (rightX === null || (right_parsed > rightX)) ? right_parsed : rightX
       topY = (topY === null || (top_parsed > topY)) ? top_parsed : topY
@@ -41,9 +104,7 @@ function getContainerCoords(toolContent, el){
       heightY = (heightY === null || (height_parsed > heightY)) ? height_parsed : heightY
       lowestContainerHeightY = (topY === null || (top_parsed > topY)) ? height_parsed : heightY
       widthX = widthX + width_parsed
-      console.log({
-        widthX,heightY,leftX,rightX,topY,bottomY
-      })
+
     }
   }
   const isGroup = el.type == "group"
@@ -65,16 +126,21 @@ function initContainers(toolContent){
       /*source container*/
       const container_source_id = el.id
       const container_source_coords = getContainerCoords(toolContent, el)
-      console.log(el.type)
-      console.log(container_source_coords)
+
+      /*if(el.type == "group"){
+        jsPlumb.addToPosse(container_source_id, "posse");
+      }*/
 
       var source = document.getElementById(container_source_id);
       const innerElements = findInnerElements(toolContent, el)
-      innerElements.forEach(el => {
-        if(el){
-          const innerElement = document.getElementById(el.id)
+      innerElements.forEach(el_inner => {
+        const parent = el
+        if(el_inner && parent.type !== "group"){
+          const innerElement = document.getElementById(el_inner.id)
           source.appendChild(innerElement)
           innerElement.classList.remove("tool-box-el")
+        } else {
+          //jsPlumb.addToPosse(container_source_id, "posse"); //, {id:"posse",active:false})
         }
       });
       source.style.left = container_source_coords.left-PADDING+'px';
@@ -102,76 +168,91 @@ function initContainers(toolContent){
   })
 }
 
-export function toggleDraggable(instance, selector, draggable){
+function createEndpoints(instance, toolContent, endpointConfig){
+  toolContent.forEach((el, i) => {
+    if(el.type == "container" || el.type == "group") {
+      const endpoint = instance.addEndpoint(el.id, { anchor: anchors}, endpointConfig);
+      endpoint.bind("dblclick", function(info) {
+       info.connections.forEach(connection => jsPlumb.deleteConnection(connection))
+      });
+    }
+  })
+
+  return instance
+}
+
+export function toggleDraggable(instance, selector, editMode, toolContent){
   instance.draggable(jsPlumb.getSelector(selector));
-  instance.setDraggable(jsPlumb.getSelector(selector), draggable);
+  instance.setDraggable(jsPlumb.getSelector(selector), editMode);
+
+  const connectionsPre = instance.getAllConnections()
+  const connections = connectionsPre.map(a => Object.assign({}, a));
+  const anchors = connections.map(a => {
+    return {id: a.id, anchor1: a.endpoints[0].anchor, anchor2: a.endpoints[1].anchor}
+  });
+  //const anchors = [connections[0].endpoints[0].anchor, connections[1].endpoints[0].anchor]
+  console.log("pre")
+  console.log(connections)
+  console.log(anchors)
+
+  instance.deleteEveryEndpoint()
+  const config = editMode ? endpointConfigEditable : endpointConfig
+  const elementsHavingEndpoints = []
+  connections.forEach(con => {
+    const conAnchor = anchors.find(a => a.id == con.id)
+    const conAnchors = [conAnchor.anchor1, conAnchor.anchor2]
+    conAnchors.map(anchor => console.log(anchor))
+    const processedAnchors = conAnchors.map(anchor =>
+         [anchor.x,
+         anchor.y,
+         anchor.getOrientation()[0],
+         anchor.getOrientation()[1],
+         anchor.offsets[0],
+         anchor.offsets[1]])
+    const con1 = instance.connect({
+       source: con.sourceId,
+       target: con.targetId,
+       ...config,
+       anchors: processedAnchors
+     })
+     //jsPlumb.detach(con1);
+     elementsHavingEndpoints.push(con.sourceId)
+     elementsHavingEndpoints.push(con.targetId)
+   })
+
+   const toolContentFiltered = toolContent.filter(el => elementsHavingEndpoints.findIndex(endpoint => endpoint == el.id) < 0)
+   console.log(toolContentFiltered)
+   console.log(elementsHavingEndpoints)
+   createEndpoints(instance, toolContentFiltered, config)
+  /*const en = connections[0].endpoints[0]
+  en.setEndpoint(["Dot", { radius: 5 }])*/
 }
 
 export function initFlows(toolContent) {
   initContainers(toolContent)
 
   var instance = jsPlumb.getInstance({
-            DragOptions: { cursor: 'pointer', zIndex: 2000 },
-            PaintStyle: { stroke: '#000' },
-            EndpointHoverStyle: { fill: "black" },
-            HoverPaintStyle: { stroke: "black" },
-            EndpointStyle: { width: 20, height: 16, stroke: '#000' },
-            Endpoint: "Rectangle",
-            Anchors: ["TopCenter", "TopCenter"],
-            Container: "canvas"
+          ...instanceConfig
     });
-    instance.bind("connection", function (info, originalEvent) {
+
+    /*instance.bind("connection", function (info, originalEvent) {
         alert(info.connection);
     });
-    instance.bind("connectionDetached", function (info, originalEvent) {
-        alert(info.connection, true);
+    instance.bind("connectionMoved", function (info, originalEvent) {
+        alert(info.connection);
+    });
+    instance.bind("dblclick",function(info, originalEvent){
+      alert("efd")
+      //instance.remove(this);
     });
 
-    var exampleDropOptions = {
-        tolerance: "touch",
-        hoverClass: "dropHover",
-        activeClass: "dragActive"
-    };
-    var exampleColor = "#000";
-    var exampleEndpoint = {
-        endpoint: ["Dot", { radius: 3 }],
-        isSource: true,
-        scope: "uno",
-        paintStyle: { fill: exampleColor, opacity: 0.5 },
-        connectorStyle: {
-            strokeWidth: 1,
-            stroke: exampleColor,
-            dashstyle: "solid"
-        },
-        connector: "Straight",
-        isTarget: true,
-        dropOptions: exampleDropOptions,
-        /*beforeDetach: function (conn) {
-                    return "Detach connection?";
-                },*/
-        onMaxConnections: function (info) {
-            alert("Cannot drop connection " + info.connection.id + " : maxConnections has been reached on Endpoint " + info.endpoint.id);
-          }
-    };
-    var color2 = "#000";
-    var exampleEndpoint2 = {
-        endpoint: ["Dot", { radius: 3 }],
-        isSource: true,
-        scope: "uno",
-        connectorStyle: { stroke: color2, strokeWidth: 6 },
-        connector: ["straight", { curviness: 63 } ],
-        isTarget: true,
-        dropOptions: exampleDropOptions
-    };
+    instance.bind("connectionDetached", function (info, originalEvent) {
+        alert(info.connection, true);
+    });*/
 
-    var anchors = [
-                [0.5, 0, 0, 0],
-                [0, 0.5, 0, 0],
-                [1, 0.5, 0, 0],
-                [0.5, 1, 0, 0],
-            ]
-    var e1 = instance.addEndpoint('container_2', { anchor: anchors }, exampleEndpoint);
-    var e1 = instance.addEndpoint("container_3", { anchor: anchors }, exampleEndpoint);
+
+
+    instance = createEndpoints(instance, toolContent, endpointConfig)
 
     return instance
   }
