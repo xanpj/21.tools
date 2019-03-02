@@ -9,8 +9,10 @@ class ToolBox extends Component {
     super(props)
 
     this.state = {
-      flowInstance: null
+      flowInstance: null,
+      value: props.value
     }
+
   }
 
   toggleEditable(editMode){
@@ -26,7 +28,24 @@ class ToolBox extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.toggleEditable(nextProps.editMode)
+    if(nextProps.value !== this.props.value) {
+        // new value from the parent - copy it to state
+        this.setState({value : nextProps.value});
+    }
   }
+
+  onValueChanged = (e) => {
+       const {value} = e.target;
+       // No empty strings
+       const isValid = value !== "";
+       this.setState({value, isValid}, this.onStateUpdated);
+   }
+
+   onStateUpdated = () => {
+       if(this.state.isValid) {
+           this.props.onChange(this.state.value);
+       }
+     }
 
   componentDidMount() {
     const toolBoxOuter = document.getElementById("ToolBox")
@@ -63,7 +82,7 @@ class ToolBox extends Component {
   }
 
   render() {
-
+    const value = this.state.value;
     return (
       <div id="ToolBox">
         <div id="tool-logos">

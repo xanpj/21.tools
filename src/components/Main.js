@@ -62,7 +62,6 @@ class Main extends Component {
 
       <div className="Main">
         <div class="containerer">
-
           <div className="left">
             <div className="middle-row">
               <div className="middle-col">

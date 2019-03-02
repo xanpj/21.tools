@@ -8,7 +8,6 @@ const anchors = [
             [0.5, 1, 0, 0],
         ]
 
-
 const instanceConfig = {
   /*dragOptions: { cursor: 'pointer', zIndex: 2000 },
   paintStyle: { stroke: '#000' },
@@ -31,10 +30,10 @@ const dropOptions = {
     activeClass: "dragActive"
 };
 const endpointConfig = {
-    endpoint: ["Dot", { radius: 3 }],
+    endpoint: ["Dot", { radius: 0.1 }],
     isSource: true,
     scope: "uno",
-    //paintStyle: { fill: "#000", opacity: 1.0 },
+    paintStyle: { fill: "black", stroke:"black"},
     connectorStyle: {
         strokeWidth: 1,
         stroke: "#000",
@@ -45,15 +44,16 @@ const endpointConfig = {
     anchors: ["TopCenter", "TopCenter"],
     endpointStyle: { fill: '#000' },
     endpointHoverStyle: { fill: "red" },
-    hoverPaintStyle: { stroke: "red" },
+    hoverPaintStyle: { fill: "red", stroke:"red"},
     container: "canvas",
     deleteEndpointsOnDetach:false,
     ConnectionsDetachable: false,
+    detachOnDelete:false,
 
     maxConnections: -1,
     connector: "Straight",
     isTarget: true,
-    dropOptions: dropOptions,
+    //dropOptions: dropOptions,
     /*dragOptions: {
       drag: function(el) {
         console.log(el.el.id)
@@ -171,10 +171,15 @@ function initContainers(toolContent){
 function createEndpoints(instance, toolContent, endpointConfig){
   toolContent.forEach((el, i) => {
     if(el.type == "container" || el.type == "group") {
-      const endpoint = instance.addEndpoint(el.id, { anchor: anchors}, endpointConfig);
-      endpoint.bind("dblclick", function(info) {
-       info.connections.forEach(connection => jsPlumb.deleteConnection(connection))
-      });
+      for (var ii = 0;ii<4;ii++){
+        const endpoint = instance.addEndpoint(el.id, { anchor: anchors[ii]}, endpointConfig);
+        endpoint.bind("dblclick", function(info) {
+         info.connections.forEach(connection => {
+           console.log(connection)
+           instance.deleteConnection(connection)
+         })
+        });
+      }
     }
   })
 
@@ -182,7 +187,7 @@ function createEndpoints(instance, toolContent, endpointConfig){
 }
 
 export function toggleDraggable(instance, selector, editMode, toolContent){
-  instance.draggable(jsPlumb.getSelector(selector));
+  instance.draggable(jsPlumb.getSelector(selector), {stop: function(e){console.log("onDrop")}, grid:[5,5]});
   instance.setDraggable(jsPlumb.getSelector(selector), editMode);
 
   const connectionsPre = instance.getAllConnections()
@@ -190,13 +195,15 @@ export function toggleDraggable(instance, selector, editMode, toolContent){
   const anchors = connections.map(a => {
     return {id: a.id, anchor1: a.endpoints[0].anchor, anchor2: a.endpoints[1].anchor}
   });
-  //const anchors = [connections[0].endpoints[0].anchor, connections[1].endpoints[0].anchor]
   console.log("pre")
   console.log(connections)
   console.log(anchors)
 
   instance.deleteEveryEndpoint()
   const config = editMode ? endpointConfigEditable : endpointConfig
+
+  createEndpoints(instance, toolContent, config)
+
   const elementsHavingEndpoints = []
   connections.forEach(con => {
     const conAnchor = anchors.find(a => a.id == con.id)
@@ -213,9 +220,15 @@ export function toggleDraggable(instance, selector, editMode, toolContent){
        source: con.sourceId,
        target: con.targetId,
        ...config,
-       anchors: processedAnchors
+       anchors: processedAnchors,
+       overlays:[]
      })
-     //jsPlumb.detach(con1);
+
+
+     /*
+     const label = con1.getOverlay("label");
+     label.setLabel("BAR");
+     */
      elementsHavingEndpoints.push(con.sourceId)
      elementsHavingEndpoints.push(con.targetId)
    })
@@ -223,9 +236,6 @@ export function toggleDraggable(instance, selector, editMode, toolContent){
    const toolContentFiltered = toolContent.filter(el => elementsHavingEndpoints.findIndex(endpoint => endpoint == el.id) < 0)
    console.log(toolContentFiltered)
    console.log(elementsHavingEndpoints)
-   createEndpoints(instance, toolContentFiltered, config)
-  /*const en = connections[0].endpoints[0]
-  en.setEndpoint(["Dot", { radius: 5 }])*/
 }
 
 export function initFlows(toolContent) {
@@ -233,6 +243,36 @@ export function initFlows(toolContent) {
 
   var instance = jsPlumb.getInstance({
           ...instanceConfig
+    });
+
+    const canvas = document.getElementById("ToolBox")
+    jsPlumb.on(canvas, "dblclick", function(e) {
+      alert("created")
+        //newNode(e.offsetX, e.offsetY);
+    });
+    instance.bind("click", function (con,e) {
+      console.log(con)
+      console.log(e)
+      var inField = document.createElement("input")
+      canvas.parentNode.insertBefore(inField, canvas);
+      inField.classList.add('connectorInputField');
+      console.log(con.canvas.style.left)
+      //canvas.attributes.width.value
+      inField.style.left = con.canvas.style.left
+      inField.style.top = con.canvas.style.top
+
+      /*c.addOverlay(
+       [ "Label", {label:"+", id:"+", labelStyle:{fill: "white", color:"black"}}]);
+       c.addOverlay(
+       [ "Arrow", {
+          location: 1, //0
+          direction: 1, //-1
+          paintStyle: { stroke: "black" },
+          width: 10,
+          id: "arrow",
+          length: 10,
+          foldback: 0.1}
+      ])*/
     });
 
     /*instance.bind("connection", function (info, originalEvent) {

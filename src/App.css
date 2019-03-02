@@ -222,6 +222,13 @@ cursor: move;
   z-index: 3;
 }
 
+.connectorInputField {
+  position:absolute;
+  z-index: 2001;
+  width: 60px;
+  height: 60px;
+}
+
 .el-used {
     opacity: 1.0;
 }
