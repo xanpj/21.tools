@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from "react-redux";
+import { actionSetFlowInstance } from "../actions/flowActions";
+
 import * as Positions from '../resources/InfographicPositions';
 import * as ToolBoxInteractions from './functionsRightScreen';
 import * as FlowActions from './functionsFlows';
@@ -7,21 +10,25 @@ const LOGO_SIZE = 30;
 class ToolBox extends Component {
   constructor(props){
     super(props)
-
     this.state = {
-      flowInstance: null,
       value: props.value
     }
+  }
 
+  componentDidUpdate(){
+    console.log("Toolbox this.state")
+    console.log(this.state)
+    console.log("Toolbox this.props")
+    console.log(this.props)
   }
 
   toggleEditable(editMode){
-    const instance = this.state.flowInstance
+    const instance = this.props.flowInstance
     if(instance !== null){
       const selector = ".tool-box-el"
       FlowActions.toggleDraggable(instance, selector, editMode, Positions.film)
     }
-
+    //this.props.actionSetFlowInstance(instance)
     const toolBoxFrame = document.getElementsByClassName("tool-box")[0]
     editMode ? toolBoxFrame.classList.add("editmode") :  toolBoxFrame.classList.remove("editmode")
   }
@@ -55,9 +62,8 @@ class ToolBox extends Component {
     const toolContent = Positions.film
     const self = this
     window.jsPlumb.ready(function() {
-      self.setState({
-        flowInstance: FlowActions.initFlows(toolContent)
-      })
+      const flowInstance = FlowActions.initFlows(toolContent)
+      self.props.actionSetFlowInstance(flowInstance)
     });
   }
 
@@ -86,4 +92,10 @@ class ToolBox extends Component {
   }
 }
 
-export default ToolBox;
+const mapStateToProps = state => ({
+  ...state
+});
+const mapDispatchToProps = dispatch => ({
+  actionSetFlowInstance: (payload) => dispatch(actionSetFlowInstance(payload))
+});
+export default connect(mapStateToProps, mapDispatchToProps)(ToolBox);

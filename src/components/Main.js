@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from "react-redux";
+import { actionSetFlowInstance } from "../actions/flowActions";
+
 import ToolBox from './ToolBox'
 import * as Positions from '../resources/InfographicPositions';
-
 
 class Main extends Component {
 
@@ -25,10 +27,17 @@ class Main extends Component {
       console.log(currentTime);
   }
 
+  componentDidUpdate(){
+    console.log("this.state")
+    console.log(this.state)
+    console.log("this.props")
+    console.log(this.props)
+
+  }
+
   componentDidMount(){
     // Get the <video> element with id="myVideo"
     const state = this.state
-    console.log(state)
     if(!this.state.videoInitialized){
       this.state.timecode.forEach((el, i) => document.getElementById(el.id).classList.add("el-used"))
 
@@ -120,12 +129,12 @@ class Main extends Component {
       return elInformation
     })
 
-      /*const connections = this.state.flowInstance.getAllConnections()
-      const anchors = connections.map(a => {
+    const connections = this.props.flowInstance.getAllConnections()
+    const anchors = connections.map(a => {
         return {id: a.id, anchor1: a.endpoints[0].anchor, anchor2: a.endpoints[1].anchor}
-      });
-      console.log("anchors")
-      console.log(anchors)*/
+    });
+    console.log("anchors")
+    console.log(anchors)
   }
 
   showContextMenu(e) {
@@ -173,8 +182,8 @@ class Main extends Component {
             <div className="right">
               <div className="tool-box">
                 <div id="edit-tool-box">
-                <div onClick={this.publishToolBox}>P</div>
-                <div onClick={this.onEditToolBox}>E</div>
+                <div onClick={this.publishToolBox.bind(this)}>P</div>
+                <div onClick={this.onEditToolBox.bind(this)}>E</div>
                   {/*<i class="fas fa-edit" onClick={this.onEditToolBox}></i>*/}
                 </div>
                 <ToolBox editMode={this.state.editMode} showContextMenu={e => this.showContextMenu(e)}/>
@@ -187,4 +196,8 @@ class Main extends Component {
   }
 }
 
-export default Main;
+
+const mapStateToProps = state => ({
+  ...state
+});
+export default connect(mapStateToProps, null)(Main);

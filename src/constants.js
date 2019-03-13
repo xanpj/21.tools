@@ -1,0 +1,3 @@
+module.exports = {
+  ACTION_SET_FLOW_INSTANCE: "ACTION_SET_FLOW_INSTANCE"
+}
