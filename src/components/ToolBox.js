@@ -49,7 +49,7 @@ class ToolBox extends Component {
 
   componentDidMount() {
     const toolBoxOuter = document.getElementById("ToolBox")
-    toolBoxOuter.addEventListener('contextmenu', (e) => this.editToolBox(e))
+    toolBoxOuter.addEventListener('contextmenu', (e) => this.props.showContextMenu(e))
     ToolBoxInteractions.MakeDraggable(toolBoxOuter);
     ToolBoxInteractions.MakeZoomable(toolBoxOuter,4,0.2)
     const toolContent = Positions.film
@@ -61,23 +61,16 @@ class ToolBox extends Component {
     });
   }
 
-  editToolBox(e) {
-    e.preventDefault();
-    alert('success!');
-    return false;
-  }
-
-
   renderLogos(){
     return Positions.film.map((el, i) => {
       if(el.type == "img")
-        return (<img id={el.id} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el" src={require("../img/"+el.content)} />)
+        return (<img id={el.id} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={require("../img/"+el.content)} />)
       else if(el.type == "text")
-        return (<span id={el.id} style={{top: el.top, left: el.left}} className="tool-box-text-el tool-box-el">{el.content}</span>)
+        return (<span id={el.id} style={{top: el.top, left: el.left}} className="tool-box-text-el tool-box-el-hack tool-box-el">{el.content}</span>)
       else if(el.type == "container")
-        return (<div id={el.id} style={{top: el.top, left: el.left}} className="tool-box-container-el tool-box-el"></div>)
+        return (<div id={el.id} style={{top: el.top, left: el.left}} className="tool-box-container-el tool-box-el-hack tool-box-el"></div>)
       else if(el.type == "group")
-        return (<div id={el.id} style={{top: el.top, left: el.left}} className="tool-box-group-el tool-box-el"></div>)
+        return (<div id={el.id} style={{top: el.top, left: el.left}} className="tool-box-group-el tool-box-el-hack tool-box-el"></div>)
     })
   }
 

@@ -138,7 +138,7 @@ function initContainers(toolContent){
         if(el_inner && parent.type !== "group"){
           const innerElement = document.getElementById(el_inner.id)
           source.appendChild(innerElement)
-          innerElement.classList.remove("tool-box-el")
+          innerElement.classList.remove("tool-box-el-hack")
         } else {
           //jsPlumb.addToPosse(container_source_id, "posse"); //, {id:"posse",active:false})
         }
@@ -196,7 +196,6 @@ export function toggleDraggable(instance, selector, editMode, toolContent){
     return {id: a.id, anchor1: a.endpoints[0].anchor, anchor2: a.endpoints[1].anchor}
   });
   console.log("pre")
-  console.log(connections)
   console.log(anchors)
 
   instance.deleteEveryEndpoint()
