@@ -1,3 +1,5 @@
+import * as Serialization from './functionsSerialization'
+
 const jsPlumb = window.jsPlumb
 const LOGO_SIZE = 30
 
@@ -118,7 +120,7 @@ function getContainerCoords(toolContent, el){
 }
 
 
-function initContainers(toolContent){
+function initContainers(instance, toolContent){
   const PADDING = 10
   toolContent.map((el, i) => {
     if(el.type == "container" || el.type == "group") {
@@ -127,9 +129,11 @@ function initContainers(toolContent){
       const container_source_id = el.id
       const container_source_coords = getContainerCoords(toolContent, el)
 
-      /*if(el.type == "group"){
-        jsPlumb.addToPosse(container_source_id, "posse");
-      }*/
+      if(el.type == "group"){
+        console.log("container_source_id 1")
+        console.log(container_source_id)
+        //instance.addToPosse(container_source_id, "possew");
+      }
 
       var source = document.getElementById(container_source_id);
       const innerElements = findInnerElements(toolContent, el)
@@ -140,13 +144,18 @@ function initContainers(toolContent){
           source.appendChild(innerElement)
           innerElement.classList.remove("tool-box-el-hack")
         } else {
-          //jsPlumb.addToPosse(container_source_id, "posse"); //, {id:"posse",active:false})
+          console.log("container_source_id 2")
+          console.log(el_inner.id)
+          //instance.addToPosse(el_inner.id, {id:"possew",active:true})
         }
       });
+
+      if(el.type  != "container" ){
+        source.style.width = container_source_coords.width+2*PADDING+'px';
+        source.style.height = container_source_coords.height+2*PADDING+'px';
+      }
       source.style.left = container_source_coords.left-PADDING+'px';
-      source.style.width = container_source_coords.width+2*PADDING+'px';
       source.style.top = container_source_coords.top-PADDING+'px';
-      source.style.height = container_source_coords.height+2*PADDING+'px';
 
       /*target container*/
       var nodes = el.outer.split(",")
@@ -187,7 +196,30 @@ function createEndpoints(instance, toolContent, endpointConfig){
 }
 
 export function toggleDraggable(instance, selector, editMode, toolContent){
-  instance.draggable(jsPlumb.getSelector(selector), {stop: function(e){console.log("onDrop")}, grid:[5,5]});
+  instance.draggable(jsPlumb.getSelector(selector), {
+    start: function(e){
+      const tempLogo = document.getElementById(e.el.id)
+      console.log(tempLogo)
+      const parentNode = tempLogo.parentNode
+      const parentParentNode = tempLogo.parentNode.parentNode
+      parentNode.removeChild(tempLogo)
+      instance.revalidate(parentNode.id)
+      parentParentNode.appendChild(tempLogo)
+    },
+    stop: function(e){
+      const tempLogo = document.getElementById(e.el.id)
+      const toolBoxElements = document.getElementsByClassName('tool-box-el')
+      //iterate through all container_source_id
+      const containerId = Serialization.getEnclosingContainerId(toolBoxElements, tempLogo)
+      console.log("containerId")
+      console.log(containerId)
+      //if container is found in which element fits --> insert as child
+      if(containerId !== null){
+        document.getElementById(containerId).appendChild(tempLogo)
+        instance.revalidate(containerId)
+      }
+    },
+     grid:[5,5]});
   instance.setDraggable(jsPlumb.getSelector(selector), editMode);
 
   const connectionsPre = instance.getAllConnections()
@@ -235,14 +267,18 @@ export function toggleDraggable(instance, selector, editMode, toolContent){
    const toolContentFiltered = toolContent.filter(el => elementsHavingEndpoints.findIndex(endpoint => endpoint == el.id) < 0)
    console.log(toolContentFiltered)
    console.log(elementsHavingEndpoints)
+
+   instance.addToPosse(["group_0", "container_1"], "possew");
+   instance.addToPosse("container_0", {id:"possew",active:true})
 }
 
 export function initFlows(toolContent) {
-  initContainers(toolContent)
 
   var instance = jsPlumb.getInstance({
           ...instanceConfig
     });
+
+    initContainers(instance, toolContent)
 
     const canvas = document.getElementById("ToolBox")
     jsPlumb.on(canvas, "dblclick", function(e) {
