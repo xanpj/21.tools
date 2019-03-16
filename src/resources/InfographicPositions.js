@@ -24,11 +24,22 @@ const filmTimecode = [
   }
   ]
 
-
-
+const toolConnections = [
+  {
+  id: "con_292",
+  anchor1: { x: 0.5, y: 0, elementId: "container_4"},
+  anchor2: { x: 0.5, y: 1, elementId: "container_3"}
+  },
+  {
+  id: "con_296",
+  anchor1: { x: 0, y: 0.5, elementId: "container_3" },
+  anchor2: { x: 1, y: 0.5, elementId: "container_2" }
+  },
+]
 
 
 module.exports = {
   film: film,
-  filmTimecode: filmTimecode
+  filmTimecode: filmTimecode,
+  toolConnections: toolConnections
 }

@@ -76,11 +76,6 @@ const endpointConfig = {
 
 const endpointConfigEditable = {...endpointConfig, endpoint: ["Dot", { radius: 5 }]}
 
-
-function makeFlow(init_id, init_coords, outer_id, outer_coords){
-  var firstInstance = jsPlumb.getInstance();
-}
-
 function findInnerElements(toolContent, el) {
   var inner_elements_ids = el.content.split(",")
   inner_elements_ids = inner_elements_ids.map((inner_el_id, i) => inner_el_id.trim())
@@ -127,6 +122,25 @@ function getContainerCoords(toolContent, el){
   return coords
 }
 
+function initConnections(instance, toolConnections){
+    toolConnections.forEach(con => {
+      const conAnchors = [con.anchor1, con.anchor2]
+      const processedAnchors = conAnchors.map(anchor =>
+           [anchor.x,
+           anchor.y,
+           0,
+           0,
+           0,
+           0])
+      const con1 = instance.connect({
+         source: con.anchor1.elementId,
+         target: con.anchor2.elementId,
+         ...endpointConfig,
+         anchors: processedAnchors,
+         overlays:[]
+    })
+  })
+}
 
 function initContainers(instance, toolContent){
   const PADDING = 10
@@ -141,7 +155,7 @@ function initContainers(instance, toolContent){
       const innerElements = findInnerElements(toolContent, el)
       innerElements.forEach(el_inner => {
         const parent = el
-        if(el_inner && parent.type !== "group"){
+        if(el_inner && parent.type === "container"){
           const innerElement = document.getElementById(el_inner.id)
           source.appendChild(innerElement)
           innerElement.classList.remove("tool-box-el-hack")
@@ -155,8 +169,10 @@ function initContainers(instance, toolContent){
       source.style.left = container_source_coords.left-PADDING+'px';
       source.style.top = container_source_coords.top-PADDING+'px';
 
+
+
       /*target container*/
-      var nodes = el.outer.split(",")
+      /*var nodes = el.outer.split(",")
       nodes = nodes.map((el, i) => el.trim())
       nodes.forEach(node => {
         var container_target = (node) ? toolContent.find(target => target.id == node) : null
@@ -167,10 +183,10 @@ function initContainers(instance, toolContent){
           /*target.style.left = container_target_coords.left+'px';
           target.style.width = container_target_coords.width+'px';
           target.style.top = container_target_coords.top+'px';
-          target.style.height = container_target_coords.height+'px';*/
+          target.style.height = container_target_coords.height+'px';*
           makeFlow(container_source_id, container_source_coords, container_target_id, container_target_coords)
         }
-      })
+      })*/
     }
   })
 }
@@ -226,9 +242,7 @@ export function toggleDraggable(instance, selector, editMode, toolContent, callB
       const tempLogo = document.getElementById(e.el.id)
       if(e.el.id.includes("logo")){
         const toolBoxElements = document.getElementsByClassName('tool-box-el')
-        //iterate through all container_source_id
         const containerId = Serialization.getEnclosingContainerId(toolBoxElements, tempLogo)
-        //if container is found in which element fits --> insert as child
         if(containerId !== null){
           document.getElementById(containerId).appendChild(tempLogo)
           instance.revalidate(containerId)
@@ -236,7 +250,7 @@ export function toggleDraggable(instance, selector, editMode, toolContent, callB
       }
       callBackOnStop()
     },
-    grid:[5,5]});
+  /*grid:[5,5]*/});
   instance.setDraggable(jsPlumb.getSelector(selector), editMode);
 
   const connectionsPre = instance.getAllConnections()
@@ -269,7 +283,6 @@ export function toggleDraggable(instance, selector, editMode, toolContent, callB
        overlays:[]
      })
 
-
      /*
      const label = con1.getOverlay("label");
      label.setLabel("BAR");
@@ -280,31 +293,31 @@ export function toggleDraggable(instance, selector, editMode, toolContent, callB
 
    const toolContentFiltered = toolContent.filter(el => elementsHavingEndpoints.findIndex(endpoint => endpoint == el.id) < 0)
 
-   //updatePosses(toolContent)
-   //instance.addToPosse(["group_0", "container_1"], "possew");
-   //instance.addToPosse("container_0", {id:"possew",active:true})
 }
 
-export function initFlows(toolContent) {
+export function initFlows(toolContent, toolConnections) {
 
   var instance = jsPlumb.getInstance({
           ...instanceConfig
     });
 
     initContainers(instance, toolContent)
+    initConnections(instance, toolConnections)
 
     const canvas = document.getElementById("ToolBox")
     jsPlumb.on(canvas, "dblclick", function(e) {
-      alert("created")
-        //newNode(e.offsetX, e.offsetY);
+      //alert("dblclick")
+      //newNode(e.offsetX, e.offsetY);
     });
     instance.bind("click", function (con,e) {
-      var inField = document.createElement("input")
+      //Below working
+      /*var inField = document.createElement("input")
       canvas.parentNode.insertBefore(inField, canvas);
       inField.classList.add('connectorInputField');
-      //canvas.attributes.width.value
       inField.style.left = con.canvas.style.left
-      inField.style.top = con.canvas.style.top
+      inField.style.top = con.canvas.style.top*/
+
+      //canvas.attributes.width.value
 
       /*c.addOverlay(
        [ "Label", {label:"+", id:"+", labelStyle:{fill: "white", color:"black"}}]);
@@ -334,7 +347,6 @@ export function initFlows(toolContent) {
     instance.bind("connectionDetached", function (info, originalEvent) {
         alert(info.connection, true);
     });*/
-
 
 
     instance = createEndpoints(instance, toolContent, endpointConfig)

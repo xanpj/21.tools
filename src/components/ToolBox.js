@@ -86,7 +86,7 @@ class ToolBox extends Component {
       ToolBoxInteractions.MakeZoomable(toolBoxOuter,4,0.2)
       const self = this
       window.jsPlumb.ready(function() {
-        const flowInstance = FlowActions.initFlows(self.props.toolContent)
+        const flowInstance = FlowActions.initFlows(self.props.toolContent, Positions.toolConnections)
         self.props.actionSetFlowInstance(flowInstance)
       });
     }
