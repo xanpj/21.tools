@@ -129,12 +129,6 @@ function initContainers(instance, toolContent){
       const container_source_id = el.id
       const container_source_coords = getContainerCoords(toolContent, el)
 
-      if(el.type == "group"){
-        console.log("container_source_id 1")
-        console.log(container_source_id)
-        //instance.addToPosse([container_source_id, "possew");
-      }
-
       var source = document.getElementById(container_source_id);
       const innerElements = findInnerElements(toolContent, el)
       innerElements.forEach(el_inner => {
@@ -143,10 +137,6 @@ function initContainers(instance, toolContent){
           const innerElement = document.getElementById(el_inner.id)
           source.appendChild(innerElement)
           innerElement.classList.remove("tool-box-el-hack")
-        } else {
-          console.log("container_source_id 2")
-          console.log(el_inner.id)
-          //instance.addToPosse(el_inner.id, {id:"possew",active:true})
         }
       });
 
@@ -184,7 +174,6 @@ function createEndpoints(instance, toolContent, endpointConfig){
         const endpoint = instance.addEndpoint(el.id, { anchor: anchors[ii]}, endpointConfig);
         endpoint.bind("dblclick", function(info) {
          info.connections.forEach(connection => {
-           console.log(connection)
            instance.deleteConnection(connection)
          })
         });
@@ -218,8 +207,6 @@ export function toggleDraggable(instance, selector, editMode, toolContent, callB
         const toolBoxElements = document.getElementsByClassName('tool-box-el')
         //iterate through all container_source_id
         const containerId = Serialization.getEnclosingContainerId(toolBoxElements, tempLogo)
-        console.log("containerId")
-        console.log(containerId)
         //if container is found in which element fits --> insert as child
         if(containerId !== null){
           document.getElementById(containerId).appendChild(tempLogo)
@@ -236,8 +223,6 @@ export function toggleDraggable(instance, selector, editMode, toolContent, callB
   const anchors = connections.map(a => {
     return {id: a.id, anchor1: a.endpoints[0].anchor, anchor2: a.endpoints[1].anchor}
   });
-  console.log("pre")
-  console.log(anchors)
 
   instance.deleteEveryEndpoint()
   const config = editMode ? endpointConfigEditable : endpointConfig
@@ -248,7 +233,6 @@ export function toggleDraggable(instance, selector, editMode, toolContent, callB
   connections.forEach(con => {
     const conAnchor = anchors.find(a => a.id == con.id)
     const conAnchors = [conAnchor.anchor1, conAnchor.anchor2]
-    conAnchors.map(anchor => console.log(anchor))
     const processedAnchors = conAnchors.map(anchor =>
          [anchor.x,
          anchor.y,
@@ -274,22 +258,17 @@ export function toggleDraggable(instance, selector, editMode, toolContent, callB
    })
 
    const toolContentFiltered = toolContent.filter(el => elementsHavingEndpoints.findIndex(endpoint => endpoint == el.id) < 0)
-   console.log(toolContentFiltered)
-   console.log(elementsHavingEndpoints)
 
    toolContent.map((el, i) => {
      if(el.type == "group") {
        const container_source_id = el.id
        //instance.addToPosse(["group_0", "container_1"], "possew");
-       instance.addToPosse([container_source_id], "possew");
+       instance.addToPosse([container_source_id], "possew"); // TODO uuid
      }
      const innerElements = findInnerElements(toolContent, el)
      innerElements.forEach(el_inner => {
        const parent = el
        if(el_inner && parent.type === "group"){
-         //instance.addToPosse(el_inner.id, {id:"possew",active:true})
-         console.log("addToPosse 2")
-         console.log(el_inner.id)
          instance.addToPosse(el_inner.id, {id:"possew",active:false})
        }
      })
@@ -312,12 +291,9 @@ export function initFlows(toolContent) {
         //newNode(e.offsetX, e.offsetY);
     });
     instance.bind("click", function (con,e) {
-      console.log(con)
-      console.log(e)
       var inField = document.createElement("input")
       canvas.parentNode.insertBefore(inField, canvas);
       inField.classList.add('connectorInputField');
-      console.log(con.canvas.style.left)
       //canvas.attributes.width.value
       inField.style.left = con.canvas.style.left
       inField.style.top = con.canvas.style.top

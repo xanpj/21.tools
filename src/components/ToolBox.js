@@ -12,43 +12,55 @@ class ToolBox extends Component {
   constructor(props){
     super(props)
     this.state = {
-      value: props.value
+      editMode: props.editMode
     }
   }
 
   componentDidUpdate(){
-    console.log("Toolbox this.state")
-    console.log(this.state)
-    console.log("Toolbox this.props")
-    console.log(this.props)
   }
 
   toggleEditable(editMode){
+    console.log("toggleEditable")
     const instance = this.props.flowInstance
     if(instance !== null){
       const selector = ".tool-box-el"
       //const self = this
-      FlowActions.toggleDraggable(instance, selector, editMode, this.props.toolContent, () => {
+      FlowActions.toggleDraggable(instance, selector, editMode, this.props.toolContent, () => {/*
         const toolBoxElements = document.getElementsByClassName('tool-box-el')
         const newToolContent = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements)
         console.log("Positions.film")
         console.log(Positions.film)
         console.log(newToolContent)
-        this.props.actionSetToolContent(newToolContent)
-        //this.props.test()
-        //this.props.actionSetToolContent(Positions.film)
+        const newToolContent2 = Positions.film.map(el => {
+          if(el.id == "container_0"){
+           return {...el, left: "20px"}
+         } else return el
+       })
+        newToolContent2.splice(2, 1)
+        console.log(newToolContent2)
+        this.props.actionSetToolContent(newToolContent2)*/
+        //this.props.actionSetToolContent(newToolContent2)
       })
     }
     //this.props.actionSetFlowInstance(instance)
     const toolBoxFrame = document.getElementsByClassName("tool-box")[0]
-    editMode ? toolBoxFrame.classList.add("editmode") :  toolBoxFrame.classList.remove("editmode")
+    editMode ? toolBoxFrame.classList.add("editmode") : toolBoxFrame.classList.remove("editmode")
+    console.log("filmPositions")
+    const toolBoxElements = document.getElementsByClassName('tool-box-el')
+    console.log(this.props.toolContent)
+    const newToolContent = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements)
+    this.props.actionSetToolContent(newToolContent)
   }
 
   componentWillReceiveProps(nextProps) {
-    this.toggleEditable(nextProps.editMode)
-    if(nextProps.value !== this.props.value) {
+    console.log("componentWillReceiveProps")
+    console.log("nextProps")
+    console.log(nextProps)
+    if(nextProps.editMode !== this.props.editMode) {
+      console.log("edit")
+        this.toggleEditable(nextProps.editMode)
         // new value from the parent - copy it to state
-        this.setState({value : nextProps.value});
+        // this.setState({editMode : nextProps.editMode});
     }
   }
 
@@ -61,40 +73,40 @@ class ToolBox extends Component {
 
    onStateUpdated = () => {
        if(this.state.isValid) {
-           this.props.onChange(this.state.value);
+           this.props.onChange(this.state.editMode);
        }
      }
 
   componentDidMount() {
-    const toolBoxOuter = document.getElementById("ToolBox")
-    toolBoxOuter.addEventListener('contextmenu', (e) => this.props.showContextMenu(e))
-    ToolBoxInteractions.MakeDraggable(toolBoxOuter);
-    ToolBoxInteractions.MakeZoomable(toolBoxOuter,4,0.2)
-    const self = this
-    window.jsPlumb.ready(function() {
-      const flowInstance = FlowActions.initFlows(self.props.toolContent)
-      self.props.actionSetFlowInstance(flowInstance)
-    });
+    if(this.props.flowInstance == null){
+      console.log("componentDidMount")
+      const toolBoxOuter = document.getElementById("ToolBox")
+      toolBoxOuter.addEventListener('contextmenu', (e) => this.props.showContextMenu(e))
+      ToolBoxInteractions.MakeDraggable(toolBoxOuter);
+      ToolBoxInteractions.MakeZoomable(toolBoxOuter,4,0.2)
+      const self = this
+      window.jsPlumb.ready(function() {
+        const flowInstance = FlowActions.initFlows(self.props.toolContent)
+        self.props.actionSetFlowInstance(flowInstance)
+      });
+    }
   }
 
   renderLogos(){
     console.log("renderLogos")
     console.log(this.props)
     if(this.props.toolContent !== null){
-      const retArr = this.props.toolContent.map((el, i) => {
+      return this.props.toolContent.map((el, i) => {
         console.log(el)
-        if(el.type == "img")
-          return (<img id={el.id} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={require("../img/"+el.content)} />)
-        else if(el.type == "text")
-          return (<span id={el.id} style={{top: el.top, left: el.left}} className="tool-box-text-el tool-box-el-hack tool-box-el">{el.content}</span>)
-        else if(el.type == "container")
-          return (<div id={el.id} style={{top: el.top, left: el.left}} className="tool-box-container-el tool-box-el-hack tool-box-el"></div>)
-        else if(el.type == "group")
-          return (<div id={el.id} style={{top: el.top, left: el.left}} className="tool-box-group-el tool-box-el-hack tool-box-el"></div>)
+          if(el.type == "img")
+            return (<img id={el.id} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={require("../img/"+el.content)} />)
+          else if(el.type == "text")
+            return (<span id={el.id} style={{top: el.top, left: el.left}} className="tool-box-text-el tool-box-el-hack tool-box-el">{el.content}</span>)
+          else if(el.type == "container")
+            return (<div id={el.id} style={{top: el.top, left: el.left}} className="tool-box-container-el tool-box-el-hack tool-box-el"></div>)
+          else if(el.type == "group")
+            return (<div id={el.id} style={{top: el.top, left: el.left}} className="tool-box-group-el tool-box-el-hack tool-box-el"></div>)
       })
-      console.log(retArr)
-      console.log("RENDER SUCCESS")
-      return retArr
     }
   }
 

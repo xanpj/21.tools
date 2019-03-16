@@ -32,11 +32,6 @@ class Main extends Component {
   }
 
   componentDidUpdate(){
-    console.log("this.state")
-    console.log(this.state)
-    console.log("this.props")
-    console.log(this.props)
-
   }
 
   componentDidMount(){
@@ -80,8 +75,6 @@ class Main extends Component {
   publishToolBox(){
     const toolBoxElements = document.getElementsByClassName('tool-box-el')
     const serializedToolBoxElements = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements)
-    console.log("serializedToolBoxElements")
-    console.log(serializedToolBoxElements)
 
     const connections = this.props.flowInstance.getAllConnections()
     const anchors = connections.map(a => {

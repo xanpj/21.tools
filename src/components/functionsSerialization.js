@@ -5,8 +5,6 @@ function getElementFrames(toolBoxElements, containers){
       const isText = el.id.includes("text")
       const isImg = el.id.includes("logo")
       const isContainer = el.id.includes("container")
-      console.log("el")
-      console.log(el)
       return {
         id: el.id,
         top: parseInt(el.style.top.replace("px", "")),
@@ -21,24 +19,17 @@ function getElementFrames(toolBoxElements, containers){
 export function getEnclosingContainerId(toolBoxElements, el){
   const retrieveOnlyContainers = true
   const toolBoxContainerFrames = getElementFrames(toolBoxElements, retrieveOnlyContainers)
-  console.log("toolBoxContainerFrames")
-  console.log(toolBoxContainerFrames)
+
   const top = parseInt(el.style.top.replace("px", ""))
   const left = parseInt(el.style.left.replace("px", ""))
   const right = left + el.width
   const height = el.height
-  console.log(top)
-  console.log(left)
-  console.log(right)
-  console.log(height)
 
   var containerId = null
   const isImg = el.id.includes("logo")
   if(isImg){
     //check if the current logo (el) fits in some container (elContainer)
     toolBoxContainerFrames.forEach(elContainer => {
-      console.log("elContainer")
-      console.log(elContainer)
       if(left > elContainer.left
         && right < (elContainer.left + elContainer.width)
         && top > (elContainer.top)
@@ -94,7 +85,7 @@ export function serializeToolBoxElements(oldToolContent, toolBoxElements){
 
       //insert any fitting elements (elChild) to the current group (el)
       const toolBoxElementsFramesLength = toolBoxElementsFrames.length
-      toolBoxElementsFrames.forEach((elChild, i) => {
+      toolBoxElementsFrames.forEach(elChild => {
         if(elChild.left > left
           && (elChild.left + elChild.width) < right
           && (elChild.top) > top
@@ -103,21 +94,26 @@ export function serializeToolBoxElements(oldToolContent, toolBoxElements){
           }
       })
     }
+    elInformation.content = elInformation.content.replace(/,\s*$/, "");
     return elInformation
   })
 
-  function customSort(a,b) {
+  function idSort(a,b) {
     if(a.type == b.type){
-      return parseInt(a.id.split("_")) > parseInt(b.id.split("_"))
+      console.log("a: " + a.id+ "; b: " + b.id)
+      if (parseInt(a.id.split("_")[1]) >= parseInt(b.id.split("_")[1])){
+        console.log("1")
+        return 1
+      }
+      else {
+        console.log("-1")
+        return -1
+      }
     }
-    if (b.type == "img" || b.type == "text")
-      return 1;
-    if ((a.type == "img" || a.type == "text") && b.type == "container")
-      return -1;
-    if ((a.type == "img" || a.type == "container" || a.type == "text") && (b.type == "group"))
-      return -1;
-    return 0;
   }
-
-  return toolBoxElementsToSerialized.sort(customSort).filter(el => el.type == "img")
+  const toolBoxElementsToSerializedFinal = [toolBoxElementsToSerialized.filter(el => el.type == "img").sort(idSort),
+                                      toolBoxElementsToSerialized.filter(el => el.type == "text").sort(idSort),
+                                      toolBoxElementsToSerialized.filter(el => el.type == "container").sort(idSort),
+                                      toolBoxElementsToSerialized.filter(el => el.type == "group").sort(idSort)]
+  return toolBoxElementsToSerializedFinal.flat()
 }
