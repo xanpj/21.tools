@@ -26,6 +26,14 @@ const instanceConfig = {
   }*/
 }
 
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+
 const dropOptions = {
     tolerance: "touch",
     hoverClass: "dropHover",
@@ -140,7 +148,7 @@ function initContainers(instance, toolContent){
         }
       });
 
-      if(el.type  != "container" ){
+      if(el.type  != "container"){
         source.style.width = container_source_coords.width+2*PADDING+'px';
         source.style.height = container_source_coords.height+2*PADDING+'px';
       }
@@ -184,12 +192,25 @@ function createEndpoints(instance, toolContent, endpointConfig){
   return instance
 }
 
+export function updatePosses(instance, toolContent){
+  toolContent.map((el, i) => {
+    instance.removeFromAllPosses(el.id)
+    const uuid = uuidv4()
+    if(el.type == "group") {
+      const container_source_id = el.id
+      instance.addToPosse([container_source_id], uuid); // TODO uuid
+    }
+    const innerElements = findInnerElements(toolContent, el)
+    innerElements.forEach(el_inner => {
+      const parent = el
+      if(el_inner && parent.type === "group"){
+        instance.addToPosse(el_inner.id, {id: uuid,active:false})
+      }
+    })
+  })
+}
+
 export function toggleDraggable(instance, selector, editMode, toolContent, callBackOnStop){
-
-
-  //instance.addToPosse(["group_0", "container_1"], "possew");
-  //instance.addToPosse("container_0", {id:"possew",active:true})
-
   instance.draggable(jsPlumb.getSelector(selector), {
     start: function(e){
       const tempLogo = document.getElementById(e.el.id)
@@ -259,20 +280,7 @@ export function toggleDraggable(instance, selector, editMode, toolContent, callB
 
    const toolContentFiltered = toolContent.filter(el => elementsHavingEndpoints.findIndex(endpoint => endpoint == el.id) < 0)
 
-   toolContent.map((el, i) => {
-     if(el.type == "group") {
-       const container_source_id = el.id
-       //instance.addToPosse(["group_0", "container_1"], "possew");
-       instance.addToPosse([container_source_id], "possew"); // TODO uuid
-     }
-     const innerElements = findInnerElements(toolContent, el)
-     innerElements.forEach(el_inner => {
-       const parent = el
-       if(el_inner && parent.type === "group"){
-         instance.addToPosse(el_inner.id, {id:"possew",active:false})
-       }
-     })
-   })
+   //updatePosses(toolContent)
    //instance.addToPosse(["group_0", "container_1"], "possew");
    //instance.addToPosse("container_0", {id:"possew",active:true})
 }

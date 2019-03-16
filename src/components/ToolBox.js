@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { actionSetFlowInstance, actionSetToolContent, test } from "../actions/flowActions";
+import { actionSetFlowInstance, actionSetToolContent } from "../actions/flowActions";
 
 import * as Positions from '../resources/InfographicPositions';
 import * as Serialization from './functionsSerialization'
@@ -40,16 +40,18 @@ class ToolBox extends Component {
         console.log(newToolContent2)
         this.props.actionSetToolContent(newToolContent2)*/
         //this.props.actionSetToolContent(newToolContent2)
+        console.log("filmPositions")
+        const toolBoxElements = document.getElementsByClassName('tool-box-el')
+        console.log(this.props.toolContent)
+        const newToolContent = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements)
+        this.props.actionSetToolContent(newToolContent)
+        FlowActions.updatePosses(instance, newToolContent)
       })
     }
     //this.props.actionSetFlowInstance(instance)
     const toolBoxFrame = document.getElementsByClassName("tool-box")[0]
     editMode ? toolBoxFrame.classList.add("editmode") : toolBoxFrame.classList.remove("editmode")
-    console.log("filmPositions")
-    const toolBoxElements = document.getElementsByClassName('tool-box-el')
-    console.log(this.props.toolContent)
-    const newToolContent = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements)
-    this.props.actionSetToolContent(newToolContent)
+
   }
 
   componentWillReceiveProps(nextProps) {
@@ -57,10 +59,8 @@ class ToolBox extends Component {
     console.log("nextProps")
     console.log(nextProps)
     if(nextProps.editMode !== this.props.editMode) {
-      console.log("edit")
-        this.toggleEditable(nextProps.editMode)
-        // new value from the parent - copy it to state
-        // this.setState({editMode : nextProps.editMode});
+      console.log("toggleEditable")
+      this.toggleEditable(nextProps.editMode)
     }
   }
 
@@ -128,6 +128,5 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   actionSetFlowInstance: (payload) => dispatch(actionSetFlowInstance(payload)),
   actionSetToolContent: (payload) => dispatch(actionSetToolContent(payload)),
-  test: (payload) => dispatch(test(payload))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(ToolBox);

@@ -12,11 +12,6 @@ export default (state = defaultState, action) => {
         ...state,
         flowInstance: action.payload
       }
-    case "TEST":
-      return {
-        ...state,
-        flowInstance: null
-      }
     case CONSTANTS.ACTION_SET_TOOL_CONTENT:
       return {
         ...state,

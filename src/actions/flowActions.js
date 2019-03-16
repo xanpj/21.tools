@@ -16,10 +16,3 @@ export const actionSetToolContent = (payload) => {
     payload
   }
 }
-
-export const test = (payload) => {
-  return {
-    type: "TEST",
-    payload
-  }
-}

@@ -100,13 +100,10 @@ export function serializeToolBoxElements(oldToolContent, toolBoxElements){
 
   function idSort(a,b) {
     if(a.type == b.type){
-      console.log("a: " + a.id+ "; b: " + b.id)
       if (parseInt(a.id.split("_")[1]) >= parseInt(b.id.split("_")[1])){
-        console.log("1")
         return 1
       }
       else {
-        console.log("-1")
         return -1
       }
     }
