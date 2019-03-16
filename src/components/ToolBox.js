@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { actionSetFlowInstance } from "../actions/flowActions";
+import { actionSetFlowInstance, actionSetToolContent, test } from "../actions/flowActions";
 
 import * as Positions from '../resources/InfographicPositions';
+import * as Serialization from './functionsSerialization'
 import * as ToolBoxInteractions from './functionsRightScreen';
 import * as FlowActions from './functionsFlows';
 
@@ -26,7 +27,17 @@ class ToolBox extends Component {
     const instance = this.props.flowInstance
     if(instance !== null){
       const selector = ".tool-box-el"
-      FlowActions.toggleDraggable(instance, selector, editMode, Positions.film)
+      //const self = this
+      FlowActions.toggleDraggable(instance, selector, editMode, this.props.toolContent, () => {
+        const toolBoxElements = document.getElementsByClassName('tool-box-el')
+        const newToolContent = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements)
+        console.log("Positions.film")
+        console.log(Positions.film)
+        console.log(newToolContent)
+        this.props.actionSetToolContent(newToolContent)
+        //this.props.test()
+        //this.props.actionSetToolContent(Positions.film)
+      })
     }
     //this.props.actionSetFlowInstance(instance)
     const toolBoxFrame = document.getElementsByClassName("tool-box")[0]
@@ -59,25 +70,32 @@ class ToolBox extends Component {
     toolBoxOuter.addEventListener('contextmenu', (e) => this.props.showContextMenu(e))
     ToolBoxInteractions.MakeDraggable(toolBoxOuter);
     ToolBoxInteractions.MakeZoomable(toolBoxOuter,4,0.2)
-    const toolContent = Positions.film
     const self = this
     window.jsPlumb.ready(function() {
-      const flowInstance = FlowActions.initFlows(toolContent)
+      const flowInstance = FlowActions.initFlows(self.props.toolContent)
       self.props.actionSetFlowInstance(flowInstance)
     });
   }
 
   renderLogos(){
-    return Positions.film.map((el, i) => {
-      if(el.type == "img")
-        return (<img id={el.id} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={require("../img/"+el.content)} />)
-      else if(el.type == "text")
-        return (<span id={el.id} style={{top: el.top, left: el.left}} className="tool-box-text-el tool-box-el-hack tool-box-el">{el.content}</span>)
-      else if(el.type == "container")
-        return (<div id={el.id} style={{top: el.top, left: el.left}} className="tool-box-container-el tool-box-el-hack tool-box-el"></div>)
-      else if(el.type == "group")
-        return (<div id={el.id} style={{top: el.top, left: el.left}} className="tool-box-group-el tool-box-el-hack tool-box-el"></div>)
-    })
+    console.log("renderLogos")
+    console.log(this.props)
+    if(this.props.toolContent !== null){
+      const retArr = this.props.toolContent.map((el, i) => {
+        console.log(el)
+        if(el.type == "img")
+          return (<img id={el.id} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={require("../img/"+el.content)} />)
+        else if(el.type == "text")
+          return (<span id={el.id} style={{top: el.top, left: el.left}} className="tool-box-text-el tool-box-el-hack tool-box-el">{el.content}</span>)
+        else if(el.type == "container")
+          return (<div id={el.id} style={{top: el.top, left: el.left}} className="tool-box-container-el tool-box-el-hack tool-box-el"></div>)
+        else if(el.type == "group")
+          return (<div id={el.id} style={{top: el.top, left: el.left}} className="tool-box-group-el tool-box-el-hack tool-box-el"></div>)
+      })
+      console.log(retArr)
+      console.log("RENDER SUCCESS")
+      return retArr
+    }
   }
 
   render() {
@@ -96,6 +114,8 @@ const mapStateToProps = state => ({
   ...state
 });
 const mapDispatchToProps = dispatch => ({
-  actionSetFlowInstance: (payload) => dispatch(actionSetFlowInstance(payload))
+  actionSetFlowInstance: (payload) => dispatch(actionSetFlowInstance(payload)),
+  actionSetToolContent: (payload) => dispatch(actionSetToolContent(payload)),
+  test: (payload) => dispatch(test(payload))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(ToolBox);

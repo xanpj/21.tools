@@ -132,7 +132,7 @@ function initContainers(instance, toolContent){
       if(el.type == "group"){
         console.log("container_source_id 1")
         console.log(container_source_id)
-        //instance.addToPosse(container_source_id, "possew");
+        //instance.addToPosse([container_source_id, "possew");
       }
 
       var source = document.getElementById(container_source_id);
@@ -195,31 +195,40 @@ function createEndpoints(instance, toolContent, endpointConfig){
   return instance
 }
 
-export function toggleDraggable(instance, selector, editMode, toolContent){
+export function toggleDraggable(instance, selector, editMode, toolContent, callBackOnStop){
+
+
+  //instance.addToPosse(["group_0", "container_1"], "possew");
+  //instance.addToPosse("container_0", {id:"possew",active:true})
+
   instance.draggable(jsPlumb.getSelector(selector), {
     start: function(e){
       const tempLogo = document.getElementById(e.el.id)
-      console.log(tempLogo)
       const parentNode = tempLogo.parentNode
-      const parentParentNode = tempLogo.parentNode.parentNode
-      parentNode.removeChild(tempLogo)
-      instance.revalidate(parentNode.id)
-      parentParentNode.appendChild(tempLogo)
+      if(e.el.id.includes("logo") && parentNode.id.includes("container")){
+        const parentParentNode = tempLogo.parentNode.parentNode
+        parentNode.removeChild(tempLogo)
+        instance.revalidate(parentNode.id)
+        parentParentNode.appendChild(tempLogo)
+      }
     },
     stop: function(e){
       const tempLogo = document.getElementById(e.el.id)
-      const toolBoxElements = document.getElementsByClassName('tool-box-el')
-      //iterate through all container_source_id
-      const containerId = Serialization.getEnclosingContainerId(toolBoxElements, tempLogo)
-      console.log("containerId")
-      console.log(containerId)
-      //if container is found in which element fits --> insert as child
-      if(containerId !== null){
-        document.getElementById(containerId).appendChild(tempLogo)
-        instance.revalidate(containerId)
+      if(e.el.id.includes("logo")){
+        const toolBoxElements = document.getElementsByClassName('tool-box-el')
+        //iterate through all container_source_id
+        const containerId = Serialization.getEnclosingContainerId(toolBoxElements, tempLogo)
+        console.log("containerId")
+        console.log(containerId)
+        //if container is found in which element fits --> insert as child
+        if(containerId !== null){
+          document.getElementById(containerId).appendChild(tempLogo)
+          instance.revalidate(containerId)
+        }
       }
+      callBackOnStop()
     },
-     grid:[5,5]});
+    grid:[5,5]});
   instance.setDraggable(jsPlumb.getSelector(selector), editMode);
 
   const connectionsPre = instance.getAllConnections()
@@ -268,8 +277,25 @@ export function toggleDraggable(instance, selector, editMode, toolContent){
    console.log(toolContentFiltered)
    console.log(elementsHavingEndpoints)
 
-   instance.addToPosse(["group_0", "container_1"], "possew");
-   instance.addToPosse("container_0", {id:"possew",active:true})
+   toolContent.map((el, i) => {
+     if(el.type == "group") {
+       const container_source_id = el.id
+       //instance.addToPosse(["group_0", "container_1"], "possew");
+       instance.addToPosse([container_source_id], "possew");
+     }
+     const innerElements = findInnerElements(toolContent, el)
+     innerElements.forEach(el_inner => {
+       const parent = el
+       if(el_inner && parent.type === "group"){
+         //instance.addToPosse(el_inner.id, {id:"possew",active:true})
+         console.log("addToPosse 2")
+         console.log(el_inner.id)
+         instance.addToPosse(el_inner.id, {id:"possew",active:false})
+       }
+     })
+   })
+   //instance.addToPosse(["group_0", "container_1"], "possew");
+   //instance.addToPosse("container_0", {id:"possew",active:true})
 }
 
 export function initFlows(toolContent) {

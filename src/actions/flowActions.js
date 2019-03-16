@@ -7,3 +7,19 @@ export const actionSetFlowInstance = (payload) => {
     payload
   }
 }
+
+export const actionSetToolContent = (payload) => {
+  console.log(CONSTANTS.ACTION_SET_TOOL_CONTENT)
+  console.log(payload)
+  return {
+    type: CONSTANTS.ACTION_SET_TOOL_CONTENT,
+    payload
+  }
+}
+
+export const test = (payload) => {
+  return {
+    type: "TEST",
+    payload
+  }
+}

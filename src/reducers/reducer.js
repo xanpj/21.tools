@@ -1,15 +1,27 @@
 import * as CONSTANTS from '../constants'
 
 const defaultState = {
-  flowInstance: null
+  flowInstance: null,
+  toolContent: null
 }
 
 export default (state = defaultState, action) => {
   switch (action.type) {
     case CONSTANTS.ACTION_SET_FLOW_INSTANCE:
       return {
+        ...state,
         flowInstance: action.payload
-      };
+      }
+    case "TEST":
+      return {
+        ...state,
+        flowInstance: null
+      }
+    case CONSTANTS.ACTION_SET_TOOL_CONTENT:
+      return {
+        ...state,
+        toolContent: action.payload
+      }
     default:
       return state;
   }

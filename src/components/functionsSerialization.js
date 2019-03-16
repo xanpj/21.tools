@@ -50,7 +50,7 @@ export function getEnclosingContainerId(toolBoxElements, el){
   return containerId
 }
 
-export function serializeToolBoxElements(toolBoxElements){
+export function serializeToolBoxElements(oldToolContent, toolBoxElements){
   const retrieveOnlyContainers = false
   const toolBoxElementsFrames = getElementFrames(toolBoxElements, retrieveOnlyContainers)
 
@@ -75,8 +75,12 @@ export function serializeToolBoxElements(toolBoxElements){
     const isGroup = el.id.includes("group")
     const isText = el.id.includes("text")
 
-    if(isImg) {
-      elInformation.type = "img"
+    if(isImg || isText) {
+      elInformation.type = isImg ? "img" : "text"
+      const correspondingElement = oldToolContent.filter(el => el.id == elInformation.id)
+      if(correspondingElement && correspondingElement.length > 0){
+        elInformation.content = correspondingElement[0].content
+      }
     }
     else if(isContainer) {
       elInformation.type = "container"
@@ -89,7 +93,8 @@ export function serializeToolBoxElements(toolBoxElements){
       elInformation.type = "group"
 
       //insert any fitting elements (elChild) to the current group (el)
-      toolBoxElementsFrames.forEach(elChild => {
+      const toolBoxElementsFramesLength = toolBoxElementsFrames.length
+      toolBoxElementsFrames.forEach((elChild, i) => {
         if(elChild.left > left
           && (elChild.left + elChild.width) < right
           && (elChild.top) > top
@@ -98,11 +103,21 @@ export function serializeToolBoxElements(toolBoxElements){
           }
       })
     }
-    else if(isText) {
-      elInformation.type = "text"
-    }
     return elInformation
   })
 
-  return toolBoxElementsToSerialized
+  function customSort(a,b) {
+    if(a.type == b.type){
+      return parseInt(a.id.split("_")) > parseInt(b.id.split("_"))
+    }
+    if (b.type == "img" || b.type == "text")
+      return 1;
+    if ((a.type == "img" || a.type == "text") && b.type == "container")
+      return -1;
+    if ((a.type == "img" || a.type == "container" || a.type == "text") && (b.type == "group"))
+      return -1;
+    return 0;
+  }
+
+  return toolBoxElementsToSerialized.sort(customSort).filter(el => el.type == "img")
 }

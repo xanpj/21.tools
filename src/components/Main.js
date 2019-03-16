@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { actionSetFlowInstance } from "../actions/flowActions";
+import { actionSetFlowInstance, actionSetToolContent } from "../actions/flowActions";
 
 import ToolBox from './ToolBox'
 import * as Serialization from './functionsSerialization'
@@ -22,6 +22,9 @@ class Main extends Component {
       flowInstance: null
     }
 
+    const toolContent = Positions.film
+    this.props.actionSetToolContent(toolContent)
+
   }
 
   updateHighlightedLogo(currentTime) {
@@ -38,9 +41,15 @@ class Main extends Component {
 
   componentDidMount(){
     // Get the <video> element with id="myVideo"
+
     const state = this.state
     if(!this.state.videoInitialized){
-      this.state.timecode.forEach((el, i) => document.getElementById(el.id).classList.add("el-used"))
+      this.state.timecode.forEach((el, i) => {
+        const logo_el = document.getElementById(el.id)
+        if(logo_el){
+          logo_el.classList.add("el-used")
+        }
+      })
 
       var vid = document.getElementById("video-player");
       vid.ontimeupdate = function() {
@@ -68,10 +77,9 @@ class Main extends Component {
     this.setState({editMode: !this.state.editMode})
   }
 
-
   publishToolBox(){
     const toolBoxElements = document.getElementsByClassName('tool-box-el')
-    const serializedToolBoxElements = Serialization.serializeToolBoxElements(toolBoxElements)
+    const serializedToolBoxElements = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements)
     console.log("serializedToolBoxElements")
     console.log(serializedToolBoxElements)
 
@@ -146,4 +154,7 @@ class Main extends Component {
 const mapStateToProps = state => ({
   ...state
 });
-export default connect(mapStateToProps, null)(Main);
+const mapDispatchToProps = dispatch => ({
+  actionSetToolContent: (payload) => dispatch(actionSetToolContent(payload)),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(Main);
