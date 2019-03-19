@@ -76,7 +76,7 @@
 
           // apply zoom
           scale += delta*factor * scale
-          scale = Math.max(1,Math.min(max_scale,scale))
+          scale = Math.max(0.1,Math.min(max_scale,scale))
 
           // calculate x and y based on zoom
           pos.x = -zoom_target.x * scale + zoom_point.x

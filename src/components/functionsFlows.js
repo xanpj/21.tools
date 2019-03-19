@@ -207,7 +207,7 @@ function createEndpoints(instance, toolContent, endpointConfig){
   return instance
 }
 
-export function revalidate(instance, elementId){
+export function revalidate(instance, elementId, leftTop){
   const element = document.getElementById(elementId)
   const orgLeft = element.style.left
   const orgTop = element.style.top
@@ -215,7 +215,6 @@ export function revalidate(instance, elementId){
   const newTop = (parseFloat(orgTop) +  parseFloat(element.dataset.y)) + "px"
   element.style.left = newLeft
   element.style.top = newTop
-  console.log(element)
   instance.revalidate(elementId)
   element.style.left = orgLeft
   element.style.top = orgTop
@@ -239,6 +238,9 @@ export function updatePosses(instance, toolContent){
   })
 }
 
+export function onlyToggleDraggable(instance, selector_id, editMode){
+  instance.setDraggable(selector_id, editMode);
+}
 export function toggleDraggable(instance, selector, editMode, toolContent, callBackOnStop){
   instance.draggable(jsPlumb.getSelector(selector), {
     start: function(e){
@@ -265,7 +267,6 @@ export function toggleDraggable(instance, selector, editMode, toolContent, callB
     },
   /*grid:[5,5]*/});
   instance.setDraggable(jsPlumb.getSelector(selector), editMode);
-  instance.setDraggable(jsPlumb.getSelector(".tool-box-group-el"), false);
 
   const connectionsPre = instance.getAllConnections()
   const connections = connectionsPre.map(a => Object.assign({}, a));

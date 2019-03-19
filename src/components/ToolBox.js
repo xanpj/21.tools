@@ -23,15 +23,18 @@ class ToolBox extends Component {
     console.log("toggleEditable")
     const instance = this.props.flowInstance
     if(instance !== null){
-
       const toolBoxOuter = document.getElementById("ToolBox")
-      ToolBoxInteractions.MakeUnDraggable(toolBoxOuter);
+      if(editMode) {
+        ToolBoxInteractions.MakeUnDraggable(toolBoxOuter)
+      } else {
+        ToolBoxInteractions.MakeDraggable(toolBoxOuter);
+      }
 
       const toolBoxGroupsSelector = ".tool-box-group-el"
-      FlowActions.toggleDraggable(instance, toolBoxGroupsSelector, false, this.props.toolContent, () => {})
+      const self = this
       interact(toolBoxGroupsSelector).resizable({
         // resize from all edges and corners
-        edges: { left: true, right: true, bottom: true, top: true },
+        edges: { left: true,  top: true, right: false, bottom: false },
 
         modifiers: [
           // keep the edges inside the parent
@@ -41,32 +44,37 @@ class ToolBox extends Component {
           }),*/
 
           // minimum size
-          interact.modifiers.restrictSize({
+          /*interact.modifiers.restrictSize({
             min: { width: 100, height: 50 },
-          }),
+          }),*/
         ],
 
         inertia: true
       })
+      .on('resizestart', function (event) {
+        FlowActions.onlyToggleDraggable(instance, event.target.id, false)
+      })
       .on('resizemove', function (event) {
-        var target = event.target,
-            x = (parseFloat(target.getAttribute('data-x')) || 0),
-            y = (parseFloat(target.getAttribute('data-y')) || 0);
+          var target = event.target,
+              x = (parseFloat(target.getAttribute('data-x')) || 0),
+              y = (parseFloat(target.getAttribute('data-y')) || 0);
 
-        // update the element's style
-        target.style.width  = event.rect.width + 'px';
-        target.style.height = event.rect.height + 'px';
+          // update the element's style
+          target.style.width  = event.rect.width + 'px';
+          target.style.height = event.rect.height + 'px';
 
-        // translate when resizing from top or left edges
-        x += event.deltaRect.left;
-        y += event.deltaRect.top;
+          // translate when resizing from top or left edges
+          if(event.edges.right || event.edges.bottom){
+            x -= event.deltaRect.right;
+            y -= event.deltaRect.bottom;
+          }
 
-        target.style.webkitTransform = target.style.transform =
-            'translate(' + x + 'px,' + y + 'px)';
+          target.style.webkitTransform = target.style.transform =
+              'translate(' + x + 'px,' + y + 'px)';
 
-        target.setAttribute('data-x', x);
-        target.setAttribute('data-y', y);
-        FlowActions.revalidate(instance, event.currentTarget.id)
+          target.setAttribute('data-x', x);
+          target.setAttribute('data-y', y);
+          FlowActions.revalidate(instance, event.currentTarget.id)
       })
       .on('resizeend', function (event) {
         var target = event.target
@@ -79,6 +87,7 @@ class ToolBox extends Component {
         target.style.webkitTransform = target.style.transform = '';
         target.setAttribute('data-x', 0);
         target.setAttribute('data-y', 0);
+        FlowActions.onlyToggleDraggable(instance, event.target.id, true)
       });
 
       const toolBoxSelector = ".tool-box-el"

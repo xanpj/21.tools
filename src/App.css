@@ -215,13 +215,13 @@ cursor: move;
 .group-resize-handle {
   position:absolute;
   z-index: 6;
-  right: 0px;
-  bottom: 0px;
+  left: 0;
+  top: 0;
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0 0 20px 20px;
-  border-color: transparent transparent #000000 transparent;
+  border-width: 15px 15px 0 0;
+  border-color: #000000 transparent transparent transparent;
 }
 
 .tool-box-container-el > .tool-box-logo-el,
