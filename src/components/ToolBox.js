@@ -23,7 +23,7 @@ class ToolBox extends Component {
     console.log("toggleEditable")
     const instance = this.props.flowInstance
     if(instance !== null){
-      const toolBoxOuter = document.getElementById("ToolBox")
+      const toolBoxOuter = document.getElementById("ToolBoxWrapper")
       if(editMode) {
         ToolBoxInteractions.MakeUnDraggable(toolBoxOuter)
       } else {
@@ -147,9 +147,9 @@ class ToolBox extends Component {
   componentDidMount() {
     if(this.props.flowInstance == null){
       console.log("componentDidMount")
-      const toolBoxOuter = document.getElementById("ToolBox")
+      const toolBoxOuter = document.getElementById("ToolBoxWrapper")
       ToolBoxInteractions.MakeDraggable(toolBoxOuter);
-      ToolBoxInteractions.MakeZoomable(toolBoxOuter,4,0.2)
+      ToolBoxInteractions.MakeZoomable(toolBoxOuter,0.1,4,0.2)
       toolBoxOuter.addEventListener('contextmenu', (e) => this.props.showContextMenu(e))
       const self = this
       window.jsPlumb.ready(function() {

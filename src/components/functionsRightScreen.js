@@ -35,7 +35,7 @@
     elmnt.onmousedown = null
   }
 
-  export function MakeZoomable(container,max_scale,factor) {
+  export function MakeZoomable(container,min_scale, max_scale,factor) {
       var target = container
       console.log(target)
       var size = {w:target.width,h:target.height}
@@ -76,7 +76,7 @@
 
           // apply zoom
           scale += delta*factor * scale
-          scale = Math.max(0.1,Math.min(max_scale,scale))
+          scale = Math.max(min_scale,Math.min(max_scale,scale))
 
           // calculate x and y based on zoom
           pos.x = -zoom_target.x * scale + zoom_point.x

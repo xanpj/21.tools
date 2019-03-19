@@ -188,11 +188,22 @@ class Main extends Component {
             <div className="right">
               <div className="tool-box">
                 <div id="edit-tool-box">
-                <div onClick={this.publishToolBox.bind(this)}>P</div>
-                <div onClick={this.onEditToolBox.bind(this)}>E</div>
-                  {/*<i class="fas fa-edit" onClick={this.onEditToolBox}></i>*/}
+                  <button type="button" class="btn btn-primary" onClick={this.publishToolBox.bind(this)}>Publish</button>
+                  <button type="button" class="btn btn-light" onClick={this.onEditToolBox.bind(this)}><i class="far fa-edit"></i></button>
+                  <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Versions
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    <button class="dropdown-item" type="button">Action</button>
+                    <button class="dropdown-item" type="button">Another action</button>
+                    <button class="dropdown-item" type="button">Something else here</button>
+                  </div>
                 </div>
-                <ToolBox addTextData={this.state.addTextData} editMode={this.state.editMode} showContextMenu={e => this.showContextMenu(e)}/>
+                </div>
+                <div id="ToolBoxWrapper">
+                  <ToolBox addTextData={this.state.addTextData} editMode={this.state.editMode} showContextMenu={e => this.showContextMenu(e)}/>
+                </div>
               </div>
             </div>
 
