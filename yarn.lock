@@ -726,6 +726,12 @@
   dependencies:
     regenerator-runtime "^0.12.0"
 
+"@babel/runtime@^7.3.1":
+  version "7.3.4"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.3.4.tgz#73d12ba819e365fcf7fd152aed56d6df97d21c83"
+  dependencies:
+    regenerator-runtime "^0.12.0"
+
 "@babel/template@^7.1.0", "@babel/template@^7.1.2":
   version "7.1.2"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.1.2.tgz#090484a574fef5a2d2d7726a674eceda5c5b5644"
@@ -781,6 +787,61 @@
 "@csstools/convert-colors@^1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
+
+"@interactjs/actions@1.4.0-beta.4+sha.d8836bd":
+  version "1.4.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/actions/-/actions-1.4.0-beta.4.tgz#a4670ed05ce3e1f7ee368e64b7cd1ba20afbb908"
+
+"@interactjs/auto-scroll@1.4.0-beta.4+sha.d8836bd":
+  version "1.4.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/auto-scroll/-/auto-scroll-1.4.0-beta.4.tgz#e01a6149b9b5e70000f9ad16bf651a7228b40378"
+
+"@interactjs/auto-start@1.4.0-beta.4+sha.d8836bd":
+  version "1.4.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/auto-start/-/auto-start-1.4.0-beta.4.tgz#8dae1aa28281bb7074f642f03c99fe5164d7c348"
+
+"@interactjs/core@1.4.0-beta.4+sha.d8836bd":
+  version "1.4.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/core/-/core-1.4.0-beta.4.tgz#af63d91f22f9c47be58748b526e83054d55f2c9b"
+
+"@interactjs/inertia@1.4.0-beta.4+sha.d8836bd":
+  version "1.4.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/inertia/-/inertia-1.4.0-beta.4.tgz#21a37e8ddd58e88a4b9d9331c8483f2919cccc2d"
+
+"@interactjs/interact@1.4.0-beta.4+sha.d8836bd":
+  version "1.4.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/interact/-/interact-1.4.0-beta.4.tgz#a22816bcac7d5c0bc31e51dfa6d5d56116d156ce"
+
+"@interactjs/modifiers@1.4.0-beta.4+sha.d8836bd":
+  version "1.4.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/modifiers/-/modifiers-1.4.0-beta.4.tgz#ac9a7f70d7cdfd3a9caee5958990ad3c04890e1d"
+
+"@interactjs/pointer-events@1.4.0-beta.4+sha.d8836bd":
+  version "1.4.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/pointer-events/-/pointer-events-1.4.0-beta.4.tgz#34518351fa9bfba373f7d875e1a726b9e8717cca"
+
+"@interactjs/reflow@1.4.0-beta.4+sha.d8836bd":
+  version "1.4.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/reflow/-/reflow-1.4.0-beta.4.tgz#14b3db2a75a0d77e54a98f57a471a185af9218d8"
+
+"@interactjs/types@1.4.0-beta.4+sha.d8836bd":
+  version "1.4.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/types/-/types-1.4.0-beta.4.tgz#97790de8ce65865ab49be04b9713d44ce1851767"
+  dependencies:
+    "@interactjs/actions" "1.4.0-beta.4+sha.d8836bd"
+    "@interactjs/auto-scroll" "1.4.0-beta.4+sha.d8836bd"
+    "@interactjs/auto-start" "1.4.0-beta.4+sha.d8836bd"
+    "@interactjs/core" "1.4.0-beta.4+sha.d8836bd"
+    "@interactjs/inertia" "1.4.0-beta.4+sha.d8836bd"
+    "@interactjs/interact" "1.4.0-beta.4+sha.d8836bd"
+    "@interactjs/modifiers" "1.4.0-beta.4+sha.d8836bd"
+    "@interactjs/pointer-events" "1.4.0-beta.4+sha.d8836bd"
+    "@interactjs/reflow" "1.4.0-beta.4+sha.d8836bd"
+    "@interactjs/utils" "1.4.0-beta.4+sha.d8836bd"
+
+"@interactjs/utils@1.4.0-beta.4+sha.d8836bd":
+  version "1.4.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/utils/-/utils-1.4.0-beta.4.tgz#84b175d3a1eed256f7c8012f51318993d755aaf5"
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
@@ -3826,6 +3887,12 @@ hoek@4.x.x:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-4.2.1.tgz#9634502aa12c445dd5a7c5734b572bb8738aacbb"
 
+hoist-non-react-statics@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-3.3.0.tgz#b09178f0122184fb95acf525daaecb4d8f45958b"
+  dependencies:
+    react-is "^16.7.0"
+
 home-or-tmp@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/home-or-tmp/-/home-or-tmp-2.0.0.tgz#e36c3f2d2cae7d746a857e38d18d5f32a7882db8"
@@ -4085,6 +4152,12 @@ inquirer@6.2.0, inquirer@^6.1.0:
     string-width "^2.1.0"
     strip-ansi "^4.0.0"
     through "^2.3.6"
+
+interactjs@^1.4.0-beta.4:
+  version "1.4.0-beta.4"
+  resolved "https://registry.yarnpkg.com/interactjs/-/interactjs-1.4.0-beta.4.tgz#240f0ab50d24b7c3b7669907fed88697524f2537"
+  dependencies:
+    "@interactjs/types" "1.4.0-beta.4+sha.d8836bd"
 
 internal-ip@^3.0.1:
   version "3.0.1"
@@ -6696,6 +6769,14 @@ prop-types@^15.6.2:
     loose-envify "^1.3.1"
     object-assign "^4.1.1"
 
+prop-types@^15.7.2:
+  version "15.7.2"
+  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
+  dependencies:
+    loose-envify "^1.4.0"
+    object-assign "^4.1.1"
+    react-is "^16.8.1"
+
 proxy-addr@~2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/proxy-addr/-/proxy-addr-2.0.4.tgz#ecfc733bf22ff8c6f407fa275327b9ab67e48b93"
@@ -6887,6 +6968,21 @@ react-dom@^16.8.0:
 react-error-overlay@^5.1.2:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-5.1.2.tgz#888957b884d4b25b083a82ad550f7aad96585394"
+
+react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.2:
+  version "16.8.4"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.4.tgz#90f336a68c3a29a096a3d648ab80e87ec61482a2"
+
+react-redux@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-6.0.1.tgz#0d423e2c1cb10ada87293d47e7de7c329623ba4d"
+  dependencies:
+    "@babel/runtime" "^7.3.1"
+    hoist-non-react-statics "^3.3.0"
+    invariant "^2.2.4"
+    loose-envify "^1.4.0"
+    prop-types "^15.7.2"
+    react-is "^16.8.2"
 
 react-scripts@2.1.3:
   version "2.1.3"

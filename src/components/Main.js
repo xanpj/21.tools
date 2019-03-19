@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { actionSetFlowInstance, actionSetToolContent } from "../actions/flowActions";
+import { actionSetToolContent, actionAddToolElement } from "../actions/flowActions";
 
 import ToolBox from './ToolBox'
+import ContextMenu from './ContextMenu'
 import * as Serialization from './functionsSerialization'
 import * as Positions from '../resources/InfographicPositions';
+
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
 
 class Main extends Component {
 
@@ -14,12 +22,13 @@ class Main extends Component {
     this.onEditToolBox = this.onEditToolBox.bind(this)
 
     this.state ={
+      flowInstance: null,
       videoInitialized: false,
       timecode: Positions.filmTimecode,
       editMode: false,
       contextMenu: false,
       contextMenuCoords: null,
-      flowInstance: null
+      addTextData: null,
     }
 
     const toolContent = Positions.film
@@ -86,16 +95,61 @@ class Main extends Component {
 
   showContextMenu(e) {
     e.preventDefault();
+    console.log("event")
+    console.log(e)
     var left = e.pageX
     var top = e.pageY
-    this.setState({contextMenu: true, contextMenuCoords: [left, top]})
+    this.setState({contextMenu: true, contextMenuCoords: [left, top, e.layerX, e.layerY]})
   }
 
-  renderContextMenu(e){
-   return (<div id="contextMenu" style={{left: this.state.contextMenuCoords[0],top:this.state.contextMenuCoords[1]}}>
-            List
-            <span onClick={() => {this.setState({contextMenu: false})}}>X</span>
-            </div>)
+  addTextOnChange(e){
+    e.preventDefault();
+    const text = e.target.value
+    var addTextDataId = ""
+    if(this.state.addTextData == null){
+      addTextDataId = "text_" + uuidv4()
+    } else {
+      addTextDataId = this.state.addTextData.id
+    }
+    const pxOffsetFromContextMenu = 20
+    const addTextData = {
+      id: addTextDataId,
+      left: this.state.contextMenuCoords[2] - pxOffsetFromContextMenu + "px",
+      top: this.state.contextMenuCoords[3] - pxOffsetFromContextMenu + "px",
+      content: text,
+      outer: "",
+      type: "text"
+    }
+    this.setState({addTextData: addTextData})
+  }
+
+  onAddTextSubmit(){
+    this.props.actionAddToolElement(this.state.addTextData)
+    this.setState({
+      contextMenu: false,
+      contextMenuCoords: null,
+      addTextData: null
+    })
+  }
+
+  addGroup() {
+    const addGroupDataId = "group_" + uuidv4()
+    const pxOffsetFromContextMenu = 20
+    const addGroupData = {
+      id: addGroupDataId,
+      width: 20,
+      height: 20,
+      left: this.state.contextMenuCoords[2] - pxOffsetFromContextMenu + "px",
+      top: this.state.contextMenuCoords[3] - pxOffsetFromContextMenu + "px",
+      content: "",
+      outer: "",
+      type: "group"
+    }
+    this.props.actionAddToolElement(addGroupData)
+    this.setState({
+      contextMenu: false,
+      contextMenuCoords: null,
+    })
   }
 
   render() {
@@ -104,7 +158,12 @@ class Main extends Component {
     return (
 
       <div className="Main">
-      {(this.state.contextMenu) ? this.renderContextMenu() : ""}
+      {(this.state.contextMenu) ? <ContextMenu
+        addGroup = {() => this.addGroup()}
+        onAddTextSubmit={() => this.onAddTextSubmit()}
+        addTextOnChange={(e) => this.addTextOnChange(e)}
+        closeContextMenu={() => this.setState({contextMenu: false})}
+        contextMenuCoords={this.state.contextMenuCoords}/> : ""}
         <div class="containerer">
           <div className="left">
             <div className="middle-row">
@@ -133,7 +192,7 @@ class Main extends Component {
                 <div onClick={this.onEditToolBox.bind(this)}>E</div>
                   {/*<i class="fas fa-edit" onClick={this.onEditToolBox}></i>*/}
                 </div>
-                <ToolBox editMode={this.state.editMode} showContextMenu={e => this.showContextMenu(e)}/>
+                <ToolBox addTextData={this.state.addTextData} editMode={this.state.editMode} showContextMenu={e => this.showContextMenu(e)}/>
               </div>
             </div>
 
@@ -149,5 +208,6 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({
   actionSetToolContent: (payload) => dispatch(actionSetToolContent(payload)),
+  actionAddToolElement: (payload) => dispatch(actionAddToolElement(payload))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

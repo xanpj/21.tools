@@ -3,6 +3,13 @@ import * as Serialization from './functionsSerialization'
 const jsPlumb = window.jsPlumb
 const LOGO_SIZE = 30
 
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 const anchors = [
             [0.5, 0, 0, 0],
             [0, 0.5, 0, 0],
@@ -25,14 +32,6 @@ const instanceConfig = {
     }
   }*/
 }
-
-function uuidv4() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-}
-
 
 const dropOptions = {
     tolerance: "touch",
@@ -208,6 +207,20 @@ function createEndpoints(instance, toolContent, endpointConfig){
   return instance
 }
 
+export function revalidate(instance, elementId){
+  const element = document.getElementById(elementId)
+  const orgLeft = element.style.left
+  const orgTop = element.style.top
+  const newLeft = (parseFloat(orgLeft) + parseFloat(element.dataset.x)) + "px"
+  const newTop = (parseFloat(orgTop) +  parseFloat(element.dataset.y)) + "px"
+  element.style.left = newLeft
+  element.style.top = newTop
+  console.log(element)
+  instance.revalidate(elementId)
+  element.style.left = orgLeft
+  element.style.top = orgTop
+}
+
 export function updatePosses(instance, toolContent){
   toolContent.map((el, i) => {
     instance.removeFromAllPosses(el.id)
@@ -252,6 +265,7 @@ export function toggleDraggable(instance, selector, editMode, toolContent, callB
     },
   /*grid:[5,5]*/});
   instance.setDraggable(jsPlumb.getSelector(selector), editMode);
+  instance.setDraggable(jsPlumb.getSelector(".tool-box-group-el"), false);
 
   const connectionsPre = instance.getAllConnections()
   const connections = connectionsPre.map(a => Object.assign({}, a));

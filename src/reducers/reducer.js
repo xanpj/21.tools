@@ -2,7 +2,7 @@ import * as CONSTANTS from '../constants'
 
 const defaultState = {
   flowInstance: null,
-  toolContent: null
+  toolContent: null,
 }
 
 export default (state = defaultState, action) => {
@@ -16,6 +16,16 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         toolContent: action.payload
+      }
+    case CONSTANTS.ACTION_ADD_TOOL_ELEMENT:
+      if(state.toolContent !== null){
+        const newToolContent = state.toolContent
+        newToolContent.push(action.payload)
+        console.log(newToolContent)
+        return {
+          ...state,
+          toolContent: newToolContent
+        }
       }
     default:
       return state;
