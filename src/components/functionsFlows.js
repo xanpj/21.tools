@@ -94,12 +94,15 @@ function getContainerCoords(toolContent, el){
     for (const el_id in inner_elements) {
       const el = inner_elements[el_id]
       const isContainerOrGroup = (el.type === "container" || el.type === "group") //styles are already set explicitly for container and groups
-      var width_parsed = isContainerOrGroup ? parseInt(document.getElementById(el.id).style.width.replace("px", "")) : document.getElementById(el.id).offsetWidth
-      var height_parsed = isContainerOrGroup ? parseInt(document.getElementById(el.id).style.height.replace("px", "")) : document.getElementById(el.id).offsetHeight
-      var left_parsed = isContainerOrGroup ? parseInt(document.getElementById(el.id).style.left.replace("px", "")) : parseInt(el.left.replace("px", ""))
-      var right_parsed = left_parsed + (width_parsed)
-      var top_parsed = isContainerOrGroup ? parseInt(document.getElementById(el.id).style.top.replace("px", "")) : parseInt(el.top.replace("px", ""))
-      var bottom_parsed = isContainerOrGroup ? parseInt(document.getElementById(el.id).style.top.replace("px", "")) : parseInt(el.top.replace("px", ""))
+      const newEl = document.getElementById(el.id)
+      if(newEl){
+        var width_parsed = isContainerOrGroup ? parseInt(newEl.style.width.replace("px", "")) : newEl.offsetWidth
+        var height_parsed = isContainerOrGroup ? parseInt(newEl.style.height.replace("px", "")) : newEl.offsetHeight
+        var left_parsed = isContainerOrGroup ? parseInt(newEl.style.left.replace("px", "")) : parseInt(el.left.replace("px", ""))
+        var right_parsed = left_parsed + (width_parsed)
+        var top_parsed = isContainerOrGroup ? parseInt(newEl.style.top.replace("px", "")) : parseInt(el.top.replace("px", ""))
+        var bottom_parsed = isContainerOrGroup ? parseInt(newEl.style.top.replace("px", "")) : parseInt(el.top.replace("px", ""))
+      }
 
       leftX = (leftX === null || (left_parsed < leftX)) ? left_parsed : leftX
       rightX = (rightX === null || (right_parsed > rightX)) ? right_parsed : rightX
@@ -156,8 +159,10 @@ function initContainers(instance, toolContent){
         const parent = el
         if(el_inner && parent.type === "container"){
           const innerElement = document.getElementById(el_inner.id)
-          source.appendChild(innerElement)
-          innerElement.classList.remove("tool-box-el-hack")
+          if(innerElement){
+            source.appendChild(innerElement)
+            innerElement.classList.remove("tool-box-el-hack")
+          }
         }
       });
 
@@ -308,6 +313,11 @@ export function toggleDraggable(instance, selector, editMode, toolContent, callB
 
    const toolContentFiltered = toolContent.filter(el => elementsHavingEndpoints.findIndex(endpoint => endpoint == el.id) < 0)
 
+}
+
+export function detachElement(instance, id){
+  instance.deleteConnectionsForElement(id);
+  instance.removeAllEndpoints(id);
 }
 
 export function initFlows(toolContent, toolConnections) {

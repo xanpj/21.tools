@@ -12,7 +12,9 @@ class ToolBox extends Component {
   constructor(props){
     super(props)
     this.state = {
-      editMode: props.editMode
+      editMode: props.editMode,
+      activeDeleteMode: false,
+      toolContentHash: null
     }
   }
 
@@ -20,7 +22,6 @@ class ToolBox extends Component {
   }
 
   toggleEditable(editMode){
-    console.log("toggleEditable")
     const instance = this.props.flowInstance
     if(instance !== null){
       const toolBoxOuter = document.getElementById("ToolBoxWrapper")
@@ -110,6 +111,7 @@ class ToolBox extends Component {
         console.log("filmPositions")
         const toolBoxElements = document.getElementsByClassName('tool-box-el')
         console.log(this.props.toolContent)
+
         const newToolContent = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements)
         this.props.actionSetToolContent(newToolContent)
         FlowActions.updatePosses(instance, newToolContent)
@@ -123,10 +125,13 @@ class ToolBox extends Component {
 
   componentWillReceiveProps(nextProps) {
     console.log("componentWillReceiveProps")
-    console.log("nextProps")
-    console.log(nextProps)
+    if(nextProps.toolContentHash !== this.state.toolContentHash){
+      //FlowActions.detachElement(this.props.flowInstance, "logo_2")
+      alert(nextProps.toolContentHash)
+      this.setState({toolContentHash: nextProps.toolContentHash})
+      this.forceUpdate()
+    }
     if(nextProps.editMode !== this.props.editMode) {
-      console.log("toggleEditable")
       this.toggleEditable(nextProps.editMode)
     }
   }
@@ -146,11 +151,11 @@ class ToolBox extends Component {
 
   componentDidMount() {
     if(this.props.flowInstance == null){
-      console.log("componentDidMount")
       const toolBoxOuter = document.getElementById("ToolBoxWrapper")
+      toolBoxOuter.addEventListener('contextmenu', (e) => this.props.showContextMenu(e))
+      toolBoxOuter.addEventListener('dblclick', (e) => this.activateDeleteMode(e))
       ToolBoxInteractions.MakeDraggable(toolBoxOuter);
       ToolBoxInteractions.MakeZoomable(toolBoxOuter,0.1,4,0.2)
-      toolBoxOuter.addEventListener('contextmenu', (e) => this.props.showContextMenu(e))
       const self = this
       window.jsPlumb.ready(function() {
         const flowInstance = FlowActions.initFlows(self.props.toolContent, Positions.toolConnections)
@@ -159,24 +164,73 @@ class ToolBox extends Component {
     }
   }
 
+  activateDeleteMode(){
+     this.setState({activeDeleteMode: !this.state.activeDeleteMode})
+      const closeButtons = document.getElementsByClassName("tool-box-el-close")
+      const closableElements1 = document.getElementsByClassName("tool-box-logo-el")
+      const closableElements2 = document.getElementsByClassName("tool-box-group-el")
+      const closableElements3 = document.getElementsByClassName("tool-box-text-el")
+      const allElementsToWiggle = [].concat.apply([], [Array.from(closeButtons), Array.from(closableElements1), Array.from(closableElements2), Array.from(closableElements3)]).flat(1)
+      if(this.state.activeDeleteMode){
+        allElementsToWiggle.forEach(el => el.classList.add("wiggle"))
+      }  else {
+        allElementsToWiggle.forEach(el => el.classList.remove("wiggle"))
+      }
+
+  }
+
   renderLogos(){
     console.log("renderLogos")
     console.log(this.props)
     if(this.props.toolContent !== null){
+      console.log("this.state.toolContentHash")
+      console.log(this.state.toolContentHash)
       return this.props.toolContent.map((el, i) => {
-          if(el.type == "img")
-            return (<img id={el.id} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={require("../img/"+el.content)} />)
+        console.log(el.id)
+          if(el.type == "img" /*&& this.props.editMode == false*/)
+            return (<img id={el.id} key={el.id} onClick={(e) => {this.deleteElement(el.id)}} className="tool-box-logo-el tool-box-el-hack tool-box-el" style={{top: el.top, left: el.left}}  src={require("../img/"+el.content)} />)
           else if(el.type == "text")
-            return (<span id={el.id} style={{top: el.top, left: el.left}} className="tool-box-text-el tool-box-el-hack tool-box-el">{el.content}</span>)
+            return (<div id={el.id} key={el.id} style={{top: el.top, left: el.left}} className="tool-box-text-el tool-box-el-hack tool-box-el">{el.content}</div>)
           else if(el.type == "container")
-            return (<div id={el.id} style={{top: el.top, left: el.left}} className="tool-box-container-el tool-box-el-hack tool-box-el"></div>)
+            return (<div id={el.id} key={el.id} style={{top: el.top, left: el.left}} className="tool-box-container-el tool-box-el-hack tool-box-el"></div>)
           else if(el.type == "group")
-            return (<div id={el.id} style={{top: el.top, left: el.left}} className="tool-box-group-el tool-box-el-hack tool-box-el">
+            return (<div id={el.id} key={el.id} style={{top: el.top, left: el.left}} className="tool-box-group-el tool-box-el-hack tool-box-el">
             <div class="group-resize-handle"></div>
             </div>)
       })
+    } else {
+      return <div></div>
     }
   }
+
+  deleteElement(refId){
+    const tempElement = document.getElementById(refId)
+    console.log(tempElement)
+    const parentParentNode = tempElement.parentNode.parentNode
+    if(tempElement.parentNode.id.includes("container")){
+      parentParentNode.appendChild(tempElement)
+    }
+    //tempElement.parentNode.removeChild(tempElement)
+    this.props.deleteElement(refId)
+  }
+
+  renderClosingButtons(){
+    if(this.props.toolContent !== null){
+      return this.props.toolContent.map((el, i) => {
+         const orgEl = document.getElementById(el.id)
+          if(el && orgEl && !orgEl.parentNode.id.includes("container")){
+            var left = parseFloat(el.left)
+            if(orgEl.width)
+              left += orgEl.width
+            else
+              left += orgEl.offsetWidth
+            const refId = el.id
+            return (<div className="tool-box-el-close" style={{top: el.top, left: left}} onClick={(e) => {this.deleteElement(refId)}}><i class="fas fa-times"></i></div>)
+          } else return ""
+      })
+    }
+  }
+
 
   renderAddTextData(){
     const addTextData = this.props.addTextData
@@ -196,6 +250,7 @@ class ToolBox extends Component {
       {(this.props.addTextData !== null) ? this.renderAddTextData() : ""}
         <div id="tool-logos">
           {this.renderLogos()}
+          {/*(this.state.activeDeleteMode) ? this.renderClosingButtons() : ""*/}
         </div>
       </div>
     );

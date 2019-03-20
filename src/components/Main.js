@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { actionSetToolContent, actionAddToolElement } from "../actions/flowActions";
+import { actionSetToolContent, actionAddToolElement, actionDeleteToolElement} from "../actions/flowActions";
 
 import ToolBox from './ToolBox'
 import ContextMenu from './ContextMenu'
@@ -14,6 +14,9 @@ function uuidv4() {
   });
 }
 
+const CONTEXT_MENU = {
+  ADD: "ADD",
+}
 class Main extends Component {
 
   constructor(props){
@@ -26,12 +29,12 @@ class Main extends Component {
       videoInitialized: false,
       timecode: Positions.filmTimecode,
       editMode: false,
-      contextMenu: false,
+      contextMenu: null,
       contextMenuCoords: null,
       addTextData: null,
     }
 
-    const toolContent = Positions.film
+    const toolContent = Positions.filmPositions
     this.props.actionSetToolContent(toolContent)
 
   }
@@ -94,12 +97,15 @@ class Main extends Component {
   }
 
   showContextMenu(e) {
-    e.preventDefault();
-    console.log("event")
-    console.log(e)
-    var left = e.pageX
-    var top = e.pageY
-    this.setState({contextMenu: true, contextMenuCoords: [left, top, e.layerX, e.layerY]})
+      e.preventDefault();
+      var left = e.pageX
+      var top = e.pageY
+      alert(this.state.contextMenu)
+      this.setState({contextMenu: CONTEXT_MENU.ADD, contextMenuCoords: [left, top, e.layerX, e.layerY]})
+  }
+
+  deleteElement(refId){
+    this.props.actionDeleteToolElement(refId)
   }
 
   addTextOnChange(e){
@@ -126,7 +132,7 @@ class Main extends Component {
   onAddTextSubmit(){
     this.props.actionAddToolElement(this.state.addTextData)
     this.setState({
-      contextMenu: false,
+      contextMenu: null,
       contextMenuCoords: null,
       addTextData: null
     })
@@ -147,7 +153,7 @@ class Main extends Component {
     }
     this.props.actionAddToolElement(addGroupData)
     this.setState({
-      contextMenu: false,
+      contextMenu: null,
       contextMenuCoords: null,
     })
   }
@@ -162,7 +168,7 @@ class Main extends Component {
         addGroup = {() => this.addGroup()}
         onAddTextSubmit={() => this.onAddTextSubmit()}
         addTextOnChange={(e) => this.addTextOnChange(e)}
-        closeContextMenu={() => this.setState({contextMenu: false})}
+        closeContextMenu={() => this.setState({contextMenu: null})}
         contextMenuCoords={this.state.contextMenuCoords}/> : ""}
         <div class="containerer">
           <div className="left">
@@ -202,7 +208,7 @@ class Main extends Component {
                 </div>
                 </div>
                 <div id="ToolBoxWrapper">
-                  <ToolBox addTextData={this.state.addTextData} editMode={this.state.editMode} showContextMenu={e => this.showContextMenu(e)}/>
+                  <ToolBox addTextData={this.state.addTextData} editMode={this.state.editMode} deleteElement={(refId) => this.deleteElement(refId)} showContextMenu={e => this.showContextMenu(e)}/>
                 </div>
               </div>
             </div>
@@ -218,6 +224,7 @@ const mapStateToProps = state => ({
   ...state
 });
 const mapDispatchToProps = dispatch => ({
+  actionDeleteToolElement: (payload) => dispatch(actionDeleteToolElement(payload)),
   actionSetToolContent: (payload) => dispatch(actionSetToolContent(payload)),
   actionAddToolElement: (payload) => dispatch(actionAddToolElement(payload))
 });

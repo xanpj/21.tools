@@ -161,6 +161,8 @@ body {
 }
 
 #edit-tool-box {
+  position: relative;
+  z-index: 7;
   float:right;
   padding-top: 5px;
   padding-right: 15px;
@@ -251,6 +253,77 @@ body {
   position: static;
 }
 
+.tool-box-el-close {
+  position: absolute;
+  content: "x";
+  height: 15px;
+  width: 15px;
+  background-color: #000;
+  border-radius: 50%;
+  display: inline-block;
+  color: #fff;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 15px;
+  z-index:7;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.1);
+  margin-top: -8px;
+  margin-left: -8px;
+}
+
+.wiggle:nth-child(1n) {
+  /* Start the shake animation and make the animation last for 0.5 seconds */
+  animation: shake1 0.5s;
+
+  /* When the animation is finished, start again */
+  animation-iteration-count: infinite;
+}
+
+.wiggle:nth-child(2n) {
+  /* Start the shake animation and make the animation last for 0.5 seconds */
+  animation: shake2 0.5s;
+
+  /* When the animation is finished, start again */
+  animation-iteration-count: infinite;
+}
+
+.wiggle:nth-child(3n) {
+  /* Start the shake animation and make the animation last for 0.5 seconds */
+  animation: shake2 0.4s;
+
+  /* When the animation is finished, start again */
+  animation-iteration-count: infinite;
+}
+
+@keyframes shake1 {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(3px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(3px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(1px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+@keyframes shake2 {
+  0% { transform: translate(-1px, -1px) rotate(0deg); }
+  10% { transform: translate(1px, 2px) rotate(1deg); }
+  20% { transform: translate(3px, 0px) rotate(-1deg); }
+  30% { transform: translate(-3px, -2px) rotate(0deg); }
+  40% { transform: translate(-1px, 1px) rotate(-1deg); }
+  50% { transform: translate(1px, -2px) rotate(1deg); }
+  60% { transform: translate(3px, -1px) rotate(0deg); }
+  70% { transform: translate(-3px, -1px) rotate(1deg); }
+  80% { transform: translate(1px, 1px) rotate(-1deg); }
+  90% { transform: translate(-1px, -2px) rotate(0deg); }
+  100% { transform: translate(-1px, 2px) rotate(1deg); }
+}
+
 .jtk-endpoint {
   z-index: 3;
 }
@@ -279,7 +352,7 @@ body {
   position: absolute;
   z-index: 5;
   /*border: 1px solid #000000;*/
-  background-color: #DDDDDD;
+  background-color: #FFFFFF;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.1);
   padding: 10px;
 }
@@ -290,7 +363,7 @@ body {
 }
 
 .list-group .list-group-item {
-  background-color: #DDDDDD;
+  background-color: #FFFFFF;
 }
 
 .list-group .list-group-item:hover {

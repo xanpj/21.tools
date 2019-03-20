@@ -22,3 +22,10 @@ export const actionAddToolElement = (payload) => {
     payload
   }
 }
+
+export const actionDeleteToolElement = (payload) => {
+  return {
+    type: CONSTANTS.ACTION_DELETE_TOOL_ELEMENT,
+    payload
+  }
+}
