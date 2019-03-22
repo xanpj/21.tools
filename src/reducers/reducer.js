@@ -35,8 +35,9 @@ export default (state = defaultState, action) => {
         const refId = action.payload
         const elIndex = newToolContent.findIndex(el => el.id === refId)
         var foundInContainer = false
+        const deleteElements = []
         if(elIndex > -1){
-          const containerCleanedContent = newToolContent.map(el => {
+          const containerCleanedContent = newToolContent.map((el, i) => {
             var newEl = el
             if(el.type=="container"){
               var contents = el.content.split(",").map(el => el.trim())
@@ -44,13 +45,18 @@ export default (state = defaultState, action) => {
               const elIndex = contents.indexOf(refId)
               contents.splice(elIndex, 1)
               if(elIndex > -1){
-                foundInContainer = true
-                newEl = {...el, content: contents.join(",")}
+                if(contents.length > 0){
+                  foundInContainer = true
+                  newEl = {...el, content: contents.join(",")}
+                } else {
+                  deleteElements.push(i)
+                }
               }
             }
             return newEl
           })
           newToolContent = containerCleanedContent
+          //deleteElements.forEach(elId => newToolContent.splice(elId,1))
           if(!foundInContainer){
             newToolContent.splice(elIndex,1)
           }

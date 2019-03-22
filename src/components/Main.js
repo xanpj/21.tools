@@ -6,13 +6,7 @@ import ToolBox from './ToolBox'
 import ContextMenu from './ContextMenu'
 import * as Serialization from './functionsSerialization'
 import * as Positions from '../resources/InfographicPositions';
-
-function uuidv4() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-}
+import * as Utils from '../utils'
 
 const CONTEXT_MENU = {
   ADD: "ADD",
@@ -113,7 +107,7 @@ class Main extends Component {
     const text = e.target.value
     var addTextDataId = ""
     if(this.state.addTextData == null){
-      addTextDataId = "text_" + uuidv4()
+      addTextDataId = "text_" + Utils.uuidv4()
     } else {
       addTextDataId = this.state.addTextData.id
     }
@@ -139,7 +133,7 @@ class Main extends Component {
   }
 
   addGroup() {
-    const addGroupDataId = "group_" + uuidv4()
+    const addGroupDataId = "group_" + Utils.uuidv4()
     const pxOffsetFromContextMenu = 20
     const addGroupData = {
       id: addGroupDataId,
@@ -208,7 +202,11 @@ class Main extends Component {
                 </div>
                 </div>
                 <div id="ToolBoxWrapper">
-                  <ToolBox addTextData={this.state.addTextData} editMode={this.state.editMode} deleteElement={(refId) => this.deleteElement(refId)} showContextMenu={e => this.showContextMenu(e)}/>
+                  <ToolBox addTextData={this.state.addTextData}
+                  editMode={this.state.editMode}
+                  deleteElement={(refId) => this.deleteElement(refId)}
+                  showContextMenu={e => this.showContextMenu(e)}
+                  />
                 </div>
               </div>
             </div>

@@ -1,3 +1,7 @@
+import * as Utils from '../utils'
+
+const PADDING = 10
+
 function getElementFrames(toolBoxElements, containers){
   return Array.from(toolBoxElements).map((el, i) => {
     if((!el.parentElement.id.includes("container") && !containers)  //exclude logos already embedded in containers
@@ -14,6 +18,33 @@ function getElementFrames(toolBoxElements, containers){
     }
   } else return null
   }).filter(el => el !== null)
+}
+
+export function getEnclosingToolId(toolBoxElements, sourceEl){
+  var toolId = null
+
+  const top = parseInt(sourceEl.style.top.replace("px", ""))
+  const left = parseInt(sourceEl.style.left.replace("px", ""))
+  const right = left + sourceEl.width
+  const height = sourceEl.height
+
+  //check if the current logo (el) fits in some container (elContainer)
+  Array.from(toolBoxElements).forEach(targetEl => {
+    if(targetEl.id.includes("logo") && (targetEl.id !== sourceEl.id)){
+      const targetElDom = document.getElementById(targetEl.id)
+      const targetElTop = parseInt(targetElDom.style.top.replace("px", ""))
+      const targetElLeft= parseInt(targetElDom.style.left.replace("px", ""))
+      const targetElRight = targetElLeft + targetElDom.width
+      const targetElHeight = targetElDom.height
+      if(left > (targetElLeft - 10)
+        && right < (targetElRight + 10)
+        && top > (targetElTop - 10)
+        && (top + height) < (targetElTop + targetElHeight + 10)){
+          toolId = targetEl.id
+        }
+    }
+  })
+  return toolId
 }
 
 export function getEnclosingContainerId(toolBoxElements, el){
@@ -41,11 +72,12 @@ export function getEnclosingContainerId(toolBoxElements, el){
   return containerId
 }
 
-export function serializeToolBoxElements(oldToolContent, toolBoxElements){
+export function serializeToolBoxElements(orgToolContent, toolBoxElements, newlyJoinedTools = null){
   const retrieveOnlyContainers = false
   const toolBoxElementsFrames = getElementFrames(toolBoxElements, retrieveOnlyContainers)
 
-  const toolBoxElementsToSerialized = Array.from(toolBoxElements).map((el, i) => {
+  const toolBoxElementsArr = Array.from(toolBoxElements)
+  const toolBoxElementsToSerialized = toolBoxElementsArr.map((el, i) => {
     var elInformation = {
       id: el.id,
       left: el.style.left,
@@ -56,6 +88,30 @@ export function serializeToolBoxElements(oldToolContent, toolBoxElements){
       outer: "",
       type: ""
     }
+    if(el.parentNode.id.includes("container")){
+      const orgElement = orgToolContent.find(orgEl => orgEl.id == el.parentNode.id)
+      console.log("orgElement")
+      console.log(orgElement)
+      const orgLeft = parseFloat(orgElement.left)
+      const orgTop = parseFloat(orgElement.top)
+      console.log("el.parentNode")
+      console.log(el.parentNode)
+      const newLeft = parseFloat(el.parentNode.style.left)
+      const newTop =  parseFloat(el.parentNode.style.top)
+      console.log(newLeft)
+      console.log(orgLeft)
+      console.log()
+      console.log(newTop)
+      console.log(orgTop)
+      console.log()
+      console.log(elInformation.left)
+      console.log(elInformation.top)
+      elInformation.left = parseFloat(elInformation.left) - (orgLeft - newLeft) + "px"
+      elInformation.top = parseFloat(elInformation.top) - (orgTop - newTop) + "px"
+      console.log(elInformation.left)
+      console.log(elInformation.top)
+    }
+
     const top = parseInt(elInformation.top.replace("px", ""))
     const left = parseInt(elInformation.left.replace("px", ""))
     const right = left + parseInt(elInformation.width.replace("px", ""))
@@ -68,7 +124,7 @@ export function serializeToolBoxElements(oldToolContent, toolBoxElements){
 
     if(isImg || isText) {
       elInformation.type = isImg ? "img" : "text"
-      const correspondingElement = oldToolContent.filter(el => el.id == elInformation.id)
+      const correspondingElement = orgToolContent.filter(el => el.id == elInformation.id)
       if(correspondingElement && correspondingElement.length > 0){
         elInformation.content = correspondingElement[0].content
       }
@@ -97,6 +153,23 @@ export function serializeToolBoxElements(oldToolContent, toolBoxElements){
     elInformation.content = elInformation.content.replace(/,\s*$/, "");
     return elInformation
   })
+
+  if(newlyJoinedTools){
+    const newlyJoinedToolsElements = toolBoxElementsArr.filter(el => newlyJoinedTools.indexOf(el.id) > -1)
+    newlyJoinedTools.reverse()
+    var elInformation = {
+      id: "container_"+ Utils.uuidv4(),
+      left: newlyJoinedToolsElements[1].style.left - PADDING,
+      top: newlyJoinedToolsElements[1].style.top - PADDING,
+      width: "",
+      height: "",
+      content: newlyJoinedTools.join(","),
+      outer: "",
+      type: "container"
+    }
+    console.log("newlyJoinedTools")
+    toolBoxElementsToSerialized.push(elInformation)
+  }
 
   function idSort(a,b) {
     if(a.type == b.type){

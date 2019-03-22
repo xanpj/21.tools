@@ -19,6 +19,9 @@ class ToolBox extends Component {
   }
 
   componentDidUpdate(){
+     console.log("DID MOUNT 2")
+     console.log(this.props.toolContent)
+     FlowActions.initContainers(this.props.flowInstance, this.props.toolContent)
   }
 
   toggleEditable(editMode){
@@ -93,7 +96,7 @@ class ToolBox extends Component {
 
       const toolBoxSelector = ".tool-box-el"
       //const self = this
-      FlowActions.toggleDraggable(instance, toolBoxSelector, editMode, this.props.toolContent, () => {/*
+      FlowActions.toggleDraggable(instance, toolBoxSelector, editMode, this.props.toolContent, (newlyJoinedTools) => {/*
         const toolBoxElements = document.getElementsByClassName('tool-box-el')
         const newToolContent = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements)
         console.log("Positions.film")
@@ -108,11 +111,10 @@ class ToolBox extends Component {
         console.log(newToolContent2)
         this.props.actionSetToolContent(newToolContent2)*/
         //this.props.actionSetToolContent(newToolContent2)
-        console.log("filmPositions")
         const toolBoxElements = document.getElementsByClassName('tool-box-el')
-        console.log(this.props.toolContent)
-
-        const newToolContent = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements)
+        const newToolContent = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements, newlyJoinedTools)
+        console.log("ToSaveFromSerialized")
+        console.log(newToolContent)
         this.props.actionSetToolContent(newToolContent)
         FlowActions.updatePosses(instance, newToolContent)
       })
@@ -150,6 +152,7 @@ class ToolBox extends Component {
      }
 
   componentDidMount() {
+    console.log("DID MOUNT 1")
     if(this.props.flowInstance == null){
       const toolBoxOuter = document.getElementById("ToolBoxWrapper")
       toolBoxOuter.addEventListener('contextmenu', (e) => this.props.showContextMenu(e))
@@ -166,7 +169,7 @@ class ToolBox extends Component {
 
   activateDeleteMode(){
      this.setState({activeDeleteMode: !this.state.activeDeleteMode})
-      const closeButtons = document.getElementsByClassName("tool-box-el-close")
+      /*const closeButtons = document.getElementsByClassName("tool-box-el-close")
       const closableElements1 = document.getElementsByClassName("tool-box-logo-el")
       const closableElements2 = document.getElementsByClassName("tool-box-group-el")
       const closableElements3 = document.getElementsByClassName("tool-box-text-el")
@@ -175,7 +178,7 @@ class ToolBox extends Component {
         allElementsToWiggle.forEach(el => el.classList.add("wiggle"))
       }  else {
         allElementsToWiggle.forEach(el => el.classList.remove("wiggle"))
-      }
+      }*/
 
   }
 
@@ -183,18 +186,15 @@ class ToolBox extends Component {
     console.log("renderLogos")
     console.log(this.props)
     if(this.props.toolContent !== null){
-      console.log("this.state.toolContentHash")
-      console.log(this.state.toolContentHash)
       return this.props.toolContent.map((el, i) => {
-        console.log(el.id)
-          if(el.type == "img" /*&& this.props.editMode == false*/)
-            return (<img id={el.id} key={el.id} onClick={(e) => {this.deleteElement(el.id)}} className="tool-box-logo-el tool-box-el-hack tool-box-el" style={{top: el.top, left: el.left}}  src={require("../img/"+el.content)} />)
+          if(el.type == "img")
+            return (<img id={el.id} key={el.id} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el"   src={require("../img/"+el.content)} />)
           else if(el.type == "text")
             return (<div id={el.id} key={el.id} style={{top: el.top, left: el.left}} className="tool-box-text-el tool-box-el-hack tool-box-el">{el.content}</div>)
           else if(el.type == "container")
             return (<div id={el.id} key={el.id} style={{top: el.top, left: el.left}} className="tool-box-container-el tool-box-el-hack tool-box-el"></div>)
           else if(el.type == "group")
-            return (<div id={el.id} key={el.id} style={{top: el.top, left: el.left}} className="tool-box-group-el tool-box-el-hack tool-box-el">
+            return (<div id={el.id} key={el.id} style={{width:el.width, height:el.height, top: el.top, left: el.left}} className="tool-box-group-el tool-box-el-hack tool-box-el">
             <div class="group-resize-handle"></div>
             </div>)
       })
@@ -205,12 +205,17 @@ class ToolBox extends Component {
 
   deleteElement(refId){
     const tempElement = document.getElementById(refId)
-    console.log(tempElement)
-    const parentParentNode = tempElement.parentNode.parentNode
-    if(tempElement.parentNode.id.includes("container")){
-      parentParentNode.appendChild(tempElement)
+    const outerNode = document.getElementById("tool-logos")
+    if(tempElement.children !== null){
+      Array.from(tempElement.children).forEach(el => {
+        tempElement.removeChild(el)
+        outerNode.appendChild(el)
+      })
     }
-    //tempElement.parentNode.removeChild(tempElement)
+    const toolBoxElements = document.getElementsByClassName('tool-box-el')
+    const newToolContent = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements, null)
+    this.props.actionSetToolContent(newToolContent)
+    FlowActions.detachElement(this.props.flowInstance, refId)
     this.props.deleteElement(refId)
   }
 
@@ -225,7 +230,8 @@ class ToolBox extends Component {
             else
               left += orgEl.offsetWidth
             const refId = el.id
-            return (<div className="tool-box-el-close" style={{top: el.top, left: left}} onClick={(e) => {this.deleteElement(refId)}}><i class="fas fa-times"></i></div>)
+            const refCloseId = refId + "_close"
+            return (<div className="tool-box-el-close" id={refCloseId} key={refCloseId} onClick={(e) => {this.deleteElement(el.id)}}  style={{top: el.top, left: left}} onClick={(e) => {this.deleteElement(refId)}}><i class="fas fa-times"></i></div>)
           } else return ""
       })
     }
@@ -250,7 +256,7 @@ class ToolBox extends Component {
       {(this.props.addTextData !== null) ? this.renderAddTextData() : ""}
         <div id="tool-logos">
           {this.renderLogos()}
-          {/*(this.state.activeDeleteMode) ? this.renderClosingButtons() : ""*/}
+          {(this.state.activeDeleteMode) ? this.renderClosingButtons() : ""}
         </div>
       </div>
     );

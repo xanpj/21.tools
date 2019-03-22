@@ -1,14 +1,10 @@
 import * as Serialization from './functionsSerialization'
+import * as Utils from '../utils'
 
 const jsPlumb = window.jsPlumb
 const LOGO_SIZE = 30
+const PADDING = 10
 
-function uuidv4() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-}
 
 const anchors = [
             [0.5, 0, 0, 0],
@@ -78,7 +74,7 @@ const endpointConfigEditable = {...endpointConfig, endpoint: ["Dot", { radius: 5
 function findInnerElements(toolContent, el) {
   var inner_elements_ids = el.content.split(",")
   inner_elements_ids = inner_elements_ids.map((inner_el_id, i) => inner_el_id.trim())
-  return toolContent.filter((inner_el, i) => inner_elements_ids.findIndex(el_id => el_id === inner_el.id) > -1)
+  return inner_elements_ids.map(el_id => toolContent.find((inner_el, i) => el_id === inner_el.id))
 }
 
 function getContainerCoords(toolContent, el){
@@ -93,6 +89,7 @@ function getContainerCoords(toolContent, el){
   if(inner_elements && inner_elements.length > 0){
     for (const el_id in inner_elements) {
       const el = inner_elements[el_id]
+      console.log(el)
       const isContainerOrGroup = (el.type === "container" || el.type === "group") //styles are already set explicitly for container and groups
       const newEl = document.getElementById(el.id)
       if(newEl){
@@ -121,6 +118,9 @@ function getContainerCoords(toolContent, el){
     top: isGroup ? bottomY : topY,
     height: isGroup ? topY - bottomY + lowestContainerHeightY: heightY
   }
+  console.log("coords")
+  console.log(el)
+  console.log(coords)
   return coords
 }
 
@@ -144,10 +144,9 @@ function initConnections(instance, toolConnections){
   })
 }
 
-function initContainers(instance, toolContent){
-  const PADDING = 10
+export function initContainers(instance, toolContent){
   toolContent.map((el, i) => {
-    if(el.type == "container" || el.type == "group") {
+    if(el.type == "container") {
 
       /*source container*/
       const container_source_id = el.id
@@ -166,31 +165,13 @@ function initContainers(instance, toolContent){
         }
       });
 
-      if(el.type  != "container"){
+      if(el.type !== "container"){
         source.style.width = container_source_coords.width+2*PADDING+'px';
         source.style.height = container_source_coords.height+2*PADDING+'px';
+      } else {
+        source.style.left = container_source_coords.left-PADDING+'px';
+        source.style.top = container_source_coords.top-PADDING+'px';
       }
-      source.style.left = container_source_coords.left-PADDING+'px';
-      source.style.top = container_source_coords.top-PADDING+'px';
-
-
-
-      /*target container*/
-      /*var nodes = el.outer.split(",")
-      nodes = nodes.map((el, i) => el.trim())
-      nodes.forEach(node => {
-        var container_target = (node) ? toolContent.find(target => target.id == node) : null
-        if(container_target) {
-          const container_target_id = container_target.id
-          const container_target_coords = getContainerCoords(toolContent, container_target)
-          var target = document.getElementById(container_target_id)
-          /*target.style.left = container_target_coords.left+'px';
-          target.style.width = container_target_coords.width+'px';
-          target.style.top = container_target_coords.top+'px';
-          target.style.height = container_target_coords.height+'px';*
-          makeFlow(container_source_id, container_source_coords, container_target_id, container_target_coords)
-        }
-      })*/
     }
   })
 }
@@ -228,7 +209,7 @@ export function revalidate(instance, elementId, leftTop){
 export function updatePosses(instance, toolContent){
   toolContent.map((el, i) => {
     instance.removeFromAllPosses(el.id)
-    const uuid = uuidv4()
+    const uuid = Utils.uuidv4()
     if(el.type == "group") {
       const container_source_id = el.id
       instance.addToPosse([container_source_id], uuid); // TODO uuid
@@ -241,6 +222,18 @@ export function updatePosses(instance, toolContent){
       }
     })
   })
+
+  //TODO POSSE for close button
+  /*
+  const closeSelector = "#logo_2_close"
+  console.log("UPDATE_POSSES")
+  console.log(jsPlumb.getSelector(closeSelector))
+  instance.draggable(jsPlumb.getSelector(closeSelector))
+  instance.setDraggable(jsPlumb.getSelector(closeSelector), false);
+  instance.addToPosse(["logo_2"], "aa"); // TODO uuid
+  instance.addToPosse("logo_2_close", {id: "aa",active:false})
+  */
+
 }
 
 export function onlyToggleDraggable(instance, selector_id, editMode){
@@ -260,15 +253,29 @@ export function toggleDraggable(instance, selector, editMode, toolContent, callB
     },
     stop: function(e){
       const tempLogo = document.getElementById(e.el.id)
+      const sourceToolId = e.el.id
+      var newlyJoinedTools = null
       if(e.el.id.includes("logo")){
         const toolBoxElements = document.getElementsByClassName('tool-box-el')
         const containerId = Serialization.getEnclosingContainerId(toolBoxElements, tempLogo)
+        const targetToolId = Serialization.getEnclosingToolId(toolBoxElements, tempLogo)
         if(containerId !== null){
           document.getElementById(containerId).appendChild(tempLogo)
           instance.revalidate(containerId)
+        } else if(targetToolId !== null){
+           newlyJoinedTools = [sourceToolId, targetToolId]
+          const targetToolDom = document.getElementById(targetToolId)
+          const sourceToolDom = document.getElementById(sourceToolId)
+          const sourceToolLeft = sourceToolDom.style.left
+          sourceToolDom.style.left = (parseInt(sourceToolLeft) + targetToolDom.width + PADDING) + "px"
+          console.log("sourceToolDom.style.left")
+          console.log(sourceToolDom.style.left)
+          //addContainer
+          //document.getElementById(containerId).appendChild(tempLogo)
+          //instance.revalidate(containerId)
         }
       }
-      callBackOnStop()
+      callBackOnStop(newlyJoinedTools)
     },
   /*grid:[5,5]*/});
   instance.setDraggable(jsPlumb.getSelector(selector), editMode);
