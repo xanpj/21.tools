@@ -89,7 +89,6 @@ function getContainerCoords(toolContent, el){
   if(inner_elements && inner_elements.length > 0){
     for (const el_id in inner_elements) {
       const el = inner_elements[el_id]
-      console.log(el)
       const isContainerOrGroup = (el.type === "container" || el.type === "group") //styles are already set explicitly for container and groups
       const newEl = document.getElementById(el.id)
       if(newEl){
@@ -118,9 +117,6 @@ function getContainerCoords(toolContent, el){
     top: isGroup ? bottomY : topY,
     height: isGroup ? topY - bottomY + lowestContainerHeightY: heightY
   }
-  console.log("coords")
-  console.log(el)
-  console.log(coords)
   return coords
 }
 
@@ -268,8 +264,6 @@ export function toggleDraggable(instance, selector, editMode, toolContent, callB
           const sourceToolDom = document.getElementById(sourceToolId)
           const sourceToolLeft = sourceToolDom.style.left
           sourceToolDom.style.left = (parseInt(sourceToolLeft) + targetToolDom.width + PADDING) + "px"
-          console.log("sourceToolDom.style.left")
-          console.log(sourceToolDom.style.left)
           //addContainer
           //document.getElementById(containerId).appendChild(tempLogo)
           //instance.revalidate(containerId)

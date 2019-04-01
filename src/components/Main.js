@@ -75,7 +75,11 @@ class Main extends Component {
   }
 
   onEditToolBox() {
-    this.setState({editMode: !this.state.editMode})
+    this.setState({
+                  editMode: !this.state.editMode,
+                  contextMenu: null,
+                  contextMenuCoords: null
+                })
   }
 
   publishToolBox(){
@@ -91,11 +95,10 @@ class Main extends Component {
   }
 
   showContextMenu(e) {
-      e.preventDefault();
-      var left = e.pageX
-      var top = e.pageY
-      alert(this.state.contextMenu)
-      this.setState({contextMenu: CONTEXT_MENU.ADD, contextMenuCoords: [left, top, e.layerX, e.layerY]})
+    e.preventDefault();
+    var left = e.pageX
+    var top = e.pageY
+    this.setState({contextMenu: CONTEXT_MENU.ADD, contextMenuCoords: [left, top, e.layerX, e.layerY]})
   }
 
   deleteElement(refId){
@@ -159,6 +162,7 @@ class Main extends Component {
 
       <div className="Main">
       {(this.state.contextMenu) ? <ContextMenu
+        editMode = {this.state.editMode}
         addGroup = {() => this.addGroup()}
         onAddTextSubmit={() => this.onAddTextSubmit()}
         addTextOnChange={(e) => this.addTextOnChange(e)}

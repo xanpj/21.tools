@@ -16,13 +16,17 @@ class ContextMenu extends Component {
 
 
   renderMenu(){
-    return (<div>
-              <ul class="list-group">
-               <li class="list-group-item" onClick={() => this.setState({view: VIEW.IMG})}><i class="fas fa-plus" /><i class="far fa-image" /></li>
-               <li class="list-group-item" onClick={() => this.props.addGroup()}><i class="fas fa-plus" /><i class="far fa-square" /></li>
-               <li class="list-group-item" onClick={() => this.setState({view: VIEW.TEXT})}><i class="fas fa-plus" /><i class="fas fa-font" /></li>
-             </ul>
-           </div>)
+    if(this.props.editMode){
+      return (<div>
+                <ul class="list-group">
+                 <li class="list-group-item" onClick={() => this.setState({view: VIEW.IMG})}><i class="fas fa-plus" /><i class="far fa-image" /></li>
+                 <li class="list-group-item" onClick={() => this.props.addGroup()}><i class="fas fa-plus" /><i class="far fa-square" /></li>
+                 <li class="list-group-item" onClick={() => this.setState({view: VIEW.TEXT})}><i class="fas fa-plus" /><i class="fas fa-font" /></li>
+               </ul>
+             </div>)
+    } else {
+        return (<div>Inspector</div>)
+    }
   }
 
   renderImgEdit(){

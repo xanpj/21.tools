@@ -37,7 +37,6 @@
 
   export function MakeZoomable(container,min_scale, max_scale,factor) {
       var target = container
-      console.log(target)
       var size = {w:target.width,h:target.height}
       target.setAttribute("style", "transform-origin: 0 0;");
 

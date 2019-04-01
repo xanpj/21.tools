@@ -7,6 +7,7 @@ import * as Serialization from './functionsSerialization'
 import * as ToolBoxInteractions from './functionsRightScreen';
 import * as FlowActions from './functionsFlows';
 import interact from 'interactjs'
+
 const LOGO_SIZE = 30;
 class ToolBox extends Component {
   constructor(props){
@@ -19,8 +20,6 @@ class ToolBox extends Component {
   }
 
   componentDidUpdate(){
-     console.log("DID MOUNT 2")
-     console.log(this.props.toolContent)
      FlowActions.initContainers(this.props.flowInstance, this.props.toolContent)
   }
 
@@ -126,7 +125,6 @@ class ToolBox extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log("componentWillReceiveProps")
     if(nextProps.toolContentHash !== this.state.toolContentHash){
       //FlowActions.detachElement(this.props.flowInstance, "logo_2")
       alert(nextProps.toolContentHash)
@@ -134,6 +132,7 @@ class ToolBox extends Component {
       this.forceUpdate()
     }
     if(nextProps.editMode !== this.props.editMode) {
+      this.setState({editMode: nextProps.editMode})
       this.toggleEditable(nextProps.editMode)
     }
   }
@@ -152,7 +151,6 @@ class ToolBox extends Component {
      }
 
   componentDidMount() {
-    console.log("DID MOUNT 1")
     if(this.props.flowInstance == null){
       const toolBoxOuter = document.getElementById("ToolBoxWrapper")
       toolBoxOuter.addEventListener('contextmenu', (e) => this.props.showContextMenu(e))
@@ -183,8 +181,6 @@ class ToolBox extends Component {
   }
 
   renderLogos(){
-    console.log("renderLogos")
-    console.log(this.props)
     if(this.props.toolContent !== null){
       return this.props.toolContent.map((el, i) => {
           if(el.type == "img")
@@ -256,7 +252,7 @@ class ToolBox extends Component {
       {(this.props.addTextData !== null) ? this.renderAddTextData() : ""}
         <div id="tool-logos">
           {this.renderLogos()}
-          {(this.state.activeDeleteMode) ? this.renderClosingButtons() : ""}
+          {(this.state.activeDeleteMode && this.state.editMode ) ? this.renderClosingButtons() : ""}
         </div>
       </div>
     );
