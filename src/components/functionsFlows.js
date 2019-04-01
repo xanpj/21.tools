@@ -162,11 +162,15 @@ export function initContainers(instance, toolContent){
       });
 
       if(el.type !== "container"){
-        source.style.width = container_source_coords.width+2*PADDING+'px';
-        source.style.height = container_source_coords.height+2*PADDING+'px';
+        if(!source.style.width && !source.style.height){
+          source.style.width = container_source_coords.width+2*PADDING+'px';
+          source.style.height = container_source_coords.height+2*PADDING+'px';
+        }
       } else {
-        source.style.left = container_source_coords.left-PADDING+'px';
-        source.style.top = container_source_coords.top-PADDING+'px';
+        if(!source.style.left && !source.style.top){
+          source.style.left = container_source_coords.left-PADDING+'px';
+          source.style.top = container_source_coords.top-PADDING+'px';
+        }
       }
     }
   })

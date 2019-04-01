@@ -20,19 +20,14 @@ class ToolBox extends Component {
   }
 
   componentDidUpdate(){
-     FlowActions.initContainers(this.props.flowInstance, this.props.toolContent)
+    if(this.props.toolContent !== null){
+      FlowActions.initContainers(this.props.flowInstance, this.props.toolContent)
+    }
   }
 
   toggleEditable(editMode){
     const instance = this.props.flowInstance
     if(instance !== null){
-      const toolBoxOuter = document.getElementById("ToolBoxWrapper")
-      if(editMode) {
-        ToolBoxInteractions.MakeUnDraggable(toolBoxOuter)
-      } else {
-        ToolBoxInteractions.MakeDraggable(toolBoxOuter);
-      }
-
       const toolBoxGroupsSelector = ".tool-box-group-el"
       const self = this
       interact(toolBoxGroupsSelector).resizable({
@@ -58,6 +53,7 @@ class ToolBox extends Component {
         FlowActions.onlyToggleDraggable(instance, event.target.id, false)
       })
       .on('resizemove', function (event) {
+        if(self.state.editMode){
           var target = event.target,
               x = (parseFloat(target.getAttribute('data-x')) || 0),
               y = (parseFloat(target.getAttribute('data-y')) || 0);
@@ -78,20 +74,32 @@ class ToolBox extends Component {
           target.setAttribute('data-x', x);
           target.setAttribute('data-y', y);
           FlowActions.revalidate(instance, event.currentTarget.id)
+        }
       })
       .on('resizeend', function (event) {
-        var target = event.target
-        const orgLeft = target.style.left
-        const orgTop = target.style.top
-        const newLeft = (parseFloat(orgLeft) + parseFloat(target.dataset.x)) + "px"
-        const newTop = (parseFloat(orgTop) +  parseFloat(target.dataset.y)) + "px"
-        target.style.left = newLeft
-        target.style.top = newTop
-        target.style.webkitTransform = target.style.transform = '';
-        target.setAttribute('data-x', 0);
-        target.setAttribute('data-y', 0);
-        FlowActions.onlyToggleDraggable(instance, event.target.id, true)
+        if(self.state.editMode){
+          var target = event.target
+          const orgLeft = target.style.left
+          const orgTop = target.style.top
+          const newLeft = (parseFloat(orgLeft) + parseFloat(target.dataset.x)) + "px"
+          const newTop = (parseFloat(orgTop) +  parseFloat(target.dataset.y)) + "px"
+          target.style.left = newLeft
+          target.style.top = newTop
+          target.style.webkitTransform = target.style.transform = '';
+          target.setAttribute('data-x', 0);
+          target.setAttribute('data-y', 0);
+          FlowActions.onlyToggleDraggable(instance, event.target.id, true)
+        }
       });
+
+      const toolBoxOuter = document.getElementById("ToolBoxWrapper")
+      if(editMode) {
+        interact(toolBoxGroupsSelector).styleCursor(true)
+        ToolBoxInteractions.MakeUnDraggable(toolBoxOuter)
+      } else {
+        interact(toolBoxGroupsSelector).styleCursor(false)
+        ToolBoxInteractions.MakeDraggable(toolBoxOuter);
+      }
 
       const toolBoxSelector = ".tool-box-el"
       //const self = this
@@ -111,10 +119,12 @@ class ToolBox extends Component {
         this.props.actionSetToolContent(newToolContent2)*/
         //this.props.actionSetToolContent(newToolContent2)
         const toolBoxElements = document.getElementsByClassName('tool-box-el')
+        const preElements = this.props.toolContent.map(el => el.id)
         const newToolContent = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements, newlyJoinedTools)
+        const postElements = newToolContent.filter(el => preElements.indexOf(el.id) == -1)
         console.log("ToSaveFromSerialized")
         console.log(newToolContent)
-        this.props.actionSetToolContent(newToolContent)
+        this.props.actionSetToolContent({toolContent: newToolContent})
         FlowActions.updatePosses(instance, newToolContent)
       })
     }
@@ -151,7 +161,7 @@ class ToolBox extends Component {
      }
 
   componentDidMount() {
-    if(this.props.flowInstance == null){
+    if(this.props.flowInstance == null && this.props.toolContent !== null){
       const toolBoxOuter = document.getElementById("ToolBoxWrapper")
       toolBoxOuter.addEventListener('contextmenu', (e) => this.props.showContextMenu(e))
       toolBoxOuter.addEventListener('dblclick', (e) => this.activateDeleteMode(e))
@@ -159,7 +169,8 @@ class ToolBox extends Component {
       ToolBoxInteractions.MakeZoomable(toolBoxOuter,0.1,4,0.2)
       const self = this
       window.jsPlumb.ready(function() {
-        const flowInstance = FlowActions.initFlows(self.props.toolContent, Positions.toolConnections)
+        console.log(self.props.toolConnections)
+        const flowInstance = FlowActions.initFlows(self.props.toolContent, self.props.toolConnections)
         self.props.actionSetFlowInstance(flowInstance)
       });
     }
@@ -182,6 +193,8 @@ class ToolBox extends Component {
 
   renderLogos(){
     if(this.props.toolContent !== null){
+      console.log("this.props.toolContent")
+      console.log(this.props.toolContent)
       return this.props.toolContent.map((el, i) => {
           if(el.type == "img")
             return (<img id={el.id} key={el.id} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el"   src={require("../img/"+el.content)} />)
@@ -200,19 +213,21 @@ class ToolBox extends Component {
   }
 
   deleteElement(refId){
-    const tempElement = document.getElementById(refId)
-    const outerNode = document.getElementById("tool-logos")
-    if(tempElement.children !== null){
-      Array.from(tempElement.children).forEach(el => {
-        tempElement.removeChild(el)
-        outerNode.appendChild(el)
-      })
+    if(this.props.flowInstance !== null && this.props.toolContent !== null){ //null check unnecessary
+      const tempElement = document.getElementById(refId)
+      const outerNode = document.getElementById("tool-logos")
+      if(tempElement.children !== null){
+        Array.from(tempElement.children).forEach(el => {
+          tempElement.removeChild(el)
+          outerNode.appendChild(el)
+        })
+      }
+      const toolBoxElements = document.getElementsByClassName('tool-box-el')
+      const newToolContent = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements, null)
+      this.props.actionSetToolContent({toolContent: newToolContent})
+      FlowActions.detachElement(this.props.flowInstance, refId)
+      this.props.deleteElement(refId)
     }
-    const toolBoxElements = document.getElementsByClassName('tool-box-el')
-    const newToolContent = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements, null)
-    this.props.actionSetToolContent(newToolContent)
-    FlowActions.detachElement(this.props.flowInstance, refId)
-    this.props.deleteElement(refId)
   }
 
   renderClosingButtons(){

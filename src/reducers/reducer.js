@@ -4,6 +4,7 @@ import * as UTILS from '../utils'
 const defaultState = {
   flowInstance: null,
   toolContent: null,
+  toolConnections: null,
   toolContentHash: null
 }
 
@@ -17,7 +18,8 @@ export default (state = defaultState, action) => {
     case CONSTANTS.ACTION_SET_TOOL_CONTENT:
       return {
         ...state,
-        toolContent: action.payload
+        toolContent: action.payload.toolContent || this.state.toolContent,
+        toolConnections: action.payload.toolConnections || this.state.toolConnections
       }
     case CONSTANTS.ACTION_ADD_TOOL_ELEMENT:
       if(state.toolContent !== null){

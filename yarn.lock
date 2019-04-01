@@ -788,60 +788,67 @@
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
 
-"@interactjs/actions@1.4.0-beta.4+sha.d8836bd":
-  version "1.4.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@interactjs/actions/-/actions-1.4.0-beta.4.tgz#a4670ed05ce3e1f7ee368e64b7cd1ba20afbb908"
+"@interactjs/actions@1.4.0-rc.4":
+  version "1.4.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/actions/-/actions-1.4.0-rc.4.tgz#d792c7ef47132e825c0be35313b11bb9cbf05967"
 
-"@interactjs/auto-scroll@1.4.0-beta.4+sha.d8836bd":
-  version "1.4.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@interactjs/auto-scroll/-/auto-scroll-1.4.0-beta.4.tgz#e01a6149b9b5e70000f9ad16bf651a7228b40378"
+"@interactjs/auto-scroll@1.4.0-rc.4":
+  version "1.4.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/auto-scroll/-/auto-scroll-1.4.0-rc.4.tgz#c637b18fc3d3017098badba04e439728bd8fc9c7"
 
-"@interactjs/auto-start@1.4.0-beta.4+sha.d8836bd":
-  version "1.4.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@interactjs/auto-start/-/auto-start-1.4.0-beta.4.tgz#8dae1aa28281bb7074f642f03c99fe5164d7c348"
+"@interactjs/auto-start@1.4.0-rc.4":
+  version "1.4.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/auto-start/-/auto-start-1.4.0-rc.4.tgz#5fa8a640978bcf1ebc1957ef302e9b169e23a44b"
 
-"@interactjs/core@1.4.0-beta.4+sha.d8836bd":
-  version "1.4.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@interactjs/core/-/core-1.4.0-beta.4.tgz#af63d91f22f9c47be58748b526e83054d55f2c9b"
+"@interactjs/core@1.4.0-rc.4":
+  version "1.4.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/core/-/core-1.4.0-rc.4.tgz#1e8cfa056432828772f063fbf805487cffa9ea16"
 
-"@interactjs/inertia@1.4.0-beta.4+sha.d8836bd":
-  version "1.4.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@interactjs/inertia/-/inertia-1.4.0-beta.4.tgz#21a37e8ddd58e88a4b9d9331c8483f2919cccc2d"
-
-"@interactjs/interact@1.4.0-beta.4+sha.d8836bd":
-  version "1.4.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@interactjs/interact/-/interact-1.4.0-beta.4.tgz#a22816bcac7d5c0bc31e51dfa6d5d56116d156ce"
-
-"@interactjs/modifiers@1.4.0-beta.4+sha.d8836bd":
-  version "1.4.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@interactjs/modifiers/-/modifiers-1.4.0-beta.4.tgz#ac9a7f70d7cdfd3a9caee5958990ad3c04890e1d"
-
-"@interactjs/pointer-events@1.4.0-beta.4+sha.d8836bd":
-  version "1.4.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@interactjs/pointer-events/-/pointer-events-1.4.0-beta.4.tgz#34518351fa9bfba373f7d875e1a726b9e8717cca"
-
-"@interactjs/reflow@1.4.0-beta.4+sha.d8836bd":
-  version "1.4.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@interactjs/reflow/-/reflow-1.4.0-beta.4.tgz#14b3db2a75a0d77e54a98f57a471a185af9218d8"
-
-"@interactjs/types@1.4.0-beta.4+sha.d8836bd":
-  version "1.4.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@interactjs/types/-/types-1.4.0-beta.4.tgz#97790de8ce65865ab49be04b9713d44ce1851767"
+"@interactjs/dev-tools@1.4.0-rc.4":
+  version "1.4.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/dev-tools/-/dev-tools-1.4.0-rc.4.tgz#fadcc88d011af4095327b33487251162953c6f39"
   dependencies:
-    "@interactjs/actions" "1.4.0-beta.4+sha.d8836bd"
-    "@interactjs/auto-scroll" "1.4.0-beta.4+sha.d8836bd"
-    "@interactjs/auto-start" "1.4.0-beta.4+sha.d8836bd"
-    "@interactjs/core" "1.4.0-beta.4+sha.d8836bd"
-    "@interactjs/inertia" "1.4.0-beta.4+sha.d8836bd"
-    "@interactjs/interact" "1.4.0-beta.4+sha.d8836bd"
-    "@interactjs/modifiers" "1.4.0-beta.4+sha.d8836bd"
-    "@interactjs/pointer-events" "1.4.0-beta.4+sha.d8836bd"
-    "@interactjs/reflow" "1.4.0-beta.4+sha.d8836bd"
-    "@interactjs/utils" "1.4.0-beta.4+sha.d8836bd"
+    "@interactjs/utils" "1.4.0-rc.4"
 
-"@interactjs/utils@1.4.0-beta.4+sha.d8836bd":
-  version "1.4.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@interactjs/utils/-/utils-1.4.0-beta.4.tgz#84b175d3a1eed256f7c8012f51318993d755aaf5"
+"@interactjs/inertia@1.4.0-rc.4":
+  version "1.4.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/inertia/-/inertia-1.4.0-rc.4.tgz#6fd12d1cefd53161e9059b35db373a1525ac03e0"
+
+"@interactjs/interact@1.4.0-rc.4":
+  version "1.4.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/interact/-/interact-1.4.0-rc.4.tgz#ab016312ef9716c8ad2383dbcd55599bd4a16a85"
+
+"@interactjs/modifiers@1.4.0-rc.4":
+  version "1.4.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/modifiers/-/modifiers-1.4.0-rc.4.tgz#efc1245e8e264dc67454d15ffef9d183c7d7ccf7"
+
+"@interactjs/pointer-events@1.4.0-rc.4":
+  version "1.4.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/pointer-events/-/pointer-events-1.4.0-rc.4.tgz#342e4b06a591be1c19d49fdb16bec63bb0757eab"
+
+"@interactjs/reflow@1.4.0-rc.4":
+  version "1.4.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/reflow/-/reflow-1.4.0-rc.4.tgz#0ab95a9e6d42cc50b19407d198498ec1ddc3ca82"
+
+"@interactjs/types@1.4.0-rc.4":
+  version "1.4.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/types/-/types-1.4.0-rc.4.tgz#69cc506086ae30951ba46fc563583231ccdb5419"
+  dependencies:
+    "@interactjs/actions" "1.4.0-rc.4"
+    "@interactjs/auto-scroll" "1.4.0-rc.4"
+    "@interactjs/auto-start" "1.4.0-rc.4"
+    "@interactjs/core" "1.4.0-rc.4"
+    "@interactjs/dev-tools" "1.4.0-rc.4"
+    "@interactjs/inertia" "1.4.0-rc.4"
+    "@interactjs/interact" "1.4.0-rc.4"
+    "@interactjs/modifiers" "1.4.0-rc.4"
+    "@interactjs/pointer-events" "1.4.0-rc.4"
+    "@interactjs/reflow" "1.4.0-rc.4"
+    "@interactjs/utils" "1.4.0-rc.4"
+
+"@interactjs/utils@1.4.0-rc.4":
+  version "1.4.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@interactjs/utils/-/utils-1.4.0-rc.4.tgz#5fb23005d3997ed59828af5ac66e44f3bdb3b28a"
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
@@ -1556,7 +1563,7 @@ balanced-match@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
 
-base64-js@^1.0.2:
+base64-js@^1.0.2, base64-js@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.3.0.tgz#cab1e6118f051095e58b5281aea8c1cd22bfc0e3"
 
@@ -1764,6 +1771,17 @@ bser@^2.0.0:
   dependencies:
     node-int64 "^0.4.0"
 
+bson@4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/bson/-/bson-4.0.2.tgz#2929fdfed1a145b1c361908a2b950a6cf4bed2c2"
+  dependencies:
+    buffer "^5.1.0"
+    long "^4.0.0"
+
+buffer-equal-constant-time@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/buffer-equal-constant-time/-/buffer-equal-constant-time-1.0.1.tgz#f8e71132f7ffe6e01a5c9697a4c6f3e48d5cc819"
+
 buffer-from@^1.0.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.1.tgz#32713bc028f75c02fdb710d7c7bcec1f2c6070ef"
@@ -1783,6 +1801,13 @@ buffer@^4.3.0:
     base64-js "^1.0.2"
     ieee754 "^1.1.4"
     isarray "^1.0.0"
+
+buffer@^5.1.0:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/buffer/-/buffer-5.2.1.tgz#dd57fa0f109ac59c602479044dca7b8b3d0b71d6"
+  dependencies:
+    base64-js "^1.0.2"
+    ieee754 "^1.1.4"
 
 builtin-modules@^1.0.0:
   version "1.1.1"
@@ -2639,6 +2664,10 @@ destroy@~1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/destroy/-/destroy-1.0.4.tgz#978857442c44749e4206613e37946205826abd80"
 
+detect-browser@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/detect-browser/-/detect-browser-3.0.1.tgz#39beead014347a8a2be1f3c4cb30a0aef2127c44"
+
 detect-indent@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/detect-indent/-/detect-indent-4.0.0.tgz#f76d064352cdf43a1cb6ce619c4ee3a9475de208"
@@ -2812,6 +2841,12 @@ ecc-jsbn@~0.1.1:
   dependencies:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
+
+ecdsa-sig-formatter@1.0.11:
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/ecdsa-sig-formatter/-/ecdsa-sig-formatter-1.0.11.tgz#ae0f0fa2d85045ef14a817daa3ce9acd0489e5bf"
+  dependencies:
+    safe-buffer "^5.0.1"
 
 ee-first@1.1.1:
   version "1.1.1"
@@ -4153,11 +4188,11 @@ inquirer@6.2.0, inquirer@^6.1.0:
     strip-ansi "^4.0.0"
     through "^2.3.6"
 
-interactjs@^1.4.0-beta.4:
-  version "1.4.0-beta.4"
-  resolved "https://registry.yarnpkg.com/interactjs/-/interactjs-1.4.0-beta.4.tgz#240f0ab50d24b7c3b7669907fed88697524f2537"
+interactjs@^1.4.0-rc.4:
+  version "1.4.0-rc.4"
+  resolved "https://registry.yarnpkg.com/interactjs/-/interactjs-1.4.0-rc.4.tgz#a747572337faf2af8c4d66f410bdb6d2eba009f2"
   dependencies:
-    "@interactjs/types" "1.4.0-beta.4+sha.d8836bd"
+    "@interactjs/types" "1.4.0-rc.4"
 
 internal-ip@^3.0.1:
   version "3.0.1"
@@ -5011,6 +5046,21 @@ jsonify@~0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/jsonify/-/jsonify-0.0.0.tgz#2c74b6ee41d93ca51b7b5aaee8f503631d252a73"
 
+jsonwebtoken@8.2.1:
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-8.2.1.tgz#333ee39aa8f238f32fa41693e7a2fb7e42f82b31"
+  dependencies:
+    jws "^3.1.4"
+    lodash.includes "^4.3.0"
+    lodash.isboolean "^3.0.3"
+    lodash.isinteger "^4.0.4"
+    lodash.isnumber "^3.0.3"
+    lodash.isplainobject "^4.0.6"
+    lodash.isstring "^4.0.1"
+    lodash.once "^4.0.0"
+    ms "^2.1.1"
+    xtend "^4.0.1"
+
 jsprim@^1.2.2:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/jsprim/-/jsprim-1.4.1.tgz#313e66bc1e5cc06e438bc1b7499c2e5c56acb6a2"
@@ -5025,6 +5075,21 @@ jsx-ast-utils@^2.0.1:
   resolved "https://registry.yarnpkg.com/jsx-ast-utils/-/jsx-ast-utils-2.0.1.tgz#e801b1b39985e20fffc87b40e3748080e2dcac7f"
   dependencies:
     array-includes "^3.0.3"
+
+jwa@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/jwa/-/jwa-1.4.1.tgz#743c32985cb9e98655530d53641b66c8645b039a"
+  dependencies:
+    buffer-equal-constant-time "1.0.1"
+    ecdsa-sig-formatter "1.0.11"
+    safe-buffer "^5.0.1"
+
+jws@^3.1.4:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/jws/-/jws-3.2.2.tgz#001099f3639468c9414000e99995fa52fb478304"
+  dependencies:
+    jwa "^1.4.1"
+    safe-buffer "^5.0.1"
 
 killable@^1.0.0:
   version "1.0.1"
@@ -5166,9 +5231,37 @@ lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
 
+lodash.includes@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/lodash.includes/-/lodash.includes-4.3.0.tgz#60bb98a87cb923c68ca1e51325483314849f553f"
+
+lodash.isboolean@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/lodash.isboolean/-/lodash.isboolean-3.0.3.tgz#6c2e171db2a257cd96802fd43b01b20d5f5870f6"
+
+lodash.isinteger@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/lodash.isinteger/-/lodash.isinteger-4.0.4.tgz#619c0af3d03f8b04c31f5882840b77b11cd68343"
+
+lodash.isnumber@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/lodash.isnumber/-/lodash.isnumber-3.0.3.tgz#3ce76810c5928d03352301ac287317f11c0b1ffc"
+
+lodash.isplainobject@^4.0.6:
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/lodash.isplainobject/-/lodash.isplainobject-4.0.6.tgz#7c526a52d89b45c45cc690b88163be0497f550cb"
+
+lodash.isstring@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/lodash.isstring/-/lodash.isstring-4.0.1.tgz#d527dfb5456eca7cc9bb95d5daeaf88ba54a5451"
+
 lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
+
+lodash.once@^4.0.0:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/lodash.once/-/lodash.once-4.1.1.tgz#0dd3971213c7c56df880977d504c88fb471a97ac"
 
 lodash.sortby@^4.7.0:
   version "4.7.0"
@@ -5202,6 +5295,10 @@ lodash.uniq@^4.5.0:
 loglevel@^1.4.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.6.1.tgz#e0fc95133b6ef276cdc8887cdaf24aa6f156f8fa"
+
+long@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/long/-/long-4.0.0.tgz#9a7b71cfb7d361a194ea555241c92f7468d5bf28"
 
 loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.3.1, loose-envify@^1.4.0:
   version "1.4.0"
@@ -5484,6 +5581,44 @@ mkdirp@0.5.1, mkdirp@0.5.x, mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkdirp@
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.1.tgz#30057438eac6cf7f8c4767f38648d6697d75c903"
   dependencies:
     minimist "0.0.8"
+
+mongodb-stitch-browser-core@^4.3.2:
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/mongodb-stitch-browser-core/-/mongodb-stitch-browser-core-4.3.2.tgz#16d989c5e60f9a673b5fe5df41a9afe865e7b997"
+  dependencies:
+    bson "4.0.2"
+    detect-browser "^3.0.0"
+    mongodb-stitch-core-sdk "^4.3.2"
+    whatwg-fetch "^3.0.0"
+
+mongodb-stitch-browser-sdk@^4.3.2:
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/mongodb-stitch-browser-sdk/-/mongodb-stitch-browser-sdk-4.3.2.tgz#45313877d141b40ed99a2a412d9c015ce131cde7"
+  dependencies:
+    mongodb-stitch-browser-core "^4.3.2"
+    mongodb-stitch-browser-services-mongodb-remote "^4.3.2"
+
+mongodb-stitch-browser-services-mongodb-remote@^4.3.2:
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/mongodb-stitch-browser-services-mongodb-remote/-/mongodb-stitch-browser-services-mongodb-remote-4.3.2.tgz#b5b26d0e2701479e2195c2ca18a9844a63622d7f"
+  dependencies:
+    mongodb-stitch-browser-core "^4.3.2"
+    mongodb-stitch-core-services-mongodb-remote "^4.3.2"
+
+mongodb-stitch-core-sdk@^4.3.2:
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/mongodb-stitch-core-sdk/-/mongodb-stitch-core-sdk-4.3.2.tgz#706f01b22232800f40e96d724082108762538415"
+  dependencies:
+    base64-js "^1.3.0"
+    bson "4.0.2"
+    jsonwebtoken "8.2.1"
+
+mongodb-stitch-core-services-mongodb-remote@^4.3.2:
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/mongodb-stitch-core-services-mongodb-remote/-/mongodb-stitch-core-services-mongodb-remote-4.3.2.tgz#60107981c18381255c9f12dc2074145ffc4a4efe"
+  dependencies:
+    bson "4.0.2"
+    mongodb-stitch-core-sdk "^4.3.2"
 
 move-concurrently@^1.0.1:
   version "1.0.1"
@@ -8558,7 +8693,7 @@ whatwg-encoding@^1.0.1, whatwg-encoding@^1.0.3, whatwg-encoding@^1.0.5:
   dependencies:
     iconv-lite "0.4.24"
 
-whatwg-fetch@3.0.0:
+whatwg-fetch@3.0.0, whatwg-fetch@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-3.0.0.tgz#fc804e458cc460009b1a2b966bc8817d2578aefb"
 
@@ -8773,7 +8908,7 @@ xregexp@4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/xregexp/-/xregexp-4.0.0.tgz#e698189de49dd2a18cc5687b05e17c8e43943020"
 
-xtend@^4.0.0, xtend@~4.0.1:
+xtend@^4.0.0, xtend@^4.0.1, xtend@~4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.1.tgz#a5c6d532be656e23db820efb943a1f04998d63af"
 

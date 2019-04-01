@@ -7,6 +7,9 @@ import ContextMenu from './ContextMenu'
 import * as Serialization from './functionsSerialization'
 import * as Positions from '../resources/InfographicPositions';
 import * as Utils from '../utils'
+import * as CONSTANTS from '../constants'
+
+import DbInterface from './DbInterface'
 
 const CONTEXT_MENU = {
   ADD: "ADD",
@@ -18,7 +21,8 @@ class Main extends Component {
 
     this.onEditToolBox = this.onEditToolBox.bind(this)
 
-    this.state ={
+    this.state = {
+      toolPageMeta: null,
       flowInstance: null,
       videoInitialized: false,
       timecode: Positions.filmTimecode,
@@ -28,8 +32,7 @@ class Main extends Component {
       addTextData: null,
     }
 
-    const toolContent = Positions.filmPositions
-    this.props.actionSetToolContent(toolContent)
+    const toolContent = null
 
   }
 
@@ -40,9 +43,35 @@ class Main extends Component {
   componentDidUpdate(){
   }
 
-  componentDidMount(){
-    // Get the <video> element with id="myVideo"
+  async componentDidMount(){
+    if(this.state.toolPageMeta == null){
+      this.db = new DbInterface()
+      const TOOL_PAGE_NAME = "video"
+      const toolPage = await this.db.getLastToolPageVersion(TOOL_PAGE_NAME)
+      if(toolPage && toolPage.length > 0){
+        this.setState({
+          toolPageMeta: {
+            name: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOL_PAGE],
+            version: toolPage[0][CONSTANTS.SCHEMA_FIELD_VERSION]
+          }
+        })
 
+        this.props.actionSetToolContent({
+          toolContent: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA],
+          toolConnections: toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]
+        })
+        console.log("Updated this.props")
+        console.log(this.props)
+
+        console.log("MONGODB: toolPage")
+        console.log(toolPage)
+        const pages = await this.db.getPages()
+        console.log(pages)
+      }
+    }
+
+
+    // Get the <video> element with id="myVideo"
     const state = this.state
     if(!this.state.videoInitialized){
       this.state.timecode.forEach((el, i) => {
@@ -92,6 +121,18 @@ class Main extends Component {
     });
     console.log("anchors")
     console.log(anchors)
+    console.log("publish")
+    console.log(this.state)
+
+    const toolDataToDb = {
+      toolPage: this.state.toolPageMeta.name,
+      version: (this.state.toolPageMeta.version || this.state.toolPageMeta.version == 0) ? parseInt(this.state.toolPageMeta.version) + 1 : 0, //TODO check if newer version exists first
+      toolsData: serializedToolBoxElements,
+      anchors: anchors,
+      timestamp: "TODO"
+    }
+
+    this.db.insertToolPageVersion(toolDataToDb)
   }
 
   showContextMenu(e) {
@@ -206,11 +247,12 @@ class Main extends Component {
                 </div>
                 </div>
                 <div id="ToolBoxWrapper">
-                  <ToolBox addTextData={this.state.addTextData}
+                  {(this.props.toolContent !== null) ?
+                  (<ToolBox addTextData={this.state.addTextData}
                   editMode={this.state.editMode}
                   deleteElement={(refId) => this.deleteElement(refId)}
                   showContextMenu={e => this.showContextMenu(e)}
-                  />
+                  />) : "Loading"}
                 </div>
               </div>
             </div>

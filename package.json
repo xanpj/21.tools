@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "interactjs": "^1.4.0-rc.4",
+    "mongodb-stitch-browser-sdk": "^4.3.2",
     "react": "^16.8.0",
     "react-dnd-html5-backend": "^7.0.2",
     "react-dom": "^16.8.0",
