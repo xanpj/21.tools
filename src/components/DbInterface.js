@@ -4,6 +4,7 @@ import {
   RemoteMongoClient
 } from "mongodb-stitch-browser-sdk";
 import * as CONSTANTS from '../constants'
+import * as Positions from '../resources/InfographicPositions';
 
 export default class DbInterface {
     constructor() {
@@ -33,7 +34,7 @@ export default class DbInterface {
        .loginWithCredential(new AnonymousCredential())
        .then(response => {
         this.db
-       .collection("toolPages")
+       .collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES)
        .insertOne({
          owner_id: this.client.auth.user.id,
          ...data
@@ -43,6 +44,9 @@ export default class DbInterface {
     }
 
     async getLastToolPageVersion(toolPageName){
+      //this.insertToolPageVersion({toolPage:"video", version:0, toolsData: Positions.filmPositions, anchors: Positions.toolConnections})
+      const pages =  await this.getPages()
+      console.log(pages)
       const credentials = await this.client.auth.loginWithCredential(new AnonymousCredential())
       return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES)
                     .find( {[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName}, {sort: {[CONSTANTS.SCHEMA_FIELD_VERSION]:-1}, limit: 1} )

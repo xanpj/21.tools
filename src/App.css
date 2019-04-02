@@ -354,12 +354,42 @@ body {
   /*border: 1px solid #000000;*/
   background-color: #FFFFFF;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.1);
-  padding: 10px;
+  padding: 15px;
 }
 
+.closeContextMenuBtn {
+  margin-top: -5px;
+  margin-bottom: 5px;
+}
 .closeContextMenuBtn i:hover {
   text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
   cursor:pointer;
+}
+
+.grid-wrapper {
+  height: 110px;
+  overflow-y:scroll;
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  background-color: #111111;
+}
+.grid-item {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 0.1em solid rgba(0, 0, 0, 0.1);
+  padding: 5px;
+  text-align: center;
+}
+
+.grid-item img {
+  width: 40px;
+  height: 40px;
+}
+
+.grid-item:hover {
+  cursor: pointer;
+  background-color: #111;
 }
 
 .list-group .list-group-item {
@@ -421,6 +451,14 @@ body {
 .custom-file > .btn {
   width: 100%;
   margin-bottom: 10px;
+}
+
+.seperator {
+  margin-top: 20px;
+}
+
+.context-menu-img-preview {
+  text-align:center;
 }
 
 #logo0 {

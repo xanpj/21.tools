@@ -48,6 +48,8 @@ class Main extends Component {
       this.db = new DbInterface()
       const TOOL_PAGE_NAME = "video"
       const toolPage = await this.db.getLastToolPageVersion(TOOL_PAGE_NAME)
+      console.log(toolPage)
+
       if(toolPage && toolPage.length > 0){
         this.setState({
           toolPageMeta: {
@@ -247,7 +249,7 @@ class Main extends Component {
                 </div>
                 </div>
                 <div id="ToolBoxWrapper">
-                  {(this.props.toolContent !== null) ?
+                {(this.props.toolContent !== null) ?
                   (<ToolBox addTextData={this.state.addTextData}
                   editMode={this.state.editMode}
                   deleteElement={(refId) => this.deleteElement(refId)}
