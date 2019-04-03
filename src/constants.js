@@ -7,7 +7,7 @@ module.exports = {
   SCHEMA_FIELD_ID: "_id",
   SCHEMA_FIELD_VERSION: "version",
   SCHEMA_FIELD_TOOL_PAGE: "toolPage",
-  SCHEMA_FIELD_TOOLS_DATA: "toolsData",
-  SCHEMA_FIELD_ANCHORS: "anchors",
+  SCHEMA_FIELD_TOOLS_DATA: "toolContent",
+  SCHEMA_FIELD_ANCHORS: "toolAnchors",
   DB_NAME: "toolsOverviewDb"
 }

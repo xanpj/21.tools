@@ -181,3 +181,14 @@ export function uuidv4() {
     return v.toString(16);
   });
 }
+
+export function idSort(a,b) {
+  if(a.type == b.type){
+    if (parseInt(a.id.split("_")[1]) >= parseInt(b.id.split("_")[1])){
+      return 1
+    }
+    else {
+      return -1
+    }
+  }
+}

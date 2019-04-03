@@ -20,18 +20,15 @@ class ToolBox extends Component {
   }
 
   componentDidUpdate(){
-    if(this.props.toolContent !== null){
-      console.log("componentDidUpdate")
-      console.log(this.props)
+    if(this.props.toolContent){
       FlowActions.initContainers(this.props.flowInstance, this.props.toolContent)
-      console.log("initContainersSucceeded")
     }
   }
 
 
   toggleEditable(editMode){
     const instance = this.props.flowInstance
-    if(instance !== null){
+    if(instance){
       const toolBoxGroupsSelector = ".tool-box-group-el"
       const self = this
       interact(toolBoxGroupsSelector).resizable({
@@ -167,7 +164,12 @@ class ToolBox extends Component {
      }
 
   componentDidMount() {
-    if(this.props.flowInstance == null && this.props.toolContent !== null){
+    console.log("this.props.flowInstance")
+    console.log(this.props.flowInstance)
+    console.log("this.props.toolContent")
+    console.log(this.props.toolContent)
+    if(this.props.flowInstance == null && this.props.toolContent){
+      console.log("setting up flowinstance")
       const toolBoxOuter = document.getElementById("ToolBoxWrapper")
       toolBoxOuter.addEventListener('contextmenu', (e) => this.props.showContextMenu(e))
       toolBoxOuter.addEventListener('dblclick', (e) => this.activateDeleteMode(e))
@@ -175,7 +177,6 @@ class ToolBox extends Component {
       ToolBoxInteractions.MakeZoomable(toolBoxOuter,0.1,4,0.2)
       const self = this
       window.jsPlumb.ready(function() {
-        console.log(self.props.toolConnections)
         const flowInstance = FlowActions.initFlows(self.props.toolContent, self.props.toolConnections)
         self.props.actionSetFlowInstance(flowInstance)
       });
@@ -205,7 +206,7 @@ class ToolBox extends Component {
   */
 
   renderLogos(){
-    if(this.props.toolContent !== null){
+    if(this.props.toolContent){
       console.log("this.props.toolContent")
       console.log(this.props.toolContent)
       return this.props.toolContent.map((el, i) => {
@@ -230,7 +231,7 @@ class ToolBox extends Component {
   }
 
   deleteElement(refId){
-    if(this.props.flowInstance !== null && this.props.toolContent !== null){ //null check unnecessary
+    if(this.props.flowInstance && this.props.toolContent){ //null check unnecessary
       const tempElement = document.getElementById(refId)
       const outerNode = document.getElementById("tool-logos")
       if(tempElement.children !== null){
@@ -248,7 +249,7 @@ class ToolBox extends Component {
   }
 
   renderClosingButtons(){
-    if(this.props.toolContent !== null){
+    if(this.props.toolContent){
       return this.props.toolContent.map((el, i) => {
          const orgEl = document.getElementById(el.id)
           if(el && orgEl && !orgEl.parentNode.id.includes("container")){
@@ -266,7 +267,7 @@ class ToolBox extends Component {
   }
 
   renderToolTips(){
-    if(this.props.toolContent !== null){
+    if(this.props.toolContent){
       return this.props.toolContent.map((el, i) => {
       if(el.type == "img"){
         return (

@@ -33,8 +33,9 @@ export default class DbInterface {
     }
 
     async getAllToolPageVersions(toolPageName){
+      //this.insertInitial()
       return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES)
-                    .find({[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName}, {sort: {[CONSTANTS.SCHEMA_FIELD_VERSION]:-1}, limit: 1000,  projection: {_id: 1, version: 1} } )
+                    .find({[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName}, {sort: {[CONSTANTS.SCHEMA_FIELD_VERSION]:-1}, limit: 1000,  projection: {[CONSTANTS.SCHEMA_FIELD_ID]: 1, [CONSTANTS.SCHEMA_FIELD_VERSION]: 1} } )
                     .toArray()
     }
 
@@ -48,13 +49,24 @@ export default class DbInterface {
       this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES).insertOne({
        owner_id: this.client.auth.user.id,
        ...data
-      })
+     })
     }
 
     async getLastToolPageVersion(toolPageName){
       return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES)
-                    .find( {[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName, version: 5}, {sort: {[CONSTANTS.SCHEMA_FIELD_VERSION]:-1}, limit: 1} ) //TODO change version
+                    .find( {[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName}, {sort: {[CONSTANTS.SCHEMA_FIELD_VERSION]:-1}, limit: 1} ) //TODO change version
                     .toArray()
+    }
+
+    insertInitial(){
+      this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES).deleteMany({"toolPage": "video"})
+      this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES).insertOne({
+        owner_id: this.client.auth.user.id,
+        [CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: "video",
+        [CONSTANTS.SCHEMA_FIELD_VERSION]: "0",
+        [CONSTANTS.SCHEMA_FIELD_TOOLS_DATA]: Positions.filmPositions,
+        [CONSTANTS.SCHEMA_FIELD_ANCHORS]: Positions.toolConnections
+      })
     }
 
 }

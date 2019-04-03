@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from "react-redux";
-import { actionSetToolContent, actionAddToolElement, actionDeleteToolElement} from "../actions/flowActions";
+import { actionSetToolContent, actionAddToolElement, actionDeleteToolElement, actionSetFlowInstance} from "../actions/flowActions";
 
 import ToolBox from './ToolBox'
 import ContextMenu from './ContextMenu'
@@ -65,13 +65,10 @@ class Main extends Component {
 
         this.props.actionSetToolContent({
           toolContent: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA],
-          toolConnections: toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]
+          toolConnections: toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS],
         })
-        console.log("Updated this.props")
-        console.log(this.props)
 
-        console.log("MONGODB: toolPage")
-        console.log(toolPage)
+        console.log("MONGODB: pages")
         const pages = await this.db.getPages()
         console.log(pages)
       }
@@ -126,17 +123,55 @@ class Main extends Component {
     const anchors = connections.map(a => {
         return {id: a.id, anchor1: a.endpoints[0].anchor, anchor2: a.endpoints[1].anchor}
     });
-    console.log("anchors")
-    console.log(anchors)
-    console.log("publish")
+
+    //determine which version number to put as name
+    var versionString = ""
+    console.log(this.state.allToolPageVersions)
     console.log(this.state)
+    if(this.state.toolPageMeta && (this.state.toolPageMeta.version || this.state.toolPageMeta.version == 0)){
+      console.log("this.state.toolPageMeta.version")
+      console.log(this.state.toolPageMeta.version)
+      const versionComponentsCurrent = this.state.toolPageMeta.version
+      const currVersionArr = versionComponentsCurrent.toString().split("\.")
+      console.log("currVersionArr")
+      console.log(currVersionArr)
+      if(this.state.allToolPageVersions.findIndex(el => {
+        const elVersionArr = el.version.toString().split("\.")
+        if(elVersionArr.length > 0 && currVersionArr.length > 0 && elVersionArr.length == currVersionArr.length){
+          console.log("elVersionArr")
+          console.log(elVersionArr)
+          console.log(elVersionArr[elVersionArr.length - 1])
+          const equal = parseInt(elVersionArr[elVersionArr.length - 1]) == parseInt(currVersionArr[currVersionArr.length-1]) + 1
+          console.log("equal")
+          console.log(equal)
+          return equal
+        } else {
+          return false
+        }
+      }) == -1) {
+        if(currVersionArr.length == 1){
+          versionString = parseInt(currVersionArr) + 1
+        } else if(currVersionArr.length > 1){
+          console.log("currVersionArr.slice(0, currVersionArr.length-1)")
+          console.log(currVersionArr.slice(0, currVersionArr.length-1) )
+          versionString = currVersionArr.slice(0, currVersionArr.length-1).join(".") + "." + (parseInt(currVersionArr[currVersionArr.length-1]) + 1)
+        } else {
+          versionString = "0"
+        }
+      } else {
+        console.log("currVersionArr +")
+        console.log(currVersionArr)
+        versionString = currVersionArr.join(".") + "." + "1"
+      }
+    }
+    console.log("versionString")
+    console.log(versionString)
 
     const toolDataToDb = {
-      toolPage: this.state.toolPageMeta.name,
-      version: (this.state.toolPageMeta.version || this.state.toolPageMeta.version == 0) ? parseInt(this.state.toolPageMeta.version) + 1 : 0, //TODO check if newer version exists first
-      toolsData: serializedToolBoxElements,
-      anchors: anchors,
-      timestamp: "TODO"
+      [CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: this.state.toolPageMeta.name,
+      [CONSTANTS.SCHEMA_FIELD_VERSION]: versionString.toString(),
+      [CONSTANTS.SCHEMA_FIELD_TOOLS_DATA]: serializedToolBoxElements,
+      [CONSTANTS.SCHEMA_FIELD_ANCHORS]: anchors,
     }
 
     this.db.insertToolPageVersion(toolDataToDb)
@@ -204,10 +239,20 @@ class Main extends Component {
   }
 
   insertImgToDocument(formData, imgPreviewUrl){
-    const addIconDataId = "logo_" + Utils.uuidv4()
+    /** set tool_id to last_id + 1 **/
+    const toolContent = this.props.toolContent
+    const toolContentSorted = toolContent.filter(el => el.id.includes("logo")).sort(Utils.idSort)
+    var lastId = 0
+    if(toolContentSorted.length > 0){
+      if(toolContentSorted[toolContentSorted.length-1].id.split("_").length > 2){
+        lastId = parseInt(toolContentSorted[toolContentSorted.length-1].id.split("_")[1]) + 1
+      } else {
+        lastId = 20
+      }
+    }
+    const addIconDataId = "logo_" + lastId + "_" +Utils.uuidv4()
     const pxOffsetFromContextMenu = 20
-    console.log(this.state.contextMenuCoords)
-    console.log("this.state.contextMenuCoords")
+
     const addIconData = {
       id: addIconDataId,
       width: 30,
@@ -228,13 +273,11 @@ class Main extends Component {
   async changeToolPageVersion(toolPageId){
     const toolPage = await this.db.getSpecificToolPageVersion(toolPageId)
     if(toolPage && toolPage.length > 0){
-      /*let mountNode = ReactDOM.findDOMNode(this.refs.ToolBox);
-      const returnDomRemove = ReactDOM.unmountComponentAtNode(mountNode)*/
-      console.log("returnDomRemove")
       this.props.actionSetToolContent({
         toolContent: null,
         toolConnections: null,
       })
+      this.props.actionSetFlowInstance(null)
       this.props.actionSetToolContent({
         toolContent: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA],
         toolConnections: toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]
@@ -319,6 +362,7 @@ const mapStateToProps = state => ({
   ...state
 });
 const mapDispatchToProps = dispatch => ({
+  actionSetFlowInstance: (payload) => dispatch(actionSetFlowInstance(payload)),
   actionDeleteToolElement: (payload) => dispatch(actionDeleteToolElement(payload)),
   actionSetToolContent: (payload) => dispatch(actionSetToolContent(payload)),
   actionAddToolElement: (payload) => dispatch(actionAddToolElement(payload))

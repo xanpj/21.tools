@@ -25,10 +25,11 @@ export default (state = defaultState, action) => {
       if(state.toolContent !== null){
         const newToolContent = state.toolContent
         newToolContent.push(action.payload)
-        console.log(newToolContent)
+        const toolContentHash = UTILS.md5(JSON.stringify(newToolContent))
         return {
           ...state,
-          toolContent: newToolContent
+          toolContent: newToolContent,
+          toolContentHash: toolContentHash
         }
       }
     case CONSTANTS.ACTION_DELETE_TOOL_ELEMENT:
@@ -62,9 +63,7 @@ export default (state = defaultState, action) => {
           if(!foundInContainer){
             newToolContent.splice(elIndex,1)
           }
-          console.log(newToolContent)
           const toolContentHash = UTILS.md5(JSON.stringify(newToolContent))
-          console.log(toolContentHash)
           return {
             ...state,
             toolContent: newToolContent,

@@ -77,8 +77,6 @@ export function serializeToolBoxElements(orgToolContent, toolBoxElements, newlyJ
   const toolBoxElementsFrames = getElementFrames(toolBoxElements, retrieveOnlyContainers)
 
   const toolBoxElementsArr = Array.from(toolBoxElements)
-  console.log("toolBoxElementsArr")
-  console.log(toolBoxElementsArr)
   const toolBoxElementsToSerialized = toolBoxElementsArr.map((el, i) => {
     var elInformation = {
       id: el.id,
@@ -92,26 +90,12 @@ export function serializeToolBoxElements(orgToolContent, toolBoxElements, newlyJ
     }
     if(el.parentNode.id.includes("container")){
       const orgElement = orgToolContent.find(orgEl => orgEl.id == el.parentNode.id)
-      console.log("orgElement")
-      console.log(orgElement)
       const orgLeft = parseFloat(orgElement.left)
       const orgTop = parseFloat(orgElement.top)
-      console.log("el.parentNode")
-      console.log(el.parentNode)
       const newLeft = parseFloat(el.parentNode.style.left)
       const newTop =  parseFloat(el.parentNode.style.top)
-      console.log("newLeft" + newLeft)
-      console.log("orgLeft" + orgLeft)
-      console.log()
-      console.log("newTop" + newTop)
-      console.log("orgTop" + orgTop)
-      console.log()
-      console.log("elInformation.left pre" + elInformation.left)
-      console.log("elInformation.top pre" + elInformation.top)
       elInformation.left = parseFloat(elInformation.left) - (orgLeft - newLeft) + "px"
       elInformation.top = parseFloat(elInformation.top) - (orgTop - newTop) + "px"
-      console.log("elInformation.left post" + elInformation.left)
-      console.log("elInformation.top post" + elInformation.top)
     }
 
     const top = parseInt(elInformation.top.replace("px", ""))
@@ -161,7 +145,6 @@ export function serializeToolBoxElements(orgToolContent, toolBoxElements, newlyJ
     const newlyJoinedToolsElements = toolBoxElementsArr.filter(el => newlyJoinedTools.indexOf(el.id) > -1)
     newlyJoinedTools.reverse()
     const newlyJoinedToolsSortedByLeft = newlyJoinedToolsElements.sort(function(x, y) {
-      console.log(x)
         const left1 = parseInt(x.style.left)
         const left2 = parseInt(y.style.left)
         if (left1 < left2) {
@@ -172,11 +155,6 @@ export function serializeToolBoxElements(orgToolContent, toolBoxElements, newlyJ
         }
         return 0;
       })
-    console.log("newlyJoinedToolsElements[1]")
-    console.log(newlyJoinedToolsElements[1])
-    console.log(newlyJoinedToolsElements[1].style.left)
-    console.log("newlyJoinedToolsSortedByLeft")
-    console.log(newlyJoinedToolsSortedByLeft)
     var elInformation = {
       id: "container_"+ Utils.uuidv4(),
       left: (parseInt(newlyJoinedToolsSortedByLeft[0].style.left) - PADDING) + "px",
@@ -187,7 +165,6 @@ export function serializeToolBoxElements(orgToolContent, toolBoxElements, newlyJ
       outer: "",
       type: "container"
     }
-    console.log("newlyJoinedTools")
     toolBoxElementsToSerialized.push(elInformation)
   }
 
@@ -201,9 +178,12 @@ export function serializeToolBoxElements(orgToolContent, toolBoxElements, newlyJ
       }
     }
   }
+  console.log("SERIALIZATION")
+  console.log(toolBoxElementsToSerialized)
   const toolBoxElementsToSerializedFinal = [toolBoxElementsToSerialized.filter(el => el.type == "img").sort(idSort),
                                       toolBoxElementsToSerialized.filter(el => el.type == "text").sort(idSort),
                                       toolBoxElementsToSerialized.filter(el => el.type == "container").sort(idSort),
                                       toolBoxElementsToSerialized.filter(el => el.type == "group").sort(idSort)]
+  console.log(toolBoxElementsToSerializedFinal)
   return toolBoxElementsToSerializedFinal.flat()
 }

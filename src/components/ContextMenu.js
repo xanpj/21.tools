@@ -90,7 +90,6 @@ class ContextMenu extends Component {
   }
 
   iconSelected(e){
-    console.log("Worked")
     this.setState({bottomView: null, file: "fromDB", imgPreviewUrl: "../img/iMovie.webp"})
   }
 
@@ -108,8 +107,6 @@ class ContextMenu extends Component {
       // Ensure it's an image
       const self = this;
       if(file.type.match(/image.*/)) {
-          console.log('An image has been loaded');
-
           // Load the image
           var reader = new FileReader();
           reader.onload = function (readerEvent) {
@@ -142,7 +139,6 @@ class ContextMenu extends Component {
                     bottomView: null,
                   });
               }
-              //console.log(readerEvent.target.result)
               image.src = readerEvent.target.result;
           }
           reader.readAsDataURL(file);
