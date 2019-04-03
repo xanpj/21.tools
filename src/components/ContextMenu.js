@@ -9,6 +9,22 @@ const VIEW = {
 const BUTTON = "BUTTON"
 const GRID = "GRID"
 
+/*function getBase64FromImageUrl(url) {
+var img = new Image();
+img.crossOrigin = "anonymous";  // This enables CORS
+img.onload = function () {
+    var canvas = document.createElement("canvas");
+    canvas.width =this.width;
+    canvas.height =this.height;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(this, 0, 0);
+    var dataURL = canvas.toDataURL("image/png");
+    console.log(dataURL)
+};
+img.src = url;
+}*/
+
+
 class ContextMenu extends Component {
   constructor(props){
     super(props)
@@ -23,16 +39,54 @@ class ContextMenu extends Component {
 
   uploadToDb = (e) => {
     e.preventDefault()
+    const imgSrc = document.getElementById('img-preview').src
     const form = e.target;
-     const data = {}
-     for (let element of form.elements) {
+    const data = {}
+    for (let element of form.elements) {
        if (element.tagName === 'BUTTON') { continue; }
        data[element.name] = element.value;
-     }
-     console.log(data)
-     //insert to DOM
-    //TODO upload to mongo with image id retrieved when uploading
-    this.props.closeContextMenu()
+    }
+
+    const self = this;
+    function resize(url, callback){
+      var image = new Image();
+      image.crossOrigin = "anonymous";  // This enables CORS
+      image.onload = function () {
+        var canvas = document.createElement('canvas'),
+            max_size = 100,// TODO : pull max size from a site config
+            width = image.width,
+            height = image.height;
+        if (width > height) {
+            if (width > max_size) {
+                height *= max_size / width;
+                width = max_size;
+            }
+        } else {
+            if (height > max_size) {
+                width *= max_size / height;
+                height = max_size;
+            }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(image, 0, 0, width, height);
+        var dataUrl = canvas.toDataURL("image/png");
+        self.setState({
+          file: "img",
+          imgPreviewUrl: dataUrl,
+          bottomView: null,
+        });
+        callback(dataUrl)
+      }
+        image.src = url;
+    }
+
+    function callback(dataUrl){
+      self.props.insertImgToDocument(data, dataUrl)
+    }
+
+    resize(imgSrc, callback);
   }
 
   iconSelected(e){
@@ -49,31 +103,64 @@ class ContextMenu extends Component {
      this.setState({bottomView: null, file: "fromURL"})
   }
 
+
+  uploadAndResize = function(file){
+      // Ensure it's an image
+      const self = this;
+      if(file.type.match(/image.*/)) {
+          console.log('An image has been loaded');
+
+          // Load the image
+          var reader = new FileReader();
+          reader.onload = function (readerEvent) {
+              var image = new Image();
+              image.onload = function (imageEvent) {
+
+                  // Resize the image
+                  var canvas = document.createElement('canvas'),
+                      max_size = 100,// TODO : pull max size from a site config
+                      width = image.width,
+                      height = image.height;
+                  if (width > height) {
+                      if (width > max_size) {
+                          height *= max_size / width;
+                          width = max_size;
+                      }
+                  } else {
+                      if (height > max_size) {
+                          width *= max_size / height;
+                          height = max_size;
+                      }
+                  }
+                  canvas.width = width;
+                  canvas.height = height;
+                  canvas.getContext('2d').drawImage(image, 0, 0, width, height);
+                  var dataUrl = canvas.toDataURL('image/png');
+                  self.setState({
+                    file: "img",
+                    imgPreviewUrl: dataUrl,
+                    bottomView: null,
+                  });
+              }
+              //console.log(readerEvent.target.result)
+              image.src = readerEvent.target.result;
+          }
+          reader.readAsDataURL(file);
+      }
+  };
+
   iconUploadOrURLSelected = (e) => {
     e.preventDefault()
     var value = null
     if(e.target.files && e.target.files.length > 0){
-      let reader = new FileReader();
-      let file = e.target.files[0];
-
-      reader.onloadend = () => {
-       this.setState({
-         file: file,
-         imgPreviewUrl: reader.result,
-         bottomView: null,
-       });
-       console.log(this.state)
-      }
-      reader.readAsDataURL(file);
-      console.log(file)
-      value = "img"
+      this.uploadAndResize(e.target.files[0])
     } else {
       value = e.target.value
-    }
-    if(value.length > 0){
-      this.setState({imgPreviewUrl: value, bottomView: BUTTON}) // TODO escape string because of XSS
-    } else {
-      this.setState({imgPreviewUrl: value, bottomView: null})
+      if(value && value.length > 0){
+        this.setState({imgPreviewUrl: value, bottomView: BUTTON}) // TODO escape string because of XSS
+      } else {
+        this.setState({imgPreviewUrl: value, bottomView: null})
+      }
     }
   }
 
@@ -111,7 +198,7 @@ class ContextMenu extends Component {
                 </div>
               </div>) : (
               <div class="context-menu-img-preview">
-                <img width="30" height="30" src={this.state.imgPreviewUrl} />
+                <img id="img-preview" width="30" height="30" src={this.state.imgPreviewUrl} />
                 <form onSubmit={this.uploadToDb} noValidate>
                   <div class="md-form file-path-wrapper">
                     <input class="file-path validate" name="name" type="text" placeholder="Tool name" />

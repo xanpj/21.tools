@@ -22,32 +22,24 @@ export default class DbInterface {
      this.db = mongodb.db(CONSTANTS.DB_NAME);
     }
 
+    async authenticateAnonymousUser(){
+      await this.client.auth.loginWithCredential(new AnonymousCredential())
+    }
+
     async getPages(){
-      const credentials = await this.client.auth.loginWithCredential(new AnonymousCredential())
       return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES)
                     .find({})
                     .toArray()
     }
 
     insertToolPageVersion(data){
-      this.client.auth
-       .loginWithCredential(new AnonymousCredential())
-       .then(response => {
-        this.db
-       .collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES)
-       .insertOne({
-         owner_id: this.client.auth.user.id,
-         ...data
-        })
-       })
-       .catch(err => console.log("err"+err))
+      this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES).insertOne({
+       owner_id: this.client.auth.user.id,
+       ...data
+      })
     }
 
     async getLastToolPageVersion(toolPageName){
-      //this.insertToolPageVersion({toolPage:"video", version:0, toolsData: Positions.filmPositions, anchors: Positions.toolConnections})
-      const pages =  await this.getPages()
-      console.log(pages)
-      const credentials = await this.client.auth.loginWithCredential(new AnonymousCredential())
       return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES)
                     .find( {[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName}, {sort: {[CONSTANTS.SCHEMA_FIELD_VERSION]:-1}, limit: 1} )
                     .toArray()

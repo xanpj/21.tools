@@ -190,16 +190,32 @@ class ToolBox extends Component {
       }  else {
         allElementsToWiggle.forEach(el => el.classList.remove("wiggle"))
       }*/
-
   }
+
+  tooltipImgInfo(){
+    if(!this.state.editMode){
+      console.log("imgInfo")
+    }
+  }
+  /*TODO:
+  Versions
+  toolbox GRID
+  usage hints
+  video selection
+  video timecode
+  */
 
   renderLogos(){
     if(this.props.toolContent !== null){
       console.log("this.props.toolContent")
       console.log(this.props.toolContent)
       return this.props.toolContent.map((el, i) => {
-          if(el.type == "img")
-            return (<img id={el.id} key={el.id} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={require("../img/"+el.content)} />)
+          /*if(el.type == "img")
+            return (<img id={el.id} key={el.id} onMouseOver={() => this.tooltipImgInfo()} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={(el.content.indexOf('data:image') > -1) ? el.content : require("../img/"+el.content)} />)
+          */
+          if(el.type == "img"){
+            return (<img id={el.id} key={el.id} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={(el.content.indexOf('data:image') > -1) ? el.content : require("../img/"+el.content)} />)
+          }
           else if(el.type == "text")
             return (<div id={el.id} key={el.id} style={{top: el.top, left: el.left}} className="tool-box-text-el tool-box-el-hack tool-box-el">{el.content}</div>)
           else if(el.type == "container")
@@ -250,6 +266,23 @@ class ToolBox extends Component {
     }
   }
 
+  renderToolTips(){
+    if(this.props.toolContent !== null){
+      return this.props.toolContent.map((el, i) => {
+      if(el.type == "img"){
+        return (
+          <div class="item-hints" style={{top: el.top, left: el.left}}>
+            <div class="hint" data-position="4">
+              <div class="hint-content do--split-children">
+                <span class="hint-content-inner">{el.id}</span>
+              </div>
+            </div>
+          </div>
+        )
+        }
+      })
+    }
+  }
 
   renderAddTextData(){
     const addTextData = this.props.addTextData
@@ -269,6 +302,7 @@ class ToolBox extends Component {
       {(this.props.addTextData !== null) ? this.renderAddTextData() : ""}
         <div id="tool-logos">
           {this.renderLogos()}
+          {!this.state.editMode ? this.renderToolTips() : ""}
           {(this.state.activeDeleteMode && this.state.editMode ) ? this.renderClosingButtons() : ""}
         </div>
       </div>

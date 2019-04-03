@@ -46,6 +46,7 @@ class Main extends Component {
   async componentDidMount(){
     if(this.state.toolPageMeta == null){
       this.db = new DbInterface()
+      await this.db.authenticateAnonymousUser()
       const TOOL_PAGE_NAME = "video"
       const toolPage = await this.db.getLastToolPageVersion(TOOL_PAGE_NAME)
       console.log(toolPage)
@@ -198,6 +199,28 @@ class Main extends Component {
     })
   }
 
+  insertImgToDocument(formData, imgPreviewUrl){
+    const addIconDataId = "logo_" + Utils.uuidv4()
+    const pxOffsetFromContextMenu = 20
+    console.log(this.state.contextMenuCoords)
+    console.log("this.state.contextMenuCoords")
+    const addIconData = {
+      id: addIconDataId,
+      width: 30,
+      height: 30,
+      left: this.state.contextMenuCoords[2] - pxOffsetFromContextMenu + "px",
+      top: this.state.contextMenuCoords[3] - pxOffsetFromContextMenu + "px",
+      content: imgPreviewUrl,
+      outer: "",
+      type: "img"
+    }
+    this.props.actionAddToolElement(addIconData)
+    this.setState({
+      contextMenu: null,
+      contextMenuCoords: null,
+    })
+  }
+
   render() {
     /*var video = document.createElement('video-player');
     var curtime = video.currentTime;*/
@@ -205,6 +228,7 @@ class Main extends Component {
 
       <div className="Main">
       {(this.state.contextMenu) ? <ContextMenu
+        insertImgToDocument = {(formData, imgPreviewUrl) => this.insertImgToDocument(formData, imgPreviewUrl)}
         editMode = {this.state.editMode}
         addGroup = {() => this.addGroup()}
         onAddTextSubmit={() => this.onAddTextSubmit()}
