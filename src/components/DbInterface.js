@@ -32,6 +32,18 @@ export default class DbInterface {
                     .toArray()
     }
 
+    async getAllToolPageVersions(toolPageName){
+      return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES)
+                    .find({[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName}, {sort: {[CONSTANTS.SCHEMA_FIELD_VERSION]:-1}, limit: 1000,  projection: {_id: 1, version: 1} } )
+                    .toArray()
+    }
+
+    async getSpecificToolPageVersion(toolPageId){
+      return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES)
+                    .find( {[CONSTANTS.SCHEMA_FIELD_ID]: toolPageId} )
+                    .toArray()
+    }
+
     insertToolPageVersion(data){
       this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES).insertOne({
        owner_id: this.client.auth.user.id,

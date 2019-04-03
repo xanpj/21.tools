@@ -169,7 +169,7 @@ body {
   color: #000000;
 }
 
-#edit-tool-box button {
+#edit-tool-box .btn {
   display:block;
   text-align: center;
   margin: 5px auto;
@@ -180,6 +180,28 @@ body {
 
 .dropdown-toggle::after {
   vertical-align: .155em;
+}
+
+
+.dropdown-menu.closed {
+  display:none;
+}
+
+.dropdown-menu.open {
+  display: block;
+  font-size: 14px;
+  width: 150px;
+  left: -80px;
+  max-height: 200px;
+  overflow-y: scroll;
+}
+
+.dropdown-item {
+  padding: .25rem 1.0rem;
+}
+
+.dropdown-item:hover {
+    background-color: #CCC;
 }
 
 #edit-tool-box i:hover{

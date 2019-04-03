@@ -192,11 +192,6 @@ class ToolBox extends Component {
       }*/
   }
 
-  tooltipImgInfo(){
-    if(!this.state.editMode){
-      console.log("imgInfo")
-    }
-  }
   /*TODO:
   Versions
   toolbox GRID

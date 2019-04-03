@@ -22,6 +22,7 @@ class Main extends Component {
     this.onEditToolBox = this.onEditToolBox.bind(this)
 
     this.state = {
+      allToolPageVersions: null,
       toolPageMeta: null,
       flowInstance: null,
       videoInitialized: false,
@@ -30,6 +31,7 @@ class Main extends Component {
       contextMenu: null,
       contextMenuCoords: null,
       addTextData: null,
+      versionDropdown: false,
     }
 
     const toolContent = null
@@ -49,14 +51,15 @@ class Main extends Component {
       await this.db.authenticateAnonymousUser()
       const TOOL_PAGE_NAME = "video"
       const toolPage = await this.db.getLastToolPageVersion(TOOL_PAGE_NAME)
-      console.log(toolPage)
+      const allToolPageVersions = await this.db.getAllToolPageVersions(TOOL_PAGE_NAME)
 
       if(toolPage && toolPage.length > 0){
         this.setState({
           toolPageMeta: {
             name: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOL_PAGE],
             version: toolPage[0][CONSTANTS.SCHEMA_FIELD_VERSION]
-          }
+          },
+          allToolPageVersions: allToolPageVersions
         })
 
         this.props.actionSetToolContent({
@@ -221,6 +224,22 @@ class Main extends Component {
     })
   }
 
+  async changeToolPageVersion(toolPageId){
+    const toolPage = await this.db.getSpecificToolPageVersion(toolPageId)
+    if(toolPage && toolPage.length > 0){
+      this.setState({
+        toolPageMeta: {
+          name: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOL_PAGE],
+          version: toolPage[0][CONSTANTS.SCHEMA_FIELD_VERSION]
+        }
+      })
+      this.props.actionSetToolContent({
+        toolContent: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA],
+        toolConnections: toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]
+      })
+    }
+  }
+
   render() {
     /*var video = document.createElement('video-player');
     var curtime = video.currentTime;*/
@@ -262,11 +281,11 @@ class Main extends Component {
                   <button type="button" class="btn btn-primary" onClick={this.publishToolBox.bind(this)}>Publish</button>
                   <button type="button" class="btn btn-light" onClick={this.onEditToolBox.bind(this)}><i class="far fa-edit"></i></button>
                   <div class="dropdown">
-                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" onClick={() => this.setState({versionDropdown: !this.state.versionDropdown}) } id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Versions
                   </button>
-                  <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                    <button class="dropdown-item" type="button">Action</button>
+                  <div class={this.state.versionDropdown ? "dropdown-menu open" : "dropdown-menu closed"} aria-labelledby="dropdownMenu2">
+                    {(this.state.allToolPageVersions) ? this.state.allToolPageVersions.map((el, i) => <button class="dropdown-item" onClick={() => this.changeToolPageVersion(el._id)} type="button">{this.state.toolPageMeta.name + " v" + el.version}</button>) : ""/*_id.getTimestamp().toLocaleString()*/}
                     <button class="dropdown-item" type="button">Another action</button>
                     <button class="dropdown-item" type="button">Something else here</button>
                   </div>
