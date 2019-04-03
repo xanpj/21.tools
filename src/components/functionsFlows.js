@@ -89,25 +89,26 @@ function getContainerCoords(toolContent, el){
   if(inner_elements && inner_elements.length > 0){
     for (const el_id in inner_elements) {
       const el = inner_elements[el_id]
-      const isContainerOrGroup = (el.type === "container" || el.type === "group") //styles are already set explicitly for container and groups
-      const newEl = document.getElementById(el.id)
-      if(newEl){
-        var width_parsed = isContainerOrGroup ? parseInt(newEl.style.width.replace("px", "")) : newEl.offsetWidth
-        var height_parsed = isContainerOrGroup ? parseInt(newEl.style.height.replace("px", "")) : newEl.offsetHeight
-        var left_parsed = isContainerOrGroup ? parseInt(newEl.style.left.replace("px", "")) : parseInt(el.left.replace("px", ""))
-        var right_parsed = left_parsed + (width_parsed)
-        var top_parsed = isContainerOrGroup ? parseInt(newEl.style.top.replace("px", "")) : parseInt(el.top.replace("px", ""))
-        var bottom_parsed = isContainerOrGroup ? parseInt(newEl.style.top.replace("px", "")) : parseInt(el.top.replace("px", ""))
+      if(el){
+        const isContainerOrGroup = (el.type === "container" || el.type === "group") //styles are already set explicitly for container and groups
+        const newEl = document.getElementById(el.id)
+        if(newEl){
+          var width_parsed = isContainerOrGroup ? parseInt(newEl.style.width.replace("px", "")) : newEl.offsetWidth
+          var height_parsed = isContainerOrGroup ? parseInt(newEl.style.height.replace("px", "")) : newEl.offsetHeight
+          var left_parsed = isContainerOrGroup ? parseInt(newEl.style.left.replace("px", "")) : parseInt(el.left.replace("px", ""))
+          var right_parsed = left_parsed + (width_parsed)
+          var top_parsed = isContainerOrGroup ? parseInt(newEl.style.top.replace("px", "")) : parseInt(el.top.replace("px", ""))
+          var bottom_parsed = isContainerOrGroup ? parseInt(newEl.style.top.replace("px", "")) : parseInt(el.top.replace("px", ""))
+        }
+
+        leftX = (leftX === null || (left_parsed < leftX)) ? left_parsed : leftX
+        rightX = (rightX === null || (right_parsed > rightX)) ? right_parsed : rightX
+        topY = (topY === null || (top_parsed > topY)) ? top_parsed : topY
+        bottomY = (bottomY === null || (bottom_parsed < bottomY)) ? bottom_parsed : bottomY
+        heightY = (heightY === null || (height_parsed > heightY)) ? height_parsed : heightY
+        lowestContainerHeightY = (topY === null || (top_parsed > topY)) ? height_parsed : heightY
+        widthX = widthX + width_parsed
       }
-
-      leftX = (leftX === null || (left_parsed < leftX)) ? left_parsed : leftX
-      rightX = (rightX === null || (right_parsed > rightX)) ? right_parsed : rightX
-      topY = (topY === null || (top_parsed > topY)) ? top_parsed : topY
-      bottomY = (bottomY === null || (bottom_parsed < bottomY)) ? bottom_parsed : bottomY
-      heightY = (heightY === null || (height_parsed > heightY)) ? height_parsed : heightY
-      lowestContainerHeightY = (topY === null || (top_parsed > topY)) ? height_parsed : heightY
-      widthX = widthX + width_parsed
-
     }
   }
   const isGroup = el.type == "group"

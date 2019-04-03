@@ -53,7 +53,7 @@ export default class DbInterface {
 
     async getLastToolPageVersion(toolPageName){
       return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES)
-                    .find( {[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName}, {sort: {[CONSTANTS.SCHEMA_FIELD_VERSION]:-1}, limit: 1} )
+                    .find( {[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName, version: 5}, {sort: {[CONSTANTS.SCHEMA_FIELD_VERSION]:-1}, limit: 1} ) //TODO change version
                     .toArray()
     }
 

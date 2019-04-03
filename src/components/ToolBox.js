@@ -21,9 +21,13 @@ class ToolBox extends Component {
 
   componentDidUpdate(){
     if(this.props.toolContent !== null){
+      console.log("componentDidUpdate")
+      console.log(this.props)
       FlowActions.initContainers(this.props.flowInstance, this.props.toolContent)
+      console.log("initContainersSucceeded")
     }
   }
+
 
   toggleEditable(editMode){
     const instance = this.props.flowInstance

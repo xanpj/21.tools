@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from "react-redux";
 import { actionSetToolContent, actionAddToolElement, actionDeleteToolElement} from "../actions/flowActions";
 
@@ -227,16 +228,24 @@ class Main extends Component {
   async changeToolPageVersion(toolPageId){
     const toolPage = await this.db.getSpecificToolPageVersion(toolPageId)
     if(toolPage && toolPage.length > 0){
+      /*let mountNode = ReactDOM.findDOMNode(this.refs.ToolBox);
+      const returnDomRemove = ReactDOM.unmountComponentAtNode(mountNode)*/
+      console.log("returnDomRemove")
+      this.props.actionSetToolContent({
+        toolContent: null,
+        toolConnections: null,
+      })
+      this.props.actionSetToolContent({
+        toolContent: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA],
+        toolConnections: toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]
+      })
       this.setState({
         toolPageMeta: {
           name: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOL_PAGE],
           version: toolPage[0][CONSTANTS.SCHEMA_FIELD_VERSION]
         }
       })
-      this.props.actionSetToolContent({
-        toolContent: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA],
-        toolConnections: toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]
-      })
+
     }
   }
 
@@ -244,8 +253,7 @@ class Main extends Component {
     /*var video = document.createElement('video-player');
     var curtime = video.currentTime;*/
     return (
-
-      <div className="Main">
+      <div className="Main" >
       {(this.state.contextMenu) ? <ContextMenu
         insertImgToDocument = {(formData, imgPreviewUrl) => this.insertImgToDocument(formData, imgPreviewUrl)}
         editMode = {this.state.editMode}
@@ -286,8 +294,6 @@ class Main extends Component {
                   </button>
                   <div class={this.state.versionDropdown ? "dropdown-menu open" : "dropdown-menu closed"} aria-labelledby="dropdownMenu2">
                     {(this.state.allToolPageVersions) ? this.state.allToolPageVersions.map((el, i) => <button class="dropdown-item" onClick={() => this.changeToolPageVersion(el._id)} type="button">{this.state.toolPageMeta.name + " v" + el.version}</button>) : ""/*_id.getTimestamp().toLocaleString()*/}
-                    <button class="dropdown-item" type="button">Another action</button>
-                    <button class="dropdown-item" type="button">Something else here</button>
                   </div>
                 </div>
                 </div>
