@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import YouTube from 'react-youtube';
 import { connect } from "react-redux";
 import { actionSetToolContent, actionAddToolElement, actionDeleteToolElement, actionSetFlowInstance} from "../actions/flowActions";
 
@@ -33,7 +34,8 @@ class Main extends Component {
       contextMenuCoords: null,
       addTextData: null,
       versionDropdown: false,
-      toolsFromDB: null
+      toolsFromDB: null,
+      videoDuration: null
     }
 
     const toolContent = null
@@ -65,7 +67,7 @@ class Main extends Component {
       })
 
       /** Hightlight icons according to time **/
-      var vid = document.getElementById("video-player");
+      /*var vid = document.getElementById("video-player");
       vid.ontimeupdate = function() {
         const activeLogos = timecode.filter((el, i) => {
           let nextElementTime = vid.duration
@@ -82,7 +84,7 @@ class Main extends Component {
         }
         console.log(vid.currentTime);
       };
-      this.state.videoInitialized = true
+      this.state.videoInitialized = true*/
     //}
 
   }
@@ -312,6 +314,52 @@ class Main extends Component {
     })
   }
 
+  backToMenu(){
+
+  }
+
+  highlightUsedIcons(currentTime){
+    const timecode = this.state.timecode
+    const activeLogos = timecode.filter((el, i) => {
+      let nextElementTime = this.state.videoDuration
+      if(i < timecode.length-1){
+        nextElementTime = timecode[i+1].time
+      }
+      const elDom = document.getElementById(el.id) //because this mounts before child component
+      if(elDom){
+        elDom.classList.remove("el-active")
+      }
+      return (currentTime> el.time && currentTime< nextElementTime)
+    })
+    if(activeLogos !== null && activeLogos.length > 0){
+      const activeLogoId = activeLogos[0]
+      const elDom = document.getElementById(activeLogoId.id)
+      if(elDom){
+        elDom.classList.add("el-active") //because this mounts before child component
+      }
+    }
+  }
+
+  startInterval(event) {
+     const self = this
+     const checkInt = setInterval(function() {
+       const currentTime = event.target.getCurrentTime()
+       self.highlightUsedIcons(currentTime)
+      //clearInterval(checkInt);
+    }, 500)
+ }
+
+  _onReady(event){
+    console.log(event)
+    if(!this.state.videoDuration){
+      this.setState({videoDuration: event.target.getDuration()})
+    }
+    if(event){
+      this.startInterval(event)
+      const currentTime = event.target.getCurrentTime()
+    }
+  }
+
   render() {
     /*var video = document.createElement('video-player');
     var curtime = video.currentTime;*/
@@ -320,6 +368,19 @@ class Main extends Component {
       versionOutput = (this.state.toolPageMeta.name + " v" + this.state.toolPageMeta.version)
       if(versionOutput.length > 8){
         versionOutput = this.state.toolPageMeta.name.slice(0,3) + "... v" + this.state.toolPageMeta.version
+      }
+    }
+    const ytOpts = {
+      playerVars: { // https://developers.google.com/youtube/player_parameters
+        autoplay: 1,
+        rel: 0,
+        showinfo: 0,
+        ecver: 0,
+        modestbranding: 0,
+        enablejsapi: 1,
+        controls: 1,
+        color: 'white',
+        iv_load_policy: 3
       }
     }
     return (
@@ -340,11 +401,12 @@ class Main extends Component {
               <div className="middle-col">
 
                 <div className="video-box">
-                  <video id="video-player" controls>
-                    <source src={require("../resources/SampleVideo_1280x720_20mb.mp4")} type="video/mp4" />
-                    <source src="mov_bbb.ogg" type="video/ogg" />
-                    Your browser does not support HTML5 video.
-                  </video>
+                  <div class="auto-resizable-iframe">
+                      <YouTube
+                       videoId="9rDhY1P3YLA"
+                       opts={ytOpts}
+                       onReady={(e) => this._onReady(e)} />
+                  </div>
                 </div>
 
                 </div>
@@ -358,6 +420,7 @@ class Main extends Component {
             <div className="right">
               <div className="tool-box">
                 <div id="edit-tool-box">
+                <div id="menuBtn" onClick={this.backToMenu.bind(this)}><i class="fas fa-arrow-circle-left"></i>Menu</div>
                   <button type="button" class="btn btn-primary" onClick={this.publishToolBox.bind(this)}>Publish</button>
                   <button type="button" class="btn btn-light" onClick={this.onEditToolBox.bind(this)}><i class="far fa-edit"></i></button>
                   <div class="dropdown">
