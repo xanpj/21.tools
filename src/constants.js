@@ -11,5 +11,10 @@ module.exports = {
   SCHEMA_FIELD_TOOL_PAGE: "toolPage",
   SCHEMA_FIELD_TOOLS_DATA: "toolContent",
   SCHEMA_FIELD_ANCHORS: "toolAnchors",
-  DB_NAME: "toolsOverviewDb"
+  DB_NAME: "toolsOverviewDb",
+  VIEWS: {
+    MENU: "MENU",
+    EDIT: "EDIT",
+    MAIN: "MAIN"
+  }
 }

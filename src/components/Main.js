@@ -11,8 +11,6 @@ import * as Positions from '../resources/InfographicPositions';
 import * as Utils from '../utils'
 import * as CONSTANTS from '../constants'
 
-import DbInterface from './DbInterface'
-
 const CONTEXT_MENU = {
   ADD: "ADD",
 }
@@ -94,11 +92,12 @@ class Main extends Component {
 
   async componentDidMount(){
     if(this.state.toolPageMeta == null){
-      this.db = new DbInterface()
-      await this.db.authenticateAnonymousUser()
       const TOOL_PAGE_NAME = "video"
-      const toolPage = await this.db.getLastToolPageVersion(TOOL_PAGE_NAME)
-      const allToolPageVersions = await this.db.getAllToolPageVersions(TOOL_PAGE_NAME)
+      await this.props.db.authenticateAnonymousUser()
+      const toolPage = await this.props.db.getLastToolPageVersion(TOOL_PAGE_NAME)
+      console.log("toolPage main")
+      console.log(toolPage)
+      const allToolPageVersions = await this.props.db.getAllToolPageVersions(TOOL_PAGE_NAME)
 
       if(toolPage && toolPage.length > 0){
         this.setState({
@@ -115,7 +114,7 @@ class Main extends Component {
         })
 
         console.log("MONGODB: pages")
-        const pages = await this.db.getPages()
+        const pages = await this.props.db.getPages()
         console.log(pages)
       }
     }
@@ -172,8 +171,8 @@ class Main extends Component {
       [CONSTANTS.SCHEMA_FIELD_ANCHORS]: anchors,
     }
 
-    await this.db.insertToolPageVersion(toolDataToDb)
-    const allToolPageVersions = await this.db.getAllToolPageVersions(this.state.toolPageMeta.name)
+    await this.props.db.insertToolPageVersion(toolDataToDb)
+    const allToolPageVersions = await this.props.db.getAllToolPageVersions(this.state.toolPageMeta.name)
     this.setState({
       toolPageMeta: {
         name: this.state.toolPageMeta.name,
@@ -284,7 +283,7 @@ class Main extends Component {
   }
 
   async changeToolPageVersion(toolPageId){
-    const toolPage = await this.db.getSpecificToolPageVersion(toolPageId)
+    const toolPage = await this.props.db.getSpecificToolPageVersion(toolPageId)
     if(toolPage && toolPage.length > 0){
       this.props.actionSetToolContent({
         toolContent: null,
@@ -308,14 +307,10 @@ class Main extends Component {
   }
 
   async searchToolDatabase(toolName){
-    const tools = await this.db.searchToolDatabase(toolName)
+    const tools = await this.props.db.searchToolDatabase(toolName)
     this.setState({
       toolsFromDB: tools
     })
-  }
-
-  backToMenu(){
-
   }
 
   highlightUsedIcons(currentTime){
@@ -372,7 +367,7 @@ class Main extends Component {
     }
     const ytOpts = {
       playerVars: { // https://developers.google.com/youtube/player_parameters
-        autoplay: 1,
+        autoplay: 0,
         rel: 0,
         showinfo: 0,
         ecver: 0,
@@ -380,7 +375,8 @@ class Main extends Component {
         enablejsapi: 1,
         controls: 1,
         color: 'white',
-        iv_load_policy: 3
+        iv_load_policy: 3,
+        origin:'http://localhost:3000' //TODO
       }
     }
     return (
@@ -420,7 +416,7 @@ class Main extends Component {
             <div className="right">
               <div className="tool-box">
                 <div id="edit-tool-box">
-                <div id="menuBtn" onClick={this.backToMenu.bind(this)}><i class="fas fa-arrow-circle-left"></i>Menu</div>
+                <div id="menuBtn" onClick={() => this.props.backToMenu()}><i class="fas fa-arrow-circle-left"></i>Menu</div>
                   <button type="button" class="btn btn-primary" onClick={this.publishToolBox.bind(this)}>Publish</button>
                   <button type="button" class="btn btn-light" onClick={this.onEditToolBox.bind(this)}><i class="far fa-edit"></i></button>
                   <div class="dropdown">
