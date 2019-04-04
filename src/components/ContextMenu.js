@@ -76,6 +76,7 @@ class ContextMenu extends Component {
           file: "img",
           imgPreviewUrl: dataUrl,
           bottomView: null,
+          imgData: null //only when uploading from DB
         });
         callback(dataUrl)
       }
@@ -89,8 +90,8 @@ class ContextMenu extends Component {
     resize(imgSrc, callback);
   }
 
-  iconSelected(e){
-    this.setState({bottomView: null, file: "fromDB", imgPreviewUrl: "../img/iMovie.webp"})
+  iconSelected(el){
+    this.setState({bottomView: null, file: "fromDB", imgPreviewUrl: el.content, imgData: {website: el.website, name: el.name, description: el.description}})
   }
 
   iconDbGridSelected(e, focus){
@@ -178,6 +179,7 @@ class ContextMenu extends Component {
 /*                <form action='.' enctype="multipart/form-data">            */
 /*onBlur={(e) => this.searchThroughDbPrepared(e, false)} */
   renderImgEdit(){
+    const {name, website, description} = this.state.imgData || {name:"", website: "", description:""}
     return (<div class="custom-file">
             {
               (!this.state.file) ?
@@ -190,18 +192,18 @@ class ContextMenu extends Component {
                 </div>
                 <div class="seperator" />
                 <div class="md-form file-path-wrapper">
-                  <input class="file-path validate" onFocus={(e) => this.iconDbGridSelected(e, true)} type="text" placeholder="Search through DB" />
+                  <input class="file-path validate" onChange={(e) => this.props.searchToolDatabase(e.target.value)} onFocus={(e) => this.iconDbGridSelected(e, true)} type="text" placeholder="Search through DB" />
                 </div>
               </div>) : (
               <div class="context-menu-img-preview">
                 <img id="img-preview" width="30" height="30" src={this.state.imgPreviewUrl} />
                 <form onSubmit={this.uploadToDb} noValidate>
                   <div class="md-form file-path-wrapper">
-                    <input class="file-path validate" name="name" type="text" placeholder="Tool name" />
+                    <input class="file-path validate" value={name} onChange={(e) => this.setState({imgData: {...this.state.imgData, name: e.target.value}})} name="name" type="text" placeholder="Tool name" />
                     <div class="seperator" />
-                    <input class="file-path validate" name="website" type="text" placeholder="Official website" />
+                    <input class="file-path validate" value={website} onChange={(e) => this.setState({imgData: {...this.state.imgData, website: e.target.value}})} name="website" type="text" placeholder="Official website" />
                     <div class="seperator" />
-                    <textarea class="file-path validate" name="description" type="text" placeholder="(Optional) Description" />
+                    <textarea class="file-path validate" value={description} onChange={(e) => this.setState({imgData: {...this.state.imgData, description: e.target.value}})} name="description" type="text" placeholder="(Optional) Description" />
                   </div>
                   <button class="btn btn-primary" type="submit">Confirm</button>
                 </form>
@@ -211,17 +213,9 @@ class ContextMenu extends Component {
               {(this.state.bottomView == GRID) ? (
               <div class="grid-wrapper">
                 <div class="grid-container">
-                  <div class="grid-item" onClick={() => this.iconSelected()}><img src={require("../img/iMovie.webp")} /></div>
-                  <div class="grid-item"><img src={require("../img/iMovie.webp")} /></div>
-                  <div class="grid-item"><img src={require("../img/iMovie.webp")} /></div>
-                  <div class="grid-item"><img src={require("../img/iMovie.webp")} /></div>
-                  <div class="grid-item"><img src={require("../img/iMovie.webp")} /></div>
-                  <div class="grid-item"><img src={require("../img/iMovie.webp")} /></div>
-                  <div class="grid-item"><img src={require("../img/iMovie.webp")} /></div>
-                  <div class="grid-item"><img src={require("../img/iMovie.webp")} /></div>
-                  <div class="grid-item"><img src={require("../img/iMovie.webp")} /></div>
-                  <div class="grid-item"><img src={require("../img/iMovie.webp")} /></div>
-                  <div class="grid-item"><img src={require("../img/iMovie.webp")} /></div>
+                {
+                  (this.props.toolsFromDB) ? this.props.toolsFromDB.map((el,i) => <div class="grid-item" key={i} onClick={() => this.iconSelected(el)}><img src={el.content} /></div>) : ""
+                }
                 </div>
               </div>
             ) : ""}

@@ -180,6 +180,8 @@ class ToolBox extends Component {
         const flowInstance = FlowActions.initFlows(self.props.toolContent, self.props.toolConnections)
         self.props.actionSetFlowInstance(flowInstance)
       });
+      //when icons are finished rendering, highlight the used icons
+      this.props.setVideoIconHighlights()
     }
   }
 
@@ -198,7 +200,7 @@ class ToolBox extends Component {
   }
 
   /*TODO:
-  Versions
+  Versions (y)
   toolbox GRID
   usage hints
   video selection
@@ -213,9 +215,8 @@ class ToolBox extends Component {
           /*if(el.type == "img")
             return (<img id={el.id} key={el.id} onMouseOver={() => this.tooltipImgInfo()} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={(el.content.indexOf('data:image') > -1) ? el.content : require("../img/"+el.content)} />)
           */
-          if(el.type == "img"){
+          if(el.type == "img")
             return (<img id={el.id} key={el.id} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={(el.content.indexOf('data:image') > -1) ? el.content : require("../img/"+el.content)} />)
-          }
           else if(el.type == "text")
             return (<div id={el.id} key={el.id} style={{top: el.top, left: el.left}} className="tool-box-text-el tool-box-el-hack tool-box-el">{el.content}</div>)
           else if(el.type == "container")
@@ -269,12 +270,16 @@ class ToolBox extends Component {
   renderToolTips(){
     if(this.props.toolContent){
       return this.props.toolContent.map((el, i) => {
-      if(el.type == "img"){
+      if(el.type == "img" && el.name){
         return (
           <div class="item-hints" style={{top: el.top, left: el.left}}>
             <div class="hint" data-position="4">
               <div class="hint-content do--split-children">
-                <span class="hint-content-inner">{el.id}</span>
+                <div class="hint-content-inner">
+                  <b>{el.name || ""}</b>
+                  <br />
+                  {el.description || ""}
+                </div>
               </div>
             </div>
           </div>

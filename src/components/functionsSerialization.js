@@ -85,7 +85,9 @@ export function serializeToolBoxElements(orgToolContent, toolBoxElements, newlyJ
       width: el.style.width,
       height: el.style.height,
       content: "",
-      outer: "",
+      name: "",
+      website: "",
+      description: "",
       type: ""
     }
     if(el.parentNode.id.includes("container")){
@@ -113,6 +115,10 @@ export function serializeToolBoxElements(orgToolContent, toolBoxElements, newlyJ
       const correspondingElement = orgToolContent.filter(el => el.id == elInformation.id)
       if(correspondingElement && correspondingElement.length > 0){
         elInformation.content = correspondingElement[0].content
+        elInformation.name = correspondingElement[0].name
+        elInformation.website = correspondingElement[0].website
+        elInformation.description = correspondingElement[0].description
+
       }
     }
     else if(isContainer) {
@@ -162,7 +168,9 @@ export function serializeToolBoxElements(orgToolContent, toolBoxElements, newlyJ
       width: "",
       height: "",
       content: newlyJoinedTools.join(","),
-      outer: "",
+      name: "",
+      website: "",
+      description: "",
       type: "container"
     }
     toolBoxElementsToSerialized.push(elInformation)

@@ -1,15 +1,33 @@
-const filmPositions = [{"id":"logo_0","left":"378px","top":"115px","content":"3ds_max_icon.png","type":"img"},{"id":"logo_1","left":"268px","top":"71px","content":"AE-logo.png","type":"img"},{"id":"logo_2","left":"422px","top":"262px","content":"arri-logo.jpg","type":"img"},{"id":"logo_3","left":"377px","top":"193px","content":"avid-media-composer-logo_o.png","type":"img"},{"id":"logo_4","left":"456px","top":"116px","content":"blender logo.jpg","type":"img"},{"id":"logo_5","left":"218px","top":"259px","content":"digital-cam-icon.jpg","type":"img"},{"id":"logo_6","left":"260px","top":"258px","content":"dslr-icon.png","type":"img"},{"id":"logo_7","left":"280px","top":"192px","content":"finalcutx.png","type":"img"},{"id":"logo_8","left":"401px","top":"24px","content":"Houdini3D_icon.png","type":"img"},{"id":"logo_9","left":"131px","top":"192px","content":"iMovie.webp","type":"img"},{"id":"logo_10","left":"298px","top":"258px","content":"iphone-icon.png","type":"img"},{"id":"logo_11","left":"239px","top":"193px","content":"logo-premiere-pro.png","type":"img"},{"id":"logo_12","left":"418px","top":"115px","content":"maya.jpg","type":"img"},{"id":"logo_13","left":"305px","top":"70px","content":"nuke-logo.png","type":"img"},{"id":"logo_14","left":"379px","top":"263px","content":"RedStickerLogo.png","type":"img"},{"id":"logo_15","left":"171px","top":"192px","content":"vegaspro.jpg","type":"img"},{"id":"logo_16","left":"438px","top":"24px","content":"zbrush-logo.png","type":"img"},{"id":"text_1","left":"254px","top":"152px","content":"Video editing","type":"text"},
-{"id":"container_0","top":"249px","left":"208px","content":"logo_5, logo_6, logo_10", "outer": "container_1", "type":"container"},
-{"id":"container_1","top":"183px","left":"229px","content":"logo_7, logo_11", "outer": "container_2", "type":"container"},
-{"id":"container_2","top":"61px","left":"258px","content":"logo_1, logo_13", "outer": "container_3, container_4", "type":"container"},
-{"id":"container_3","top":"14px","left":"391px","content":"logo_8, logo_16", "outer": "", "type":"container"},
-{"id":"container_4","top":"106x","left":"368px","content":"logo_4, logo_0, logo_12", "outer": "", "type":"container"},
-{"id":"group_0","left":"254px","top":"152px", "height":"250px", "width":"250px","content":"text_1, container_0, container_1", "outer": "", "type":"group"}
+const filmPositions = [
+  {"id":"logo_0","left":"378px","top":"115px","content":"3ds_max_icon.png","type":"img", "name": "", "website": "", "description": ""},
+  {"id":"logo_1","left":"268px","top":"71px","content":"AE-logo.png","type":"img","name": "", "website": "", "description": ""},
+  {"id":"logo_2","left":"422px","top":"262px","content":"arri-logo.jpg","type":"img","name": "", "website": "", "description": ""},
+  {"id":"logo_3","left":"377px","top":"193px","content":"avid-media-composer-logo_o.png","type":"img","name": "", "website": "", "description": ""},
+  {"id":"logo_4","left":"456px","top":"116px","content":"blender logo.jpg","type":"img", "name": "", "website": "", "description": ""},
+  {"id":"logo_5","left":"218px","top":"259px","content":"digital-cam-icon.jpg","type":"img", "name": "", "website": "", "description": ""},
+  {"id":"logo_6","left":"260px","top":"258px","content":"dslr-icon.png","type":"img", "name": "", "website": "", "description": ""},
+  {"id":"logo_7","left":"280px","top":"192px","content":"finalcutx.png","type":"img", "name": "", "website": "", "description": ""},
+  {"id":"logo_8","left":"401px","top":"24px","content":"Houdini3D_icon.png","type":"img", "name": "", "website": "", "description": ""},
+  {"id":"logo_9","left":"131px","top":"192px","content":"iMovie.webp","type":"img", "name": "", "website": "", "description": ""},
+  {"id":"logo_10","left":"298px","top":"258px","content":"iphone-icon.png","type":"img", "name": "", "website": "", "description": ""},
+  {"id":"logo_11","left":"239px","top":"193px","content":"logo-premiere-pro.png","type":"img", "name": "", "website": "", "description": ""},
+  {"id":"logo_12","left":"418px","top":"115px","content":"maya.jpg","type":"img", "name": "", "website": "", "description": ""},
+  {"id":"logo_13","left":"305px","top":"70px","content":"nuke-logo.png","type":"img", "name": "", "website": "", "description": ""},
+  {"id":"logo_14","left":"379px","top":"263px","content":"RedStickerLogo.png","type":"img", "name": "", "website": "", "description": ""},
+  {"id":"logo_15","left":"171px","top":"192px","content":"vegaspro.jpg","type":"img", "name": "", "website": "", "description": ""},
+  {"id":"logo_16","left":"438px","top":"24px","content":"zbrush-logo.png","type":"img", "name": "", "website": "", "description": ""},
+  {"id":"text_1","left":"254px","top":"152px","content":"Video editing","type":"text", "name": "", "website": "", "description": ""},
+  {"id":"container_0","top":"249px","left":"208px","content":"logo_5, logo_6, logo_10", "type":"container", "name": "", "website": "", "description": ""},
+  {"id":"container_1","top":"183px","left":"229px","content":"logo_7, logo_11", "type":"container", "name": "", "website": "", "description": ""},
+  {"id":"container_2","top":"61px","left":"258px","content":"logo_1, logo_13", "type":"container", "name": "", "website": "", "description": ""},
+  {"id":"container_3","top":"14px","left":"391px","content":"logo_8, logo_16", "type":"container", "name": "", "website": "", "description": ""},
+  {"id":"container_4","top":"106x","left":"368px","content":"logo_4, logo_0, logo_12", "type":"container", "name": "", "website": "", "description": ""},
+  {"id":"group_0","left":"254px","top":"152px", "height":"250px", "width":"250px","content":"text_1, container_0, container_1", "type":"group", "name": "", "website": "", "description": ""}
 ]
 
 /*
 const filmPositions = [{"id":"logo_0","left":"378px","top":"115px","content":"3ds_max_icon.png","type":"img"},{"id":"logo_1","left":"268px","top":"71px","content":"AE-logo.png","type":"img"},{"id":"logo_2","left":"422px","top":"262px","content":"arri-logo.jpg","type":"img"},{"id":"logo_3","left":"377px","top":"193px","content":"avid-media-composer-logo_o.png","type":"img"},{"id":"logo_4","left":"456px","top":"116px","content":"blender logo.jpg","type":"img"},{"id":"logo_5","left":"218px","top":"259px","content":"digital-cam-icon.jpg","type":"img"},{"id":"logo_6","left":"260px","top":"258px","content":"dslr-icon.png","type":"img"},{"id":"logo_7","left":"280px","top":"192px","content":"finalcutx.png","type":"img"},{"id":"logo_8","left":"401px","top":"24px","content":"Houdini3D_icon.png","type":"img"},{"id":"logo_9","left":"131px","top":"192px","content":"iMovie.webp","type":"img"},{"id":"logo_10","left":"298px","top":"258px","content":"iphone-icon.png","type":"img"},{"id":"logo_11","left":"239px","top":"193px","content":"logo-premiere-pro.png","type":"img"},{"id":"logo_12","left":"418px","top":"115px","content":"maya.jpg","type":"img"},{"id":"logo_13","left":"305px","top":"70px","content":"nuke-logo.png","type":"img"},{"id":"logo_14","left":"379px","top":"263px","content":"RedStickerLogo.png","type":"img"},{"id":"logo_15","left":"171px","top":"192px","content":"vegaspro.jpg","type":"img"},{"id":"logo_16","left":"438px","top":"24px","content":"zbrush-logo.png","type":"img"},{"id":"text_1","left":"254px","top":"152px","content":"Video editing","type":"text"},
-{"id":"container_4","left":"254px","top":"152px","content":"logo_9, logo_15", "outer": "", "type":"container"}
+{"id":"container_4","left":"254px","top":"152px","content":"logo_9, logo_15",  "type":"container"}
 ]*/
 
 

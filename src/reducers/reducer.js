@@ -26,6 +26,8 @@ export default (state = defaultState, action) => {
         const newToolContent = state.toolContent
         newToolContent.push(action.payload)
         const toolContentHash = UTILS.md5(JSON.stringify(newToolContent))
+        console.log("reducer")
+        console.log(newToolContent)
         return {
           ...state,
           toolContent: newToolContent,

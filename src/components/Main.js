@@ -33,6 +33,7 @@ class Main extends Component {
       contextMenuCoords: null,
       addTextData: null,
       versionDropdown: false,
+      toolsFromDB: null
     }
 
     const toolContent = null
@@ -41,6 +42,49 @@ class Main extends Component {
 
   updateHighlightedLogo(currentTime) {
       console.log(currentTime);
+  }
+
+  setVideoIconHighlights(){
+    // Get the <video> element with id="myVideo"
+
+    /** Highlight all used icons **/
+    console.log("setVideoIconHighlights")
+    //if(!this.state.videoInitialized){
+      const state = this.state
+      const timecode = state.timecode
+      console.log("timecode")
+      console.log(timecode)
+      timecode.forEach((el, i) => {
+        console.log(el.id)
+        const logo_el = document.getElementById(el.id)
+        console.log("logo_el")
+        console.log(logo_el)
+        if(logo_el){
+          logo_el.classList.add("el-used")
+        }
+      })
+
+      /** Hightlight icons according to time **/
+      var vid = document.getElementById("video-player");
+      vid.ontimeupdate = function() {
+        const activeLogos = timecode.filter((el, i) => {
+          let nextElementTime = vid.duration
+          if(i < timecode.length-1){
+            nextElementTime = timecode[i+1].time
+          }
+          document.getElementById(el.id).classList.remove("el-active")
+          return (vid.currentTime > el.time && vid.currentTime < nextElementTime)
+        })
+        if(activeLogos !== null && activeLogos.length > 0){
+          console.log(activeLogos)
+          const activeLogoId = activeLogos[0]
+          document.getElementById(activeLogoId.id).classList.add("el-active")
+        }
+        console.log(vid.currentTime);
+      };
+      this.state.videoInitialized = true
+    //}
+
   }
 
   componentDidUpdate(){
@@ -73,38 +117,6 @@ class Main extends Component {
         console.log(pages)
       }
     }
-
-
-    // Get the <video> element with id="myVideo"
-    const state = this.state
-    if(!this.state.videoInitialized){
-      this.state.timecode.forEach((el, i) => {
-        const logo_el = document.getElementById(el.id)
-        if(logo_el){
-          logo_el.classList.add("el-used")
-        }
-      })
-
-      var vid = document.getElementById("video-player");
-      vid.ontimeupdate = function() {
-        const timecode = state.timecode
-        const activeLogos = timecode.filter((el, i) => {
-          let nextElementTime = vid.duration
-          if(i < timecode.length-1){
-            nextElementTime = timecode[i+1].time
-          }
-          document.getElementById(el.id).classList.remove("el-active")
-          return (vid.currentTime > el.time && vid.currentTime < nextElementTime)
-        })
-        if(activeLogos !== null && activeLogos.length > 0){
-          console.log(activeLogos)
-          const activeLogoId = activeLogos[0]
-          document.getElementById(activeLogoId.id).classList.add("el-active")
-        }
-        console.log(vid.currentTime);
-      };
-      this.state.videoInitialized = true
-   }
   }
 
   onEditToolBox() {
@@ -115,7 +127,7 @@ class Main extends Component {
                 })
   }
 
-  publishToolBox(){
+  async publishToolBox(){
     const toolBoxElements = document.getElementsByClassName('tool-box-el')
     const serializedToolBoxElements = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements)
 
@@ -126,25 +138,13 @@ class Main extends Component {
 
     //determine which version number to put as name
     var versionString = ""
-    console.log(this.state.allToolPageVersions)
-    console.log(this.state)
     if(this.state.toolPageMeta && (this.state.toolPageMeta.version || this.state.toolPageMeta.version == 0)){
-      console.log("this.state.toolPageMeta.version")
-      console.log(this.state.toolPageMeta.version)
       const versionComponentsCurrent = this.state.toolPageMeta.version
       const currVersionArr = versionComponentsCurrent.toString().split("\.")
-      console.log("currVersionArr")
-      console.log(currVersionArr)
       if(this.state.allToolPageVersions.findIndex(el => {
         const elVersionArr = el.version.toString().split("\.")
         if(elVersionArr.length > 0 && currVersionArr.length > 0 && elVersionArr.length == currVersionArr.length){
-          console.log("elVersionArr")
-          console.log(elVersionArr)
-          console.log(elVersionArr[elVersionArr.length - 1])
-          const equal = parseInt(elVersionArr[elVersionArr.length - 1]) == parseInt(currVersionArr[currVersionArr.length-1]) + 1
-          console.log("equal")
-          console.log(equal)
-          return equal
+          return parseInt(elVersionArr[elVersionArr.length - 1]) == parseInt(currVersionArr[currVersionArr.length-1]) + 1
         } else {
           return false
         }
@@ -152,15 +152,11 @@ class Main extends Component {
         if(currVersionArr.length == 1){
           versionString = parseInt(currVersionArr) + 1
         } else if(currVersionArr.length > 1){
-          console.log("currVersionArr.slice(0, currVersionArr.length-1)")
-          console.log(currVersionArr.slice(0, currVersionArr.length-1) )
           versionString = currVersionArr.slice(0, currVersionArr.length-1).join(".") + "." + (parseInt(currVersionArr[currVersionArr.length-1]) + 1)
         } else {
           versionString = "0"
         }
       } else {
-        console.log("currVersionArr +")
-        console.log(currVersionArr)
         versionString = currVersionArr.join(".") + "." + "1"
       }
     }
@@ -174,7 +170,15 @@ class Main extends Component {
       [CONSTANTS.SCHEMA_FIELD_ANCHORS]: anchors,
     }
 
-    this.db.insertToolPageVersion(toolDataToDb)
+    await this.db.insertToolPageVersion(toolDataToDb)
+    const allToolPageVersions = await this.db.getAllToolPageVersions(this.state.toolPageMeta.name)
+    this.setState({
+      toolPageMeta: {
+        name: this.state.toolPageMeta.name,
+        version: versionString
+      },
+      allToolPageVersions: allToolPageVersions
+    })
   }
 
   showContextMenu(e) {
@@ -203,8 +207,10 @@ class Main extends Component {
       left: this.state.contextMenuCoords[2] - pxOffsetFromContextMenu + "px",
       top: this.state.contextMenuCoords[3] - pxOffsetFromContextMenu + "px",
       content: text,
-      outer: "",
-      type: "text"
+      type: "text",
+      name: "",
+      website: "",
+      description:"",
     }
     this.setState({addTextData: addTextData})
   }
@@ -228,7 +234,9 @@ class Main extends Component {
       left: this.state.contextMenuCoords[2] - pxOffsetFromContextMenu + "px",
       top: this.state.contextMenuCoords[3] - pxOffsetFromContextMenu + "px",
       content: "",
-      outer: "",
+      name: "",
+      website: "",
+      description:"",
       type: "group"
     }
     this.props.actionAddToolElement(addGroupData)
@@ -260,9 +268,12 @@ class Main extends Component {
       left: this.state.contextMenuCoords[2] - pxOffsetFromContextMenu + "px",
       top: this.state.contextMenuCoords[3] - pxOffsetFromContextMenu + "px",
       content: imgPreviewUrl,
-      outer: "",
+      name: formData.name || "",
+      website: formData.website || "",
+      description: formData.description || "",
       type: "img"
     }
+    console.log(addIconData)
     this.props.actionAddToolElement(addIconData)
     this.setState({
       contextMenu: null,
@@ -282,6 +293,7 @@ class Main extends Component {
         toolContent: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA],
         toolConnections: toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]
       })
+
       this.setState({
         toolPageMeta: {
           name: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOL_PAGE],
@@ -289,15 +301,32 @@ class Main extends Component {
         }
       })
 
+      this.setVideoIconHighlights()
     }
+  }
+
+  async searchToolDatabase(toolName){
+    const tools = await this.db.searchToolDatabase(toolName)
+    this.setState({
+      toolsFromDB: tools
+    })
   }
 
   render() {
     /*var video = document.createElement('video-player');
     var curtime = video.currentTime;*/
+    var versionOutput = "Versions"
+    if(this.state.toolPageMeta){
+      versionOutput = (this.state.toolPageMeta.name + " v" + this.state.toolPageMeta.version)
+      if(versionOutput.length > 8){
+        versionOutput = this.state.toolPageMeta.name.slice(0,3) + "... v" + this.state.toolPageMeta.version
+      }
+    }
     return (
       <div className="Main" >
       {(this.state.contextMenu) ? <ContextMenu
+        toolsFromDB = {this.state.toolsFromDB}
+        searchToolDatabase = {(toolName) => this.searchToolDatabase(toolName)}
         insertImgToDocument = {(formData, imgPreviewUrl) => this.insertImgToDocument(formData, imgPreviewUrl)}
         editMode = {this.state.editMode}
         addGroup = {() => this.addGroup()}
@@ -333,16 +362,21 @@ class Main extends Component {
                   <button type="button" class="btn btn-light" onClick={this.onEditToolBox.bind(this)}><i class="far fa-edit"></i></button>
                   <div class="dropdown">
                   <button class="btn btn-secondary dropdown-toggle" type="button" onClick={() => this.setState({versionDropdown: !this.state.versionDropdown}) } id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Versions
+                    {versionOutput}
                   </button>
                   <div class={this.state.versionDropdown ? "dropdown-menu open" : "dropdown-menu closed"} aria-labelledby="dropdownMenu2">
-                    {(this.state.allToolPageVersions) ? this.state.allToolPageVersions.map((el, i) => <button class="dropdown-item" onClick={() => this.changeToolPageVersion(el._id)} type="button">{this.state.toolPageMeta.name + " v" + el.version}</button>) : ""/*_id.getTimestamp().toLocaleString()*/}
+                    {(this.state.allToolPageVersions) ? this.state.allToolPageVersions.map((el, i) =>
+                      <button class="dropdown-item" onClick={() => this.changeToolPageVersion(el._id)} type="button">
+                      {this.state.toolPageMeta.name + " v" + el.version}</button>
+                    ) : ""/*_id.getTimestamp().toLocaleString()*/}
                   </div>
                 </div>
                 </div>
                 <div id="ToolBoxWrapper">
                 {(this.props.toolContent !== null) ?
-                  (<ToolBox addTextData={this.state.addTextData}
+                  (<ToolBox
+                  setVideoIconHighlights={() => this.setVideoIconHighlights()}
+                  addTextData={this.state.addTextData}
                   editMode={this.state.editMode}
                   deleteElement={(refId) => this.deleteElement(refId)}
                   showContextMenu={e => this.showContextMenu(e)}

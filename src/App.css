@@ -173,9 +173,14 @@ body {
   display:block;
   text-align: center;
   margin: 5px auto;
-  width: 80px;
+  width: 100%;
   font-size: 12px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.1);
+}
+
+#edit-tool-box .dropdown-toggle {
+  min-width: 100px;
+  width: 100%;
 }
 
 .dropdown-toggle::after {
@@ -191,7 +196,7 @@ body {
   display: block;
   font-size: 14px;
   width: 150px;
-  left: -80px;
+  left: -60px;
   max-height: 200px;
   overflow-y: scroll;
 }
