@@ -1,5 +1,5 @@
 import * as CONSTANTS from '../constants'
-import * as UTILS from '../utils'
+import * as Utils from '../utils'
 
 const defaultState = {
   flowInstance: null,
@@ -19,13 +19,13 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         toolContent: action.payload.toolContent /* || state.toolContent*/,
-        toolConnections: action.payload.toolConnections /* || state.toolConnections*/
+        toolConnections: action.payload.toolConnections || state.toolConnections // TODO check if working with ||
       }
     case CONSTANTS.ACTION_ADD_TOOL_ELEMENT:
       if(state.toolContent !== null){
         const newToolContent = state.toolContent
         newToolContent.push(action.payload)
-        const toolContentHash = UTILS.md5(JSON.stringify(newToolContent))
+        const toolContentHash = Utils.md5(JSON.stringify(newToolContent))
         console.log("reducer")
         console.log(newToolContent)
         return {
@@ -65,7 +65,7 @@ export default (state = defaultState, action) => {
           if(!foundInContainer){
             newToolContent.splice(elIndex,1)
           }
-          const toolContentHash = UTILS.md5(JSON.stringify(newToolContent))
+          const toolContentHash = Utils.md5(JSON.stringify(newToolContent))
           return {
             ...state,
             toolContent: newToolContent,

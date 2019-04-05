@@ -13,7 +13,8 @@ class App extends Component {
     super(props)
 
     this.state = {
-      view: CONSTANTS.VIEWS.MENU
+      view: CONSTANTS.VIEWS.MENU,
+      data: null
     }
 
     this.db = new DbInterface()
@@ -22,10 +23,20 @@ class App extends Component {
     await this.db.authenticateAnonymousUser()
   }
 
+  backToMenu(){
+      this.setState({view: CONSTANTS.VIEWS.MENU})
+  }
+
+  submitWorkflow(timecode, version){
+    console.log("Submitted")
+  }
+
   renderView(){
     if(this.state.view == CONSTANTS.VIEWS.EDIT){
       return (<div>
-        <div id="UploadHeader">
+        <Main backToMenu={() => this.backToMenu()} submitWorkflow={(timecode, version) => this.submitWorkflow(timecode, version)} workflowMode={true} db={this.db} />
+
+        {/*<div id="UploadHeader">
           <form>
           <div class="form-row">
           <label>Form header</label>
@@ -53,19 +64,17 @@ class App extends Component {
 
             </div>
           </form>
-          </div>
-        <Main db={this.db}/>
+          </div>*/}
     </div>
     )}
     else if(this.state.view == CONSTANTS.VIEWS.MAIN){
       return (
         <div>
-          <Main backToMenu={() => this.setState({view: CONSTANTS.VIEWS.MENU}) } db={this.db}/>
+          <Main backToMenu={() => this.backToMenu()} db={this.db}/>
         </div>
       )
-    }
-    else {
-        return (<Menu />)
+    } else {
+        return (<Menu changeView={(view, data) => this.setState({view:  view, data: data}) }/>)
     }
   }
 
@@ -74,7 +83,6 @@ class App extends Component {
     //params from url
     return (
       <div className="App">
-      <div id="ToolPageHeader">Workflows</div>
       {this.renderView()}
       </div>
     );

@@ -27,6 +27,7 @@ class ToolBox extends Component {
 
 
   toggleEditable(editMode){
+    console.log("toggleEditable")
     const instance = this.props.flowInstance
     if(instance){
       const toolBoxGroupsSelector = ".tool-box-group-el"
@@ -51,9 +52,12 @@ class ToolBox extends Component {
         inertia: true
       })
       .on('resizestart', function (event) {
-        FlowActions.onlyToggleDraggable(instance, event.target.id, false)
+        if(self.state.editMode){
+          FlowActions.onlyToggleDraggable(instance, event.target.id, false)
+        }
       })
       .on('resizemove', function (event) {
+        console.log(self.state.editMode)
         if(self.state.editMode){
           var target = event.target,
               x = (parseFloat(target.getAttribute('data-x')) || 0),
@@ -168,13 +172,17 @@ class ToolBox extends Component {
     console.log(this.props.flowInstance)
     console.log("this.props.toolContent")
     console.log(this.props.toolContent)
-    if(this.props.flowInstance == null && this.props.toolContent){
+    console.log(this.props.toolConnections)
+    /** this needs to be set everytime again to set scroll listeners **/
+
+    /** **/
+    if(this.props.toolContent && this.props.toolConnections){
       console.log("setting up flowinstance")
       const toolBoxOuter = document.getElementById("ToolBoxWrapper")
+      ToolBoxInteractions.MakeZoomable(toolBoxOuter,0.1,4,0.2,true)
+      ToolBoxInteractions.MakeDraggable(toolBoxOuter);
       toolBoxOuter.addEventListener('contextmenu', (e) => this.props.showContextMenu(e))
       toolBoxOuter.addEventListener('dblclick', (e) => this.activateDeleteMode(e))
-      ToolBoxInteractions.MakeDraggable(toolBoxOuter);
-      ToolBoxInteractions.MakeZoomable(toolBoxOuter,0.1,4,0.2)
       const self = this
       window.jsPlumb.ready(function() {
         const flowInstance = FlowActions.initFlows(self.props.toolContent, self.props.toolConnections)
@@ -183,6 +191,11 @@ class ToolBox extends Component {
       //when icons are finished rendering, highlight the used icons
       this.props.setVideoIconHighlights()
     }
+  }
+
+  componentWillUnmount(){
+    const toolBoxOuter = document.getElementById("ToolBoxWrapper")
+    ToolBoxInteractions.MakeZoomable(toolBoxOuter,0.1,4,0.2,false)
   }
 
   activateDeleteMode(){
@@ -216,7 +229,7 @@ class ToolBox extends Component {
             return (<img id={el.id} key={el.id} onMouseOver={() => this.tooltipImgInfo()} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={(el.content.indexOf('data:image') > -1) ? el.content : require("../img/"+el.content)} />)
           */
           if(el.type == "img")
-            return (<img id={el.id} key={el.id} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={(el.content.indexOf('data:image') > -1) ? el.content : require("../img/"+el.content)} />)
+            return (<img id={el.id} key={el.id} onClick={() => this.props.toolSelected(el.id)} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={(el.content.indexOf('data:image') > -1) ? el.content : require("../img/"+el.content)} />)
           else if(el.type == "text")
             return (<div id={el.id} key={el.id} style={{top: el.top, left: el.left}} className="tool-box-text-el tool-box-el-hack tool-box-el">{el.content}</div>)
           else if(el.type == "container")
@@ -307,7 +320,7 @@ class ToolBox extends Component {
       {(this.props.addTextData !== null) ? this.renderAddTextData() : ""}
         <div id="tool-logos">
           {this.renderLogos()}
-          {!this.state.editMode ? this.renderToolTips() : ""}
+          {!this.state.editMode && !this.props.workflowMode ? this.renderToolTips() : ""}
           {(this.state.activeDeleteMode && this.state.editMode ) ? this.renderClosingButtons() : ""}
         </div>
       </div>

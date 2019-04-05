@@ -23,17 +23,21 @@ class Main extends Component {
 
     this.state = {
       allToolPageVersions: null,
+      contentHashOnMount: null,
       toolPageMeta: null,
       flowInstance: null,
       videoInitialized: false,
-      timecode: Positions.filmTimecode,
+      videoEvent: null,
+      timecode: [],
       editMode: false,
       contextMenu: null,
       contextMenuCoords: null,
       addTextData: null,
       versionDropdown: false,
       toolsFromDB: null,
-      videoDuration: null
+      videoDuration: null,
+      toolsSelected: null,
+      checkInterval: null
     }
 
     const toolContent = null
@@ -63,31 +67,16 @@ class Main extends Component {
           logo_el.classList.add("el-used")
         }
       })
-
-      /** Hightlight icons according to time **/
-      /*var vid = document.getElementById("video-player");
-      vid.ontimeupdate = function() {
-        const activeLogos = timecode.filter((el, i) => {
-          let nextElementTime = vid.duration
-          if(i < timecode.length-1){
-            nextElementTime = timecode[i+1].time
-          }
-          document.getElementById(el.id).classList.remove("el-active")
-          return (vid.currentTime > el.time && vid.currentTime < nextElementTime)
-        })
-        if(activeLogos !== null && activeLogos.length > 0){
-          console.log(activeLogos)
-          const activeLogoId = activeLogos[0]
-          document.getElementById(activeLogoId.id).classList.add("el-active")
-        }
-        console.log(vid.currentTime);
-      };
-      this.state.videoInitialized = true*/
-    //}
-
   }
 
   componentDidUpdate(){
+  }
+
+  componentWillUnmount(){
+    if(this.state.checkInterval){
+      console.log("unmounted")
+      clearInterval(this.state.checkInterval)
+    }
   }
 
   async componentDidMount(){
@@ -100,10 +89,13 @@ class Main extends Component {
       const allToolPageVersions = await this.props.db.getAllToolPageVersions(TOOL_PAGE_NAME)
 
       if(toolPage && toolPage.length > 0){
+        const contentHashOnMount = Utils.md5(JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA] + "_" + toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]))
         this.setState({
+          contentHashOnMount: contentHashOnMount,
           toolPageMeta: {
             name: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOL_PAGE],
-            version: toolPage[0][CONSTANTS.SCHEMA_FIELD_VERSION]
+            version: toolPage[0][CONSTANTS.SCHEMA_FIELD_VERSION],
+            videoDuration: null,
           },
           allToolPageVersions: allToolPageVersions
         })
@@ -129,57 +121,69 @@ class Main extends Component {
   }
 
   async publishToolBox(){
-    const toolBoxElements = document.getElementsByClassName('tool-box-el')
-    const serializedToolBoxElements = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements)
+    if(this.state.editMode){
+      alert("Please leave edit mode first")
+    } else {
+      const contentHashOnMount = Utils.md5(JSON.stringify(this.props.toolContent + "_" + this.props.toolConnections))
+      const contentChanged = contentHashOnMount !== this.state.contentHashOnMount
 
-    const connections = this.props.flowInstance.getAllConnections()
-    const anchors = connections.map(a => {
-        return {id: a.id, anchor1: a.endpoints[0].anchor, anchor2: a.endpoints[1].anchor}
-    });
+      var versionString = ""
+      if(contentChanged) {
+        const toolBoxElements = document.getElementsByClassName('tool-box-el')
+        const serializedToolBoxElements = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements)
 
-    //determine which version number to put as name
-    var versionString = ""
-    if(this.state.toolPageMeta && (this.state.toolPageMeta.version || this.state.toolPageMeta.version == 0)){
-      const versionComponentsCurrent = this.state.toolPageMeta.version
-      const currVersionArr = versionComponentsCurrent.toString().split("\.")
-      if(this.state.allToolPageVersions.findIndex(el => {
-        const elVersionArr = el.version.toString().split("\.")
-        if(elVersionArr.length > 0 && currVersionArr.length > 0 && elVersionArr.length == currVersionArr.length){
-          return parseInt(elVersionArr[elVersionArr.length - 1]) == parseInt(currVersionArr[currVersionArr.length-1]) + 1
-        } else {
-          return false
+        const connections = this.props.flowInstance.getAllConnections()
+        const anchors = connections.map(a => {
+            return {id: a.id, anchor1: a.endpoints[0].anchor, anchor2: a.endpoints[1].anchor}
+        });
+
+        //determine which version number to put as name
+        if(this.state.toolPageMeta && (this.state.toolPageMeta.version || this.state.toolPageMeta.version == 0)){
+          const versionComponentsCurrent = this.state.toolPageMeta.version
+          const currVersionArr = versionComponentsCurrent.toString().split("\.")
+          if(this.state.allToolPageVersions.findIndex(el => {
+            const elVersionArr = el.version.toString().split("\.")
+            if(elVersionArr.length > 0 && currVersionArr.length > 0 && elVersionArr.length == currVersionArr.length){
+              return parseInt(elVersionArr[elVersionArr.length - 1]) == parseInt(currVersionArr[currVersionArr.length-1]) + 1
+            } else {
+              return false
+            }
+          }) == -1) {
+            if(currVersionArr.length == 1){
+              versionString = parseInt(currVersionArr) + 1
+            } else if(currVersionArr.length > 1){
+              versionString = currVersionArr.slice(0, currVersionArr.length-1).join(".") + "." + (parseInt(currVersionArr[currVersionArr.length-1]) + 1)
+            } else {
+              versionString = "0"
+            }
+          } else {
+            versionString = currVersionArr.join(".") + "." + "1"
+          }
         }
-      }) == -1) {
-        if(currVersionArr.length == 1){
-          versionString = parseInt(currVersionArr) + 1
-        } else if(currVersionArr.length > 1){
-          versionString = currVersionArr.slice(0, currVersionArr.length-1).join(".") + "." + (parseInt(currVersionArr[currVersionArr.length-1]) + 1)
-        } else {
-          versionString = "0"
+        console.log("versionString")
+        console.log(versionString)
+
+        const toolDataToDb = {
+          [CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: this.state.toolPageMeta.name,
+          [CONSTANTS.SCHEMA_FIELD_VERSION]: versionString.toString(),
+          [CONSTANTS.SCHEMA_FIELD_TOOLS_DATA]: serializedToolBoxElements,
+          [CONSTANTS.SCHEMA_FIELD_ANCHORS]: anchors,
         }
-      } else {
-        versionString = currVersionArr.join(".") + "." + "1"
+
+        await this.props.db.insertToolPageVersion(toolDataToDb)
+        const allToolPageVersions = await this.props.db.getAllToolPageVersions(this.state.toolPageMeta.name)
+        this.setState({
+          toolPageMeta: {
+            name: this.state.toolPageMeta.name,
+            version: versionString
+          },
+          allToolPageVersions: allToolPageVersions
+        })
+      }
+      if(this.props.workflowMode){
+          this.props.submitWorkflow(this.state.timecode, versionString || this.state.toolPageMeta.version)
       }
     }
-    console.log("versionString")
-    console.log(versionString)
-
-    const toolDataToDb = {
-      [CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: this.state.toolPageMeta.name,
-      [CONSTANTS.SCHEMA_FIELD_VERSION]: versionString.toString(),
-      [CONSTANTS.SCHEMA_FIELD_TOOLS_DATA]: serializedToolBoxElements,
-      [CONSTANTS.SCHEMA_FIELD_ANCHORS]: anchors,
-    }
-
-    await this.props.db.insertToolPageVersion(toolDataToDb)
-    const allToolPageVersions = await this.props.db.getAllToolPageVersions(this.state.toolPageMeta.name)
-    this.setState({
-      toolPageMeta: {
-        name: this.state.toolPageMeta.name,
-        version: versionString
-      },
-      allToolPageVersions: allToolPageVersions
-    })
   }
 
   showContextMenu(e) {
@@ -335,13 +339,25 @@ class Main extends Component {
     }
   }
 
+  toolSelected(elId){
+    const event = this.state.videoEvent
+    const timecode = this.state.timecode
+    if(event && timecode){
+      const newElement = {
+        id: elId,
+        time: event.target.getCurrentTime()
+      }
+      this.setState({timecode: [...timecode, newElement]})
+    }
+  }
+
   startInterval(event) {
      const self = this
      const checkInt = setInterval(function() {
        const currentTime = event.target.getCurrentTime()
        self.highlightUsedIcons(currentTime)
-      //clearInterval(checkInt);
     }, 500)
+    this.setState({checkInterval: checkInt})
  }
 
   _onReady(event){
@@ -352,6 +368,7 @@ class Main extends Component {
     if(event){
       this.startInterval(event)
       const currentTime = event.target.getCurrentTime()
+      this.setState({videoEvent: event})
     }
   }
 
@@ -417,7 +434,7 @@ class Main extends Component {
               <div className="tool-box">
                 <div id="edit-tool-box">
                 <div id="menuBtn" onClick={() => this.props.backToMenu()}><i class="fas fa-arrow-circle-left"></i>Menu</div>
-                  <button type="button" class="btn btn-primary" onClick={this.publishToolBox.bind(this)}>Publish</button>
+                  <button type="button" class={this.props.workflowMode ? "btn btn-success" : "btn btn-primary"} onClick={this.publishToolBox.bind(this)}>{this.props.workflowMode ? "Submit" : "Publish"}</button>
                   <button type="button" class="btn btn-light" onClick={this.onEditToolBox.bind(this)}><i class="far fa-edit"></i></button>
                   <div class="dropdown">
                   <button class="btn btn-secondary dropdown-toggle" type="button" onClick={() => this.setState({versionDropdown: !this.state.versionDropdown}) } id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -434,6 +451,8 @@ class Main extends Component {
                 <div id="ToolBoxWrapper">
                 {(this.props.toolContent !== null) ?
                   (<ToolBox
+                  workflowMode={this.props.workflowMode}
+                  toolSelected={(elId) => this.toolSelected(elId)}
                   setVideoIconHighlights={() => this.setVideoIconHighlights()}
                   addTextData={this.state.addTextData}
                   editMode={this.state.editMode}

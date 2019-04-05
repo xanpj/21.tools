@@ -35,7 +35,7 @@
     elmnt.onmousedown = null
   }
 
-  export function MakeZoomable(container,min_scale, max_scale,factor) {
+  export function MakeZoomable(container,min_scale, max_scale,factor, toggle) {
       var target = container
       var size = {w:target.width,h:target.height}
       target.setAttribute("style", "transform-origin: 0 0;");
@@ -46,25 +46,46 @@
       var scale = 1
 
       const myitem = document.getElementById('tool-logos')
-
-      if (myitem.addEventListener)
-        {
-            // IE9, Chrome, Safari, Opera
-            window.addEventListener("mousewheel", MouseWheelHandler, false);
-            // Firefox
-            window.addEventListener("DOMMouseScroll", MouseWheelHandler, false);
-        }
-        // IE 6/7/8
-        else
-        {
-            window.attachEvent("onmousewheel", MouseWheelHandler);
-        }
+      if(toggle){
+        if (myitem.addEventListener)
+          {
+              // IE9, Chrome, Safari, Opera
+              window.addEventListener("mousewheel", MouseWheelHandler, false); //false
+              // Firefox
+              window.addEventListener("DOMMouseScroll", MouseWheelHandler, false); //false
+          }
+          // IE 6/7/8
+          else
+          {
+              window.attachEvent("onmousewheel", MouseWheelHandler);
+          }
+      } else {
+        if (myitem.removeEventListener)
+          {
+              // IE9, Chrome, Safari, Opera
+              window.removeEventListener("mousewheel", MouseWheelHandler, false);
+              // Firefox
+              window.removeEventListener("DOMMouseScroll", MouseWheelHandler, false);
+          }
+          // IE 6/7/8
+          else
+          {
+              window.removeEvent("onmousewheel", MouseWheelHandler);
+          }
+      }
 
       function MouseWheelHandler(e) {
+        /*
+          e = e || window.event;
+          if (e.preventDefault)
+              e.preventDefault();
+          e.returnValue = false;
+      */
+
           zoom_point.x = e.pageX - e.offsetX
           zoom_point.y = e.pageY - e.offsetY
 
-          e.preventDefault();
+          //e.preventDefault();
           // cross-browser wheel delta
           var e = window.event || e; // old IE support
           var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));

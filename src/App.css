@@ -27,6 +27,8 @@ body {
 
 /** UPLOAD **/
 #UploadHeader {
+  position: absolute;
+  bottom:0;
   min-height: 100px;
   background-color: #ccc;
   width: 100%;
@@ -60,10 +62,10 @@ body {
   /*whatever width you want*/
 }
 
-.search {
+.search, .search_2, .custom_input {
   width: 100%;
 }
-.search input {
+.search input, .search_2 input, .custom_input input {
   width: 90%;
   padding: 10px 90px;
   padding-right: 20px;
@@ -73,7 +75,20 @@ body {
   height: 40px;
 }
 
-.search div {
+.search_2 input {
+  width: 100%;
+}
+
+.custom_input input {
+  padding: 10px 10px;
+  width: 100%
+}
+
+.custom_input {
+  margin-top: 20px;
+}
+
+.search div, .search_2 div, .custom_input div {
   margin-left: 5px;
   line-height: 40px;
   position: absolute;
@@ -86,12 +101,12 @@ body {
     width: 200px;
 }
 
-.search input:focus {
+.search input:focus, .submit_input input:focus {
   outline: 0;
   background:transparent;
 }
 
-.search button {
+.search button, .search_2 button {
   position: relative;
   float: right;
   border: 0;
@@ -103,14 +118,21 @@ body {
   border: 1px solid #000;
 }
 
-.search button:hover {
-  background: #fff;
-}
-.search button:active {
-  box-shadow: 0px 0px 12px 0px rgba(225, 225, 225, 1);
+.submit_input button {
+  width: 100%;
+  margin: 20px auto;
+  cursor: pointer;
+  height: 40px;
+  background: transparent;
+  border: 1px solid #000;
 }
 
-.search button:focus {outline: 0;}
+.search button:hover, .submit_input button:hover {
+  background: #dedede;
+}
+.search button:active, .submit_input button:active {
+  box-shadow: 0px 0px 12px 0px rgba(225, 225, 225, 1);
+}
 
 .seperator {
   margin-top: 20px;
@@ -250,6 +272,14 @@ body {
   /*top: 0;*/
   height: 100%;
   width:50%;
+
+  /*optional for inline video*/
+  height: 50%;
+  width: 45%;
+  margin: 0 auto;
+  text-align: center;
+  left: 2.5%;
+  top: 25%;
 }
 
 .middle-col {
@@ -431,7 +461,6 @@ width: 100%;
 
 .tool-box-logo-el {
   position: absolute;
-  z-index: 2;
   width: 30px;
   height: 30px;
   opacity: 0.4;
@@ -465,6 +494,7 @@ width: 100%;
   z-index: 1;
   padding: 10px;
   border: 1px dashed #000000;
+  touch-action: none;
 }
 
 .group-resize-handle {
