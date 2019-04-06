@@ -19,6 +19,7 @@ module.exports = {
   VIEWS: {
     MENU: "MENU",
     EDIT: "EDIT",
+    TOOLBOX: "TOOLBOX",
     MAIN: "MAIN",
     LOADING: "LOADING",
     MENU_INTERNAL: {
@@ -26,5 +27,7 @@ module.exports = {
       CREATE_TOOLBOX: "MENU_INTERNAL.CREATE_TOOLBOX",
       REQUEST: "MENU_INTERNAL.REQUEST"
     }
-  }
+  },
+  CREATE_WORKFLOW_MENU: "CREATE_WORKFLOW_MENU",
+  CREATE_TOOLBOX: "CREATE_TOOLBOX"
 }

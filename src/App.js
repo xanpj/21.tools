@@ -5,6 +5,7 @@ import './App.css';
 import CONSTANTS from './constants'
 import Menu from './components/Menu'
 import Main from './components/Main'
+import Spinner from './components/Spinner'
 import DbInterface from './components/DbInterface'
 
 class App extends Component {
@@ -16,6 +17,7 @@ class App extends Component {
       view: CONSTANTS.VIEWS.MENU,
       data: null,
       workflowData: null,
+      toolboxData: null,
       toolboxResults: [],
       selectedToolbox: "",
       textToolbox: "",
@@ -107,6 +109,14 @@ class App extends Component {
     }
   }
 
+  changeView(view, data){
+    if(view == CONSTANTS.VIEWS.EDIT) {
+      this.setState({view:  view, workflowData: data})
+    } else if(view == CONSTANTS.VIEWS.TOOLBOX){
+      this.setState({view:  view, toolboxData: data})
+    }
+  }
+
   selectWorkflow(workflowId, workflowName){
     this.setState({
       selectedWorkflow: workflowName,
@@ -148,17 +158,27 @@ class App extends Component {
 
   renderView(){
     if(this.state.view == CONSTANTS.VIEWS.LOADING){
-        return (<div class="spinner"><img src="spinner-eclipse.svg" /></div>)
+        return (<Spinner />)
     }
-    if(this.state.view == CONSTANTS.VIEWS.EDIT){
+    else if(this.state.view == CONSTANTS.VIEWS.TOOLBOX){
+      return (<div>
+              <Main toolboxData={this.state.toolboxData}
+                    workflowData = {null}
+                    backToMenu={() => this.backToMenu()}
+                    submitWorkflow={(timecode, version) => this.submitWorkflow(timecode, version)}
+                    toolboxMode={true}
+                    db={this.db} />
+              </div>)
+    }
+    else if(this.state.view == CONSTANTS.VIEWS.EDIT){
       console.log("this.state.workflowData eDIT")
       console.log(this.state.workflowData)
       return (<div>
-        <Main workflowData={this.state.workflowData}
-              backToMenu={() => this.backToMenu()}
-              submitWorkflow={(timecode, version) => this.submitWorkflow(timecode, version)}
-              workflowMode={true}
-              db={this.db} />
+              <Main workflowData={this.state.workflowData}
+                    backToMenu={() => this.backToMenu()}
+                    submitWorkflow={(timecode, version) => this.submitWorkflow(timecode, version)}
+                    workflowMode={true}
+                    db={this.db} />
 
         {/*<div id="UploadHeader">
           <form>
@@ -208,7 +228,7 @@ class App extends Component {
                       selectToolbox={(toolbox) => this.selectToolbox(toolbox)}
                       searchToolbox={(toolName) => this.searchToolbox(toolName)}
                       toolboxResults = {this.state.toolboxResults}
-                      changeView={(view, data) => this.setState({view:  view, workflowData: data}) }/>)
+                      changeView={(view, data) => this.changeView(view, data)}/>)
     }
   }
 

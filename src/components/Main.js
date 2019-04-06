@@ -6,6 +6,7 @@ import { actionSetToolContent, actionAddToolElement, actionDeleteToolElement, ac
 
 import ToolBox from './ToolBox'
 import ContextMenu from './ContextMenu'
+import Spinner from './Spinner'
 import * as Serialization from './functionsSerialization'
 import * as Positions from '../resources/InfographicPositions';
 import * as Utils from '../utils'
@@ -37,7 +38,8 @@ class Main extends Component {
       versionDropdown: false,
       toolsFromDB: null,
       toolsSelected: null,
-      checkInterval: null
+      checkInterval: null,
+      workflowData: null
     }
 
     const toolContent = null
@@ -86,42 +88,44 @@ class Main extends Component {
       await this.props.db.authenticateAnonymousUser()
       var toolPage;
       console.log("this.props.workflowData")
-      console.log(this.props.workflowData)
-      if(this.props.workflowData && this.props.workflowData.toolPageVersion){
-        console.log("WORKING")
-        toolPage = await this.props.db.getSpecificToolPageVersion(this.props.workflowData.toolbox, this.props.workflowData.toolPageVersion)
+      if(this.props.workflowData){
+        if(this.props.workflowData.toolPageVersion){
+          console.log("WORKING")
+          console.log(this.props.workflowData)
+          toolPage = await this.props.db.getSpecificToolPageVersion(this.props.workflowData.toolbox, this.props.workflowData.toolPageVersion)
+          console.log(toolPage)
+        } else {
+          toolPage = await this.props.db.getLastToolPageVersion(this.props.workflowData.toolbox)
+        }
+        console.log("toolPage main")
         console.log(toolPage)
-      } else {
-        toolPage = await this.props.db.getLastToolPageVersion(this.props.workflowData.toolbox)
-      }
-      console.log("toolPage main")
-      console.log(toolPage)
-      const allToolPageVersions = await this.props.db.getAllToolPageVersions(TOOL_PAGE_NAME)
+        const allToolPageVersions = await this.props.db.getAllToolPageVersions(TOOL_PAGE_NAME)
 
-      if(toolPage && toolPage.length > 0){
-        const contentHashOnMount = Utils.md5(JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA]) + "_" + JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]))
-        console.log("contentHashOnMount")
-        console.log(toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA])
-        console.log(contentHashOnMount)
-        this.setState({
-          workflowData: this.props.workflowData,
-          timecode: this.props.workflowData.timecode,
-          toolPageMeta: {
-            name: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOL_PAGE],
-            version: toolPage[0][CONSTANTS.SCHEMA_FIELD_VERSION],
-          },
-          allToolPageVersions: allToolPageVersions,
-          contentHashOnMount: contentHashOnMount,
-        })
+        if(toolPage && toolPage.length > 0){
+          const contentHashOnMount = Utils.md5(JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA]) + "_" + JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]))
+          console.log("contentHashOnMount")
+          console.log(toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA])
+          console.log(contentHashOnMount)
+          this.setState({
+            workflowData: this.props.workflowData,
+            timecode: this.props.workflowData.timecode,
+            toolPageMeta: {
+              name: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOL_PAGE],
+              version: toolPage[0][CONSTANTS.SCHEMA_FIELD_VERSION],
+            },
+            allToolPageVersions: allToolPageVersions,
+            contentHashOnMount: contentHashOnMount,
+          })
 
-        this.props.actionSetToolContent({
-          toolContent: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA],
-          toolConnections: toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS],
-        })
+          this.props.actionSetToolContent({
+            toolContent: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA],
+            toolConnections: toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS],
+          })
 
-        console.log("MONGODB: pages")
-        const pages = await this.props.db.getPages()
-        console.log(pages)
+          console.log("MONGODB: pages")
+          const pages = await this.props.db.getPages()
+          console.log(pages)
+        }
       }
     }
   }
@@ -474,7 +478,7 @@ class Main extends Component {
                   editMode={this.state.editMode}
                   deleteElement={(refId) => this.deleteElement(refId)}
                   showContextMenu={e => this.showContextMenu(e)}
-                  />) : "Loading"}
+                  />) : <Spinner view={CONSTANTS.VIEWS.TOOLBOX} />}
                 </div>
               </div>
             </div>

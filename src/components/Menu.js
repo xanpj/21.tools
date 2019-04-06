@@ -119,19 +119,37 @@ function CreateWorkflowMenu(props){
     </div>)
 }
 
+function CreateToolbox(props){
+  return (
+    <div>
+      <div id="menuBtnLeft" onClick={() => props.backToMenu()}><i class="fas fa-arrow-circle-left"></i>Menu</div>
+      <h2>Create a new toolbox</h2>
+      <small>Make sure to check if a toolbox isn't already existing for your purpose or if you can fit your tools in an existing toolbox.</small>
+      <form onSubmit={props.handleSubmit} >
+        <div class="custom_input">
+            <input type="text" name="toolbox" placeholder="Toolbox name" required={true} />
+        </div>
+        <div class="custom_input">
+            <input type="text" name="description" placeholder="Short Description" />
+        </div>
+        <div class="submit_input">
+            <button type="submit">Create new toolbox</button>
+        </div>
+      </form>
+    </div>)
+}
+
 class Menu extends Component {
 
   constructor(props){
     super(props)
-
-    this.handleSubmit = this.handleSubmit.bind(this)
 
     this.state = {
       view: null,
     }
   }
 
-  handleSubmit(event){
+  handleSubmit(event, source){
     event.preventDefault()
     const form = event.target;
      const data = {}
@@ -140,11 +158,22 @@ class Menu extends Component {
        data[element.name] = element.value;
      }
       console.log(data)
-      const postData = {
-        ...data,
-        timecode: []
+      var postData = null;
+      if(source == CONSTANTS.CREATE_WORKFLOW_MENU){
+        postData = {
+          ...data,
+          timecode: []
+        }
+      } else if(source == CONSTANTS.CREATE_TOOLBOX){
+        postData = {
+          ...data
+        }
       }
-      this.props.changeView(CONSTANTS.VIEWS.EDIT,postData)
+      //TODO 
+      //check if toolbox exists
+      //create new toolbox iwth initial tool
+      //fill toolContent, either directly or via filling workflowData
+      this.props.changeView(CONSTANTS.VIEWS.TOOLBOX, postData)
   }
 
   renderView(){
@@ -157,9 +186,15 @@ class Menu extends Component {
                     searchToolbox={(toolName) => this.props.searchToolbox(toolName)}
                     toolboxResults={this.props.toolboxResults}
                     backToMenu={() => this.setState({view: null}) }
-                    handleSubmit={this.handleSubmit}
-                    back={() => this.setState({view: null})} />
-    } else {
+                    handleSubmit={(event) => this.handleSubmit(event, CONSTANTS.CREATE_WORKFLOW_MENU)}
+                     />
+    } else if(this.state.view === CONSTANTS.VIEWS.MENU_INTERNAL.CREATE_TOOLBOX){
+      return <CreateToolbox
+                    backToMenu={() => this.setState({view: null}) }
+                    handleSubmit={(event) => this.handleSubmit(event, CONSTANTS.CREATE_TOOLBOX)}
+                    />
+    }
+    else {
       return <MainMenu
                     textWorkflow={this.props.textWorkflow}
                     selectedWorkflow={this.props.selectedWorkflow}
