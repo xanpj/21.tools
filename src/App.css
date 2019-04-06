@@ -183,6 +183,15 @@ body {
   padding-bottom: 200px;
 }
 
+.edit-view-wrapper {
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
+
+.menu-btn-wrapper  {
+  display: flex;
+  align-items: stretch;
+}
 .menu-btn {
   display: -webkit-flex;
   display: -ms-flexbox;

@@ -12,16 +12,16 @@ function MainMenu(props) {
         <div class="search">
           <form action="" noValidate>
             <div>How to do</div>
-            <input type="search" placeholder="XYZ" />
+            <input type="search" value={props.selectedWorkflow || props.textWorkflow} onChange={(e) => props.searchWorkflow(e.target.value)} placeholder="XYZ" />
             <div class="after-input">in the 21st century</div>
             <button type="submit"><i class="fas fa-search"></i></button>
           </form>
         </div>
         <div class="dropdown">
-          <div class={true ? "dropdown-menu main open" : "dropdown-menu main closed"} aria-labelledby="dropdownMenuMain">
-            {[{toolPage: "video", count: "5"}].map((el, i) =>
-              <button onClick={() => props.selectToolbox(el.toolPage)} class="dropdown-item" type="button">
-              {el.toolPage}<span class="badge-new indropdown">{el.count} versions</span>
+          <div class={(props.workflowResults && props.workflowResults.length > 0) ? "dropdown-menu main open" : "dropdown-menu main closed"} aria-labelledby="dropdownMenuMain">
+            {props.workflowResults.map((el, i) =>
+              <button onClick={() => props.selectWorkflow(el._id, el.videoTitle)} class="dropdown-item" type="button">
+              {el.videoTitle}<span class="badge-new indropdown">{el.toolbox}</span>
               </button>
             )}
           </div>
@@ -31,7 +31,7 @@ function MainMenu(props) {
       </div>
     </div>
 
-    {(props.menuEnabled) ? (
+    {(props.workflowResults && props.workflowResults.length == 0) ? (
     <div class="row seperator">
         <div class="menu-btn-wrapper col-md-4">
           <div class="menu-btn" onClick={() => props.changeInternalView(CONSTANTS.VIEWS.MENU_INTERNAL.CREATE_WORKFLOW)}>
@@ -66,7 +66,7 @@ function MainMenu(props) {
             </div>
           </div>
         </div>
-    </div>) : ""}
+    </div>) : <div style={{height:"123px"}}></div>}
 
   </div>)
 }
@@ -150,9 +150,23 @@ class Menu extends Component {
   renderView(){
     console.log(this.props.toolboxResults)
     if(this.state.view === CONSTANTS.VIEWS.MENU_INTERNAL.CREATE_WORKFLOW){
-      return <CreateWorkflowMenu selectedToolbox={this.props.selectedToolbox} selectToolbox={(toolPage) => this.props.selectToolbox(toolPage)} textToolbox={this.props.textToolbox} backToMenu={() => this.setState({view: null}) } toolboxResults={this.props.toolboxResults} searchToolbox={(toolName) => this.props.searchToolbox(toolName)} handleSubmit={this.handleSubmit} back={() => this.setState({view: null})} />
+      return <CreateWorkflowMenu
+                    textToolbox={this.props.textToolbox}
+                    selectedToolbox={this.props.selectedToolbox}
+                    selectToolbox={(toolPage) => this.props.selectToolbox(toolPage)}
+                    searchToolbox={(toolName) => this.props.searchToolbox(toolName)}
+                    toolboxResults={this.props.toolboxResults}
+                    backToMenu={() => this.setState({view: null}) }
+                    handleSubmit={this.handleSubmit}
+                    back={() => this.setState({view: null})} />
     } else {
-      return <MainMenu changeInternalView={(view) => this.setState({view: view})} />
+      return <MainMenu
+                    textWorkflow={this.props.textWorkflow}
+                    selectedWorkflow={this.props.selectedWorkflow}
+                    selectWorkflow={(workflowId, workflowName) => this.props.selectWorkflow(workflowId, workflowName)}
+                    searchWorkflow={(workflowName) => this.props.searchWorkflow(workflowName)}
+                    workflowResults={this.props.workflowResults}
+                    changeInternalView={(view) => this.setState({view: view})} />
     }
   }
 
@@ -164,7 +178,7 @@ class Menu extends Component {
         <div class="middle">
         <div class="inner">
 
-          <div class="menu-wrapper">
+          <div class={(!this.state.view) ? "menu-wrapper" : "menu-wrapper edit-view-wrapper"}>
           <div class="container">
 
           {this.renderView()}

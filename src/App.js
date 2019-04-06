@@ -18,20 +18,23 @@ class App extends Component {
       workflowData: null,
       toolboxResults: [],
       selectedToolbox: "",
-      textToolbox: ""
+      textToolbox: "",
+      workflowResults: [],
+      selectedWorkflow: "",
+      textWorkflow: ""
     }
 
     this.db = new DbInterface()
   }
 
   async componentDidMount(){
-    await this.db.authenticateAnonymousUser()
   }
 
   async componentWillMount(){
     //5ca8507120a84470fdb90363
     /** params from URL **/
     var currentLocation = window.location
+    await this.db.authenticateAnonymousUser()
     console.log(currentLocation)
     if(currentLocation.pathname !== "/"){
         this.setState({
@@ -40,7 +43,6 @@ class App extends Component {
 
       const videoUrl = currentLocation.pathname.slice(1)
       const videoUrlArr = videoUrl.split("-")
-      await this.db.authenticateAnonymousUser()
       if(videoUrlArr.length > 0){
         const videoId = videoUrlArr[1]
         const workflowData = await this.db.getWorkflow(videoId)
@@ -82,12 +84,47 @@ class App extends Component {
     window.location.pathname = "/"+urlString
   }
 
+  /** Workflow autocomplete **/
+  async searchWorkflow(workflowName){
+    console.log("workflowName")
+    console.log(workflowName)
+    this.setState({
+      textWorkflow: workflowName
+    })
+    if(workflowName.length > 0){
+      const workflowResults = await this.db.searchWorkflow(workflowName)
+      console.log("workflowResults")
+      console.log(workflowResults)
+      this.setState({
+        workflowResults: workflowResults,
+        selectedWorkflow: null
+      })
+    } else {
+      this.setState({
+        workflowResults: [],
+        selectedWorkflow: null
+      })
+    }
+  }
+
+  selectWorkflow(workflowId, workflowName){
+    this.setState({
+      selectedWorkflow: workflowName,
+      workflowResults: []
+    })
+    console.log(workflowId.id)
+    const urlString = btoa(unescape(encodeURIComponent(workflowName))) + "-" + workflowId.toString()
+    window.location.pathname = "/"+urlString
+  }
+  /** END Workflow autocomplete **/
+
   selectToolbox(toolbox){
     this.setState({
       selectedToolbox: toolbox
     })
   }
 
+  /** Toolbox autocomplete **/
   async searchToolbox(toolName){
     console.log(toolName)
     this.setState({
@@ -106,7 +143,7 @@ class App extends Component {
       })
     }
   }
-
+  /** END Toolbox autocomplete **/
 
 
   renderView(){
@@ -161,7 +198,12 @@ class App extends Component {
         </div>
       )
     } else {
-        return (<Menu textToolbox={this.state.textToolbox}
+        return (<Menu textWorkflow={this.state.textWorkflow}
+                      selectedWorkflow={this.state.selectedWorkflow}
+                      selectWorkflow={(workflowId, workflowName) => this.selectWorkflow(workflowId, workflowName)}
+                      searchWorkflow={(workflowName) => this.searchWorkflow(workflowName)}
+                      workflowResults = {this.state.workflowResults}
+                      textToolbox={this.state.textToolbox}
                       selectedToolbox={this.state.selectedToolbox}
                       selectToolbox={(toolbox) => this.selectToolbox(toolbox)}
                       searchToolbox={(toolName) => this.searchToolbox(toolName)}

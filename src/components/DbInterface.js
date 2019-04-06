@@ -80,10 +80,11 @@ export default class DbInterface {
       return await this.client.callFunction("searchToolbox", [toolbox, 0])
     }
 
-    async searchWorkflow(toolbox){
-      const regex = new RegExp(toolbox, 'i')
-      return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES)
-                    .find(  {[CONSTANTS.SCHEMA_FIELD_NAME]: regex},
+    async searchWorkflow(workflowName){
+      const regex = new RegExp(workflowName, 'i')
+      //return await this.db.collection(CONSTANTS.SCHEMA_TABLE_WORKFLOWS).find({}).toArray()
+      return await this.db.collection(CONSTANTS.SCHEMA_TABLE_WORKFLOWS)
+                    .find(  {[CONSTANTS.SCHEMA_FIELD_VIDEO_TITLE]: regex},
                             { limit: 1000,
                               projection: {
                                 [CONSTANTS.SCHEMA_FIELD_ID]: 1,
@@ -92,8 +93,9 @@ export default class DbInterface {
                                 [CONSTANTS.SCHEMA_FIELD_TOOLPAGE_VERSION]: 1
                               }
                             }
-                          ) //TODO change version
+                          )
                     .toArray()
+                    //TODO change version
     }
 
 
