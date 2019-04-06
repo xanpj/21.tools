@@ -15,7 +15,10 @@ class App extends Component {
     this.state = {
       view: CONSTANTS.VIEWS.MENU,
       data: null,
-      workflowData: null
+      workflowData: null,
+      toolboxResults: [],
+      selectedToolbox: "",
+      textToolbox: ""
     }
 
     this.db = new DbInterface()
@@ -79,6 +82,31 @@ class App extends Component {
     window.location.pathname = "/"+urlString
   }
 
+  selectToolbox(toolbox){
+    this.setState({
+      selectedToolbox: toolbox
+    })
+  }
+
+  async searchToolbox(toolName){
+    console.log(toolName)
+    this.setState({
+      textToolbox: toolName
+    })
+    if(toolName.length > 0){
+      const toolboxResults = await this.db.searchToolbox(toolName)
+      this.setState({
+        toolboxResults: toolboxResults,
+        selectedToolbox: null
+      })
+    } else {
+      this.setState({
+        toolboxResults: [],
+        selectedToolbox: null
+      })
+    }
+  }
+
 
 
   renderView(){
@@ -89,7 +117,11 @@ class App extends Component {
       console.log("this.state.workflowData eDIT")
       console.log(this.state.workflowData)
       return (<div>
-        <Main workflowData={this.state.workflowData} backToMenu={() => this.backToMenu()} submitWorkflow={(timecode, version) => this.submitWorkflow(timecode, version)} workflowMode={true} db={this.db} />
+        <Main workflowData={this.state.workflowData}
+              backToMenu={() => this.backToMenu()}
+              submitWorkflow={(timecode, version) => this.submitWorkflow(timecode, version)}
+              workflowMode={true}
+              db={this.db} />
 
         {/*<div id="UploadHeader">
           <form>
@@ -129,7 +161,12 @@ class App extends Component {
         </div>
       )
     } else {
-        return (<Menu changeView={(view, data) => this.setState({view:  view, workflowData: data}) }/>)
+        return (<Menu textToolbox={this.state.textToolbox}
+                      selectedToolbox={this.state.selectedToolbox}
+                      selectToolbox={(toolbox) => this.selectToolbox(toolbox)}
+                      searchToolbox={(toolName) => this.searchToolbox(toolName)}
+                      toolboxResults = {this.state.toolboxResults}
+                      changeView={(view, data) => this.setState({view:  view, workflowData: data}) }/>)
     }
   }
 

@@ -12,6 +12,9 @@ module.exports = {
   SCHEMA_FIELD_TOOL_PAGE: "toolPage",
   SCHEMA_FIELD_TOOLS_DATA: "toolContent",
   SCHEMA_FIELD_ANCHORS: "toolAnchors",
+  SCHEMA_FIELD_VIDEO_TITLE: "videoTitle",
+  SCHEMA_FIELD_TOOL_PAGE_VERSION: "toolPageVersion",
+  SCHEMA_FIELD_TOOLBOX: "toolbox",
   DB_NAME: "toolsOverviewDb",
   VIEWS: {
     MENU: "MENU",

@@ -72,16 +72,35 @@ body {
   /*whatever width you want*/
 }
 
-.search, .search_2, .custom_input {
+.search {
+  font-size: 16px;
   width: 100%;
 }
-.search input, .search_2 input, .custom_input input {
+
+.search_2, .custom_input {
+  font-size: 14px;
+  width: 100%;
+}
+
+.search_2 input, .custom_input input {
   width: 90%;
   padding: 10px 90px;
   padding-right: 20px;
   border: 0;
   background: transparent;
   border-bottom: 1px solid black;
+  height: 40px;
+}
+
+.search input {
+  font-weight: bold;
+  width: 90%;
+  padding: 10px 95px;
+  padding-right: 200px;
+  border: 0;
+  background: transparent;
+  border: 1px solid black;
+  /*  border-bottom: 1px solid black;*/
   height: 40px;
 }
 
@@ -99,7 +118,7 @@ body {
 }
 
 .search div, .search_2 div, .custom_input div {
-  margin-left: 5px;
+  margin-left: 10px;
   line-height: 40px;
   position: absolute;
   margin-right: 5px;
@@ -108,6 +127,12 @@ body {
 .after-input {
     display:inline;
     margin-left: -150px !important;
+    width: 200px;
+}
+
+.after-input2 {
+    display:inline;
+    margin-left: -120px !important;
     width: 200px;
 }
 
@@ -126,6 +151,7 @@ body {
   width: 10%;
   background: transparent;
   border: 1px solid #000;
+  border-left: none;
 }
 
 .submit_input button {
@@ -193,12 +219,48 @@ body {
   padding: .2em .6em .3em;;
   margin-right: 10px;
   font-weight: 700;
-
 }
 
+.badge-new.indropdown {
+  float:right;
+  line-height: 12px;
+}
 
 .search-bar {
   width: 100%
+}
+
+.dropdown-menu.main.closed {
+  display:none;
+}
+
+.dropdown-menu.main.open {
+  display: block;
+  font-size: 14px;
+  left: 0;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  width: 100%;
+  max-height: 200px;
+  overflow-y: hidden;
+}
+
+
+#menuBtnLeft {
+text-align: left;
+display:block;
+width: 100%;
+margin-bottom: 20px;
+}
+
+#menuBtnLeft i {
+  float: left;
+  line-height: 24px;
+  margin-right: 10px;
+}
+
+#menuBtnLeft:hover {
+  cursor: pointer;
+  color: #0069d9;
 }
 
 /**MAIN**/
@@ -432,7 +494,6 @@ width: 100%;
 .dropdown-toggle::after {
   vertical-align: .155em;
 }
-
 
 .dropdown-menu.closed {
   display:none;

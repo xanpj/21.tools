@@ -10,18 +10,28 @@ function MainMenu(props) {
         <div class="form-group col-md-12 ">
 
         <div class="search">
-          <form action="">
+          <form action="" noValidate>
             <div>How to do</div>
-            <input type="search" placeholder="Videos" required />
+            <input type="search" placeholder="XYZ" />
             <div class="after-input">in the 21st century</div>
-            <button type="submit">Search</button>
+            <button type="submit"><i class="fas fa-search"></i></button>
           </form>
+        </div>
+        <div class="dropdown">
+          <div class={true ? "dropdown-menu main open" : "dropdown-menu main closed"} aria-labelledby="dropdownMenuMain">
+            {[{toolPage: "video", count: "5"}].map((el, i) =>
+              <button onClick={() => props.selectToolbox(el.toolPage)} class="dropdown-item" type="button">
+              {el.toolPage}<span class="badge-new indropdown">{el.count} versions</span>
+              </button>
+            )}
+          </div>
         </div>
 
         </div>
       </div>
     </div>
 
+    {(props.menuEnabled) ? (
     <div class="row seperator">
         <div class="menu-btn-wrapper col-md-4">
           <div class="menu-btn" onClick={() => props.changeInternalView(CONSTANTS.VIEWS.MENU_INTERNAL.CREATE_WORKFLOW)}>
@@ -56,37 +66,49 @@ function MainMenu(props) {
             </div>
           </div>
         </div>
-    </div>
+    </div>) : ""}
+
   </div>)
 }
 
 function CreateWorkflowMenu(props){
   return (
     <div>
+      <div id="menuBtnLeft" onClick={() => props.backToMenu()}><i class="fas fa-arrow-circle-left"></i>Menu</div>
       <h2>Create a new workflow</h2>
-      <form onSubmit={props.handleSubmit} noValidate>
+      <form onSubmit={props.handleSubmit} >
         <div class="search_2">
             <div>How to do</div>
-            <input type="search" name="videoTitle" placeholder="Videos" required />
-            <div class="after-input">in the 21st century</div>
+            <input type="search" name="videoTitle" placeholder="Videos" required={true} />
+            <div class="after-input2">in the 21st century</div>
         </div>
         <div class="custom_input">
-            <input type="custom_input" name="toolbox" placeholder="Select Toolbox" required />
+            <input type="text" name="toolbox" value={props.selectedToolbox || props.textToolbox} onChange={(e) => props.searchToolbox(e.target.value)} placeholder="Select Toolbox" required={true} />
+        </div>
+        <div class="dropdown">
+          <div class={(props.toolboxResults.length > 0 && !props.selectedToolbox) ? "dropdown-menu main open" : "dropdown-menu main closed"} aria-labelledby="dropdownMenuMain">
+            {props.toolboxResults.map((el, i) =>
+              <button onClick={() => props.selectToolbox(el.toolPage)} class="dropdown-item" type="button">
+              {el.toolPage}<span class="badge-new indropdown">{el.count} versions</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div class="custom_input">
+            <input type="text" name="youtubeId" placeholder="Youtube Video ID" required={true} />
         </div>
         <div class="custom_input">
-            <input type="custom_input" name="youtubeId" placeholder="Youtube Video ID" required />
+            <input type="text" name="tags" placeholder="Tags" />
         </div>
         <div class="custom_input">
-            <input type="custom_input" name="tags" placeholder="Tags" required />
+            <input type="email" name="email" placeholder="Email" required={true} />
         </div>
         <div class="custom_input">
-            <input type="custom_input" name="email" placeholder="Email" required />
+            <input type="text" name="website" placeholder="Website" />
         </div>
         <div class="custom_input">
-            <input type="custom_input" name="website" placeholder="Website" required />
-        </div>
-        <div class="custom_input">
-            <input type="custom_input" name="fullName" placeholder="Full Name/Artist Name" required />
+            <input type="text" name="fullName" placeholder="Full Name/Artist Name" />
         </div>
         <div class="submit_input">
             <button type="submit">Select tools</button>
@@ -105,10 +127,8 @@ class Menu extends Component {
     this.handleSubmit = this.handleSubmit.bind(this)
 
     this.state = {
-      view: null
+      view: null,
     }
-
-
   }
 
   handleSubmit(event){
@@ -120,12 +140,17 @@ class Menu extends Component {
        data[element.name] = element.value;
      }
       console.log(data)
-      this.props.changeView(CONSTANTS.VIEWS.EDIT,data)
+      const postData = {
+        ...data,
+        timecode: []
+      }
+      this.props.changeView(CONSTANTS.VIEWS.EDIT,postData)
   }
 
   renderView(){
+    console.log(this.props.toolboxResults)
     if(this.state.view === CONSTANTS.VIEWS.MENU_INTERNAL.CREATE_WORKFLOW){
-      return <CreateWorkflowMenu handleSubmit={this.handleSubmit} back={() => this.setState({view: null})} />
+      return <CreateWorkflowMenu selectedToolbox={this.props.selectedToolbox} selectToolbox={(toolPage) => this.props.selectToolbox(toolPage)} textToolbox={this.props.textToolbox} backToMenu={() => this.setState({view: null}) } toolboxResults={this.props.toolboxResults} searchToolbox={(toolName) => this.props.searchToolbox(toolName)} handleSubmit={this.handleSubmit} back={() => this.setState({view: null})} />
     } else {
       return <MainMenu changeInternalView={(view) => this.setState({view: view})} />
     }

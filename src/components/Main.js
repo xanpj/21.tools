@@ -80,6 +80,7 @@ class Main extends Component {
   }
 
   async componentDidMount(){
+    console.log("componentDidMount")
     if(this.state.toolPageMeta == null){
       const TOOL_PAGE_NAME = "video"
       await this.props.db.authenticateAnonymousUser()
@@ -98,7 +99,10 @@ class Main extends Component {
       const allToolPageVersions = await this.props.db.getAllToolPageVersions(TOOL_PAGE_NAME)
 
       if(toolPage && toolPage.length > 0){
-        const contentHashOnMount = Utils.md5(JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA] + "_" + toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]))
+        const contentHashOnMount = Utils.md5(JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA]) + "_" + JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]))
+        console.log("contentHashOnMount")
+        console.log(toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA])
+        console.log(contentHashOnMount)
         this.setState({
           workflowData: this.props.workflowData,
           timecode: this.props.workflowData.timecode,
@@ -134,7 +138,8 @@ class Main extends Component {
     if(this.state.editMode){
       alert("Please leave edit mode first")
     } else {
-      const contentHashOnMount = Utils.md5(JSON.stringify(this.props.toolContent + "_" + this.props.toolConnections))
+      console.log(this.props.toolContent)
+      const contentHashOnMount = Utils.md5(JSON.stringify(this.props.toolContent) + "_" + JSON.stringify(this.props.toolConnections))
       const contentChanged = contentHashOnMount !== this.state.contentHashOnMount
       var versionString = ""
 
@@ -448,16 +453,16 @@ class Main extends Component {
                   <button type="button" class={this.props.workflowMode ? "btn btn-success" : "btn btn-primary"} onClick={this.publishToolBox.bind(this)}>{this.props.workflowMode ? "Submit" : "Publish"}</button>
                   <button type="button" class="btn btn-light" onClick={this.onEditToolBox.bind(this)}><i class="far fa-edit"></i></button>
                   <div class="dropdown">
-                  <button class="btn btn-secondary dropdown-toggle" type="button" onClick={() => this.setState({versionDropdown: !this.state.versionDropdown}) } id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {versionOutput}
-                  </button>
-                  <div class={this.state.versionDropdown ? "dropdown-menu open" : "dropdown-menu closed"} aria-labelledby="dropdownMenu2">
-                    {(this.state.allToolPageVersions) ? this.state.allToolPageVersions.map((el, i) =>
-                      <button class="dropdown-item" onClick={() => this.changeToolPageVersion(el._id)} type="button">
-                      {this.state.toolPageMeta.name + " v" + el.version}</button>
-                    ) : ""/*_id.getTimestamp().toLocaleString()*/}
+                    <button class="btn btn-secondary dropdown-toggle" type="button" onClick={() => this.setState({versionDropdown: !this.state.versionDropdown}) } id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      {versionOutput}
+                    </button>
+                    <div class={this.state.versionDropdown ? "dropdown-menu open" : "dropdown-menu closed"} aria-labelledby="dropdownMenu2">
+                      {(this.state.allToolPageVersions) ? this.state.allToolPageVersions.map((el, i) =>
+                        <button class="dropdown-item" onClick={() => this.changeToolPageVersion(el._id)} type="button">
+                        {this.state.toolPageMeta.name + " v" + el.version}</button>
+                      ) : ""/*_id.getTimestamp().toLocaleString()*/}
+                    </div>
                   </div>
-                </div>
                 </div>
                 <div id="ToolBoxWrapper">
                 {(this.props.toolContent !== null) ?
