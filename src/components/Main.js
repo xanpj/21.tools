@@ -28,6 +28,7 @@ class Main extends Component {
       flowInstance: null,
       videoInitialized: false,
       videoEvent: null,
+      videoDuration: null,
       timecode: [],
       editMode: false,
       contextMenu: null,
@@ -35,7 +36,6 @@ class Main extends Component {
       addTextData: null,
       versionDropdown: false,
       toolsFromDB: null,
-      videoDuration: null,
       toolsSelected: null,
       checkInterval: null
     }
@@ -100,14 +100,14 @@ class Main extends Component {
       if(toolPage && toolPage.length > 0){
         const contentHashOnMount = Utils.md5(JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA] + "_" + toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]))
         this.setState({
-          contentHashOnMount: contentHashOnMount,
           workflowData: this.props.workflowData,
+          timecode: this.props.workflowData.timecode,
           toolPageMeta: {
             name: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOL_PAGE],
             version: toolPage[0][CONSTANTS.SCHEMA_FIELD_VERSION],
-            videoDuration: null,
           },
-          allToolPageVersions: allToolPageVersions
+          allToolPageVersions: allToolPageVersions,
+          contentHashOnMount: contentHashOnMount,
         })
 
         this.props.actionSetToolContent({
@@ -338,7 +338,7 @@ class Main extends Component {
       if(elDom){
         elDom.classList.remove("el-active")
       }
-      return (currentTime> el.time && currentTime< nextElementTime)
+      return (currentTime > el.time && currentTime< nextElementTime)
     })
     if(activeLogos !== null && activeLogos.length > 0){
       const activeLogoId = activeLogos[0]
@@ -371,7 +371,6 @@ class Main extends Component {
  }
 
   _onReady(event){
-    console.log(event)
     if(!this.state.videoDuration){
       this.setState({videoDuration: event.target.getDuration()})
     }
@@ -428,7 +427,7 @@ class Main extends Component {
                 <div className="video-box">
                   <div class="auto-resizable-iframe">
                       <YouTube
-                       videoId={(this.state.workflowData) ? this.state.workflowData.youtubeId : "" }
+                       videoId={(this.props.workflowData) ? this.props.workflowData.youtubeId : "" }
                        opts={ytOpts}
                        onReady={(e) => this._onReady(e)} />
                   </div>
