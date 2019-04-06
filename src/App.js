@@ -14,27 +14,82 @@ class App extends Component {
 
     this.state = {
       view: CONSTANTS.VIEWS.MENU,
-      data: null
+      data: null,
+      workflowData: null
     }
 
     this.db = new DbInterface()
   }
+
   async componentDidMount(){
     await this.db.authenticateAnonymousUser()
+  }
+
+  async componentWillMount(){
+    //5ca8507120a84470fdb90363
+    /** params from URL **/
+    var currentLocation = window.location
+    console.log(currentLocation)
+    if(currentLocation.pathname !== "/"){
+        this.setState({
+          view: CONSTANTS.VIEWS.LOADING,
+        })
+
+      const videoUrl = currentLocation.pathname.slice(1)
+      const videoUrlArr = videoUrl.split("-")
+      await this.db.authenticateAnonymousUser()
+      if(videoUrlArr.length > 0){
+        const videoId = videoUrlArr[1]
+        const workflowData = await this.db.getWorkflow(videoId)
+        if(workflowData.length > 0){
+          console.log("workflowData")
+          console.log(workflowData)
+          this.setState({
+            view: CONSTANTS.VIEWS.MAIN,
+            workflowData: workflowData[0],
+          })
+        }
+
+
+      }
+    }
+  }
+
+  async componentDidMount(){
   }
 
   backToMenu(){
       this.setState({view: CONSTANTS.VIEWS.MENU})
   }
 
-  submitWorkflow(timecode, version){
+  async submitWorkflow(timecode, version){
+    console.log(this.state.workflowData)
+    const data = {
+      ...this.state.workflowData,
+      toolPageVersion: version,
+      timecode: timecode,
+    }
+    const videoTitle = this.state.workflowData.videoTitle
+    const lastInsertedId = await this.db.submitWorkflow(data)
+    console.log(lastInsertedId)
+    const urlString = btoa(unescape(encodeURIComponent(videoTitle))) + "-" + lastInsertedId.insertedId.toString()
+    console.log(urlString)
+    /* REVERSE unescape(decodeURIComponent( atob(urlString.split("-")[0]) ) ) */
     console.log("Submitted")
+    window.location.pathname = "/"+urlString
   }
 
+
+
   renderView(){
+    if(this.state.view == CONSTANTS.VIEWS.LOADING){
+        return (<div class="spinner"><img src="spinner-eclipse.svg" /></div>)
+    }
     if(this.state.view == CONSTANTS.VIEWS.EDIT){
+      console.log("this.state.workflowData eDIT")
+      console.log(this.state.workflowData)
       return (<div>
-        <Main backToMenu={() => this.backToMenu()} submitWorkflow={(timecode, version) => this.submitWorkflow(timecode, version)} workflowMode={true} db={this.db} />
+        <Main workflowData={this.state.workflowData} backToMenu={() => this.backToMenu()} submitWorkflow={(timecode, version) => this.submitWorkflow(timecode, version)} workflowMode={true} db={this.db} />
 
         {/*<div id="UploadHeader">
           <form>
@@ -70,17 +125,15 @@ class App extends Component {
     else if(this.state.view == CONSTANTS.VIEWS.MAIN){
       return (
         <div>
-          <Main backToMenu={() => this.backToMenu()} db={this.db}/>
+          <Main workflowData={this.state.workflowData} backToMenu={() => this.backToMenu()} db={this.db}/>
         </div>
       )
     } else {
-        return (<Menu changeView={(view, data) => this.setState({view:  view, data: data}) }/>)
+        return (<Menu changeView={(view, data) => this.setState({view:  view, workflowData: data}) }/>)
     }
   }
 
   render() {
-    //components Menu / Edit / MAIN
-    //params from url
     return (
       <div className="App">
       {this.renderView()}

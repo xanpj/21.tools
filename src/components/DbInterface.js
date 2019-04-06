@@ -1,7 +1,8 @@
 import {
   Stitch,
   AnonymousCredential,
-  RemoteMongoClient
+  RemoteMongoClient,
+  BSON
 } from "mongodb-stitch-browser-sdk";
 import * as CONSTANTS from '../constants'
 import * as Positions from '../resources/InfographicPositions';
@@ -26,6 +27,7 @@ export default class DbInterface {
       await this.client.auth.loginWithCredential(new AnonymousCredential())
     }
 
+    /** TOOLPAGES **/
     async getPages(){
       return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES)
                     .find({})
@@ -39,7 +41,13 @@ export default class DbInterface {
                     .toArray()
     }
 
-    async getSpecificToolPageVersion(toolPageId){
+    async getSpecificToolPageVersion(toolPageName, version){
+      return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES)
+                    .find( {[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName, [CONSTANTS.SCHEMA_FIELD_VERSION]: version} )
+                    .toArray()
+    }
+
+    async getSpecificToolPage(toolPageId){
       return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES)
                     .find( {[CONSTANTS.SCHEMA_FIELD_ID]: toolPageId} )
                     .toArray()
@@ -67,6 +75,18 @@ export default class DbInterface {
                     .toArray()
     }
 
+    insertInitial(){
+      this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES).deleteMany({"toolPage": "video"})
+      this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES).insertOne({
+        owner_id: this.client.auth.user.id,
+        [CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: "video",
+        [CONSTANTS.SCHEMA_FIELD_VERSION]: "0",
+        [CONSTANTS.SCHEMA_FIELD_TOOLS_DATA]: Positions.filmPositions,
+        [CONSTANTS.SCHEMA_FIELD_ANCHORS]: Positions.toolConnections
+      })
+    }
+
+    /** TOOLDB **/
     insertToolDBInitial(){
       this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_DATABASE).insertOne({
         owner_id: this.client.auth.user.id,
@@ -77,15 +97,19 @@ export default class DbInterface {
       })
     }
 
-    insertInitial(){
-      this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES).deleteMany({"toolPage": "video"})
-      this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES).insertOne({
-        owner_id: this.client.auth.user.id,
-        [CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: "video",
-        [CONSTANTS.SCHEMA_FIELD_VERSION]: "0",
-        [CONSTANTS.SCHEMA_FIELD_TOOLS_DATA]: Positions.filmPositions,
-        [CONSTANTS.SCHEMA_FIELD_ANCHORS]: Positions.toolConnections
-      })
+    /** WORKFLOWS **/
+    async submitWorkflow(data){
+      return await this.db.collection(CONSTANTS.SCHEMA_TABLE_WORKFLOWS).insertOne({
+       owner_id: this.client.auth.user.id,
+       ...data
+     })
+    }
+
+    async getWorkflow(id){
+      return await this.db.collection(CONSTANTS.SCHEMA_TABLE_WORKFLOWS)
+                    .find( {[CONSTANTS.SCHEMA_FIELD_ID]: new BSON.ObjectId(id)}, {limit: 1} ) //TODO change version
+                    .toArray()
+
     }
 
 }

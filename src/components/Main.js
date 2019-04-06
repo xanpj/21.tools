@@ -83,7 +83,16 @@ class Main extends Component {
     if(this.state.toolPageMeta == null){
       const TOOL_PAGE_NAME = "video"
       await this.props.db.authenticateAnonymousUser()
-      const toolPage = await this.props.db.getLastToolPageVersion(TOOL_PAGE_NAME)
+      var toolPage;
+      console.log("this.props.workflowData")
+      console.log(this.props.workflowData)
+      if(this.props.workflowData && this.props.workflowData.toolPageVersion){
+        console.log("WORKING")
+        toolPage = await this.props.db.getSpecificToolPageVersion(this.props.workflowData.toolbox, this.props.workflowData.toolPageVersion)
+        console.log(toolPage)
+      } else {
+        toolPage = await this.props.db.getLastToolPageVersion(this.props.workflowData.toolbox)
+      }
       console.log("toolPage main")
       console.log(toolPage)
       const allToolPageVersions = await this.props.db.getAllToolPageVersions(TOOL_PAGE_NAME)
@@ -92,6 +101,7 @@ class Main extends Component {
         const contentHashOnMount = Utils.md5(JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA] + "_" + toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]))
         this.setState({
           contentHashOnMount: contentHashOnMount,
+          workflowData: this.props.workflowData,
           toolPageMeta: {
             name: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOL_PAGE],
             version: toolPage[0][CONSTANTS.SCHEMA_FIELD_VERSION],
@@ -126,8 +136,8 @@ class Main extends Component {
     } else {
       const contentHashOnMount = Utils.md5(JSON.stringify(this.props.toolContent + "_" + this.props.toolConnections))
       const contentChanged = contentHashOnMount !== this.state.contentHashOnMount
-
       var versionString = ""
+
       if(contentChanged) {
         const toolBoxElements = document.getElementsByClassName('tool-box-el')
         const serializedToolBoxElements = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements)
@@ -287,7 +297,7 @@ class Main extends Component {
   }
 
   async changeToolPageVersion(toolPageId){
-    const toolPage = await this.props.db.getSpecificToolPageVersion(toolPageId)
+    const toolPage = await this.props.db.getSpecificToolPage(toolPageId)
     if(toolPage && toolPage.length > 0){
       this.props.actionSetToolContent({
         toolContent: null,
@@ -396,6 +406,8 @@ class Main extends Component {
         origin:'http://localhost:3000' //TODO
       }
     }
+    console.log("Youtube")
+    console.log(this.state.workflowData)
     return (
       <div className="Main" >
       {(this.state.contextMenu) ? <ContextMenu
@@ -416,7 +428,7 @@ class Main extends Component {
                 <div className="video-box">
                   <div class="auto-resizable-iframe">
                       <YouTube
-                       videoId="9rDhY1P3YLA"
+                       videoId={(this.state.workflowData) ? this.state.workflowData.youtubeId : "" }
                        opts={ytOpts}
                        onReady={(e) => this._onReady(e)} />
                   </div>
