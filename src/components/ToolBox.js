@@ -319,6 +319,7 @@ class ToolBox extends Component {
       <div id="ToolBox">
       {(this.props.addTextData !== null) ? this.renderAddTextData() : ""}
         <div id="tool-logos">
+          <div class="tool-box-reference-point"></div>
           {this.renderLogos()}
           {!this.state.editMode && !this.props.workflowMode ? this.renderToolTips() : ""}
           {(this.state.activeDeleteMode && this.state.editMode ) ? this.renderClosingButtons() : ""}

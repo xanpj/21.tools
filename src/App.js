@@ -105,8 +105,15 @@ class App extends Component {
       textWorkflow: workflowName
     })
     if(workflowName.length > 0){
-      const workflowResults = await this.db.searchWorkflow(workflowName)
+      var workflowResults = []
+      const onlyWorkflowResults  = await this.db.searchWorkflow(workflowName)
+      const toolboxResultsAsWorkflowResultsRaw = await this.db.searchToolbox(workflowName)
+      const toolboxResultsAsWorkflowResults = this.toolboxResultsTransformer(toolboxResultsAsWorkflowResultsRaw)
+      console.log("toolboxResultsAsWorkflowResults")
+      console.log(toolboxResultsAsWorkflowResults)
       console.log("workflowResults")
+      console.log(workflowResults)
+      workflowResults = onlyWorkflowResults.slice(0,5).concat(toolboxResultsAsWorkflowResults.slice(0,5))
       console.log(workflowResults)
       this.setState({
         workflowResults: workflowResults,
@@ -141,6 +148,8 @@ class App extends Component {
   }
 
   selectWorkflow(workflowId, workflowName){
+    //workflow was selected
+    if(workflowId){
       this.setState({
         selectedWorkflow: workflowName,
         workflowResults: []
@@ -148,13 +157,48 @@ class App extends Component {
       console.log(workflowId.id)
       const urlString = btoa(unescape(encodeURIComponent(workflowName))) + "-" + workflowId.toString()
       window.location.pathname = "/"+urlString
+    } else { //toolbox was selected
+      this.setState({
+        selectedWorkflow: workflowName,
+        workflowResults: []
+      })
+      const toolboxName = workflowName
+      const urlString = btoa(unescape(encodeURIComponent(toolboxName)))
+      window.location.pathname = "/"+urlString
     }
+    }
+
   /** END Workflow autocomplete **/
 
   selectToolbox(toolbox){
     this.setState({
       selectedToolbox: toolbox
     })
+  }
+
+  toolboxResultsTransformer(toolboxResultsRaw) {
+    var toolboxResults = []
+    if(toolboxResultsRaw.length > 0 && toolboxResultsRaw[0].versions){
+      toolboxResultsRaw = toolboxResultsRaw[0]
+      var toolPageIncluded = []
+      var toolPageVersions = []
+      toolboxResultsRaw.versions.forEach((el, i) => {
+        const splitted = el.split("-");
+        const versionId = splitted[splitted.length - 1]
+        const beginning = splitted.slice(0, splitted.length - 1)[0]
+        if(splitted.length > 1){
+          var idx = toolPageIncluded.indexOf(beginning)
+          if(idx > -1){
+            toolPageVersions[idx] += 1
+          } else {
+            toolPageIncluded.push(beginning)
+            toolPageVersions.push(1)
+          }
+        }
+      })
+      toolboxResults = toolPageIncluded.map((el,i) => ({toolPage: el, versions: toolPageVersions[i]})).sort((a,b) => {return (a.versions < b.versions) ? 1 : -1})
+    }
+    return toolboxResults
   }
 
   /** Toolbox autocomplete **/
@@ -164,34 +208,9 @@ class App extends Component {
       textToolbox: toolName
     })
     if(toolName.length > 0){
-
-      var toolboxResults = []
       var toolboxResultsRaw = await this.db.searchToolbox(toolName)
       console.log(toolboxResultsRaw)
-      if(toolboxResultsRaw.length > 0 && toolboxResultsRaw[0].versions){
-        toolboxResultsRaw = toolboxResultsRaw[0]
-        var toolPageIncluded = []
-        var toolPageVersions = []
-        toolboxResultsRaw.versions.forEach((el, i) => {
-          const splitted = el.split("-");
-          const versionId = splitted[splitted.length - 1]
-          const beginning = splitted.slice(0, splitted.length - 1)[0]
-          console.log(beginning)
-          if(splitted.length > 1){
-            var idx = toolPageIncluded.indexOf(beginning)
-            console.log(idx)
-            if(idx > -1){
-              toolPageVersions[idx] += 1
-            } else {
-              toolPageIncluded.push(beginning)
-              console.log("toolPageIncluded")
-              console.log(toolPageIncluded)
-              toolPageVersions.push(1)
-            }
-          }
-        })
-        toolboxResults = toolPageIncluded.map((el,i) => ({toolPage: el, versions: toolPageVersions[i]})).sort((a,b) => {return (a.versions < b.versions) ? 1 : -1})
-      }
+      const toolboxResults = this.toolboxResultsTransformer(toolboxResultsRaw)
       this.setState({
         toolboxResults: toolboxResults,
         selectedToolbox: null

@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import CONSTANTS from './../constants'
 
 function MainMenu(props) {
+  var firstToolbox = 0
   return (
     <div>
       <div class="row">
@@ -19,10 +20,21 @@ function MainMenu(props) {
         </div>
         <div class="dropdown">
           <div class={(props.workflowResults && props.workflowResults.length > 0) ? "dropdown-menu main open" : "dropdown-menu main closed"} aria-labelledby="dropdownMenuMain">
-            {props.workflowResults.map((el, i) =>
-              <button onClick={() => props.selectWorkflow(el._id, el.videoTitle)} class="dropdown-item" type="button">
-              {el.videoTitle}<span class="badge-new indropdown">{el.toolbox}</span>
-              </button>
+            {props.workflowResults.map((el, i) => {
+              firstToolbox += (el.toolPage) ? 1 : 0
+              return (el.toolbox) ? (
+                <button onClick={() => props.selectWorkflow(el._id, el.videoTitle)} class="dropdown-item" type="button">
+                {el.videoTitle}<span class="badge-new indropdown">{el.toolbox}</span>
+                </button>
+              ) : (
+                <div>
+                {(firstToolbox == 1) ? <span class="line-seperator" /> : ""}
+                <button onClick={() => props.selectWorkflow(null, el.toolPage)} class="dropdown-item" type="button">
+                {el.toolPage} (Toolbox)<span class="badge-grey indropdown">versions: {el.versions}</span>
+                </button>
+                </div>
+              )
+            }
             )}
           </div>
         </div>

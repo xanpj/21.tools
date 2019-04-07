@@ -30,5 +30,5 @@ module.exports = {
   },
   CREATE_WORKFLOW_MENU: "CREATE_WORKFLOW_MENU",
   CREATE_TOOLBOX: "CREATE_TOOLBOX",
-  TOOLPAGE_INIT_ELEMENT: {"id":"text_0","left":"800px","top":"200px", "height":"", "width":"","content": "", "type":"text", "name": "", "website": "", "description": ""}
+  TOOLPAGE_INIT_ELEMENT: {"id":"text_0","left":"200px","top":"200px", "height":"", "width":"","content": "", "type":"text", "name": "", "website": "", "description": ""}
 }
