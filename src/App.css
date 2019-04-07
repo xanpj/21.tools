@@ -104,14 +104,18 @@ body {
 
 .search input {
   font-weight: bold;
-  width: 90%;
+  width: 100%; /*90% if search button enabled*/
   padding: 10px 95px;
-  padding-right: 200px;
+  padding-right: 150px;
   border: 0;
   background: transparent;
   border: 1px solid black;
   /*  border-bottom: 1px solid black;*/
   height: 40px;
+}
+
+.search .searchSmallScreen {
+  padding-right: 10px;
 }
 
 .search_2 input {
@@ -125,6 +129,10 @@ body {
 
 .custom_input {
   margin-top: 20px;
+}
+
+.form-group.form-padding-fix {
+  padding-right: 0px;
 }
 
 .search div, .search_2 div, .custom_input div {
@@ -185,7 +193,8 @@ body {
 }
 
 .menu-wrapper {
-  margin: 0 auto;
+  margin: 0px auto;
+  margin-top: 10%;
   width: 95%;
   border: 1px solid #ccc;
   padding: 100px;
@@ -202,6 +211,7 @@ body {
   display: flex;
   align-items: stretch;
 }
+
 .menu-btn {
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -260,7 +270,7 @@ body {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   width: 100%;
   max-height: 200px;
-  overflow-y: hidden;
+  overflow-y: auto;
 }
 
 
@@ -285,9 +295,14 @@ margin-bottom: 20px;
 /**MAIN**/
 
 #ToolPageHeader {
+  position: absolute;
   padding: 10px;
   color: #fff;
-  min-height: 10%;
+  font-size: 18px;
+  font-weight: bold;
+  /*min-height: 10%;*/
+  height: 50px;
+  z-index: 12;
   width: 100%;
   background-color: #000;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -314,12 +329,13 @@ margin-bottom: 20px;
   width: 50%;
 }
 
+.video-box {
+}
+
+
 .right {
   float:right;
   width: 50%;
-}
-
-.video-box {
 }
 
 .tool-box {
@@ -332,6 +348,16 @@ margin-bottom: 20px;
   overflow-y: hidden;
   overflow-x: hidden;
 }
+
+.right.full {
+    width: 100%;
+}
+
+.tool-box.full {
+  width: 100%;
+}
+
+
 
 .splitter {
   position: absolute;
@@ -478,6 +504,7 @@ margin-bottom: 20px;
   padding-top: 5px;
   padding-right: 15px;
   color: #000000;
+  margin-top: 60px;
 }
 
 #menuBtn {
@@ -554,6 +581,7 @@ width: 100%;
   width: 30px;
   height: 30px;
   opacity: 0.4;
+  z-index: 3;
 }
 
 .tool-box-text-el {

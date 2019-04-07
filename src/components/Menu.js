@@ -6,15 +6,15 @@ function MainMenu(props) {
   return (
     <div>
       <div class="row">
-      <div class="form-row  search-bar">
-        <div class="form-group col-md-12 ">
+      <div class="form-row search-bar">
+        <div class="form-group col-md-12 form-padding-fix">
 
         <div class="search">
           <form action="" noValidate>
             <div>How to do</div>
-            <input type="search" value={props.selectedWorkflow || props.textWorkflow} onChange={(e) => props.searchWorkflow(e.target.value)} placeholder="XYZ" />
-            <div class="after-input">in the 21st century</div>
-            <button type="submit"><i class="fas fa-search"></i></button>
+            <input type="search" class={(props.innerWidth < 600) ? "searchSmallScreen" : ""} value={props.selectedWorkflow || props.textWorkflow} onChange={(e) => props.searchWorkflow(e.target.value)} placeholder="XYZ" />
+              {(props.innerWidth < 600) ? "" : <div class="after-input">in the 21st century</div>}
+            {/*<button type="submit" onClick={() => props.selectWorkflow(el._id, el.videoTitle)}><i class="fas fa-search"></i></button>*/}
           </form>
         </div>
         <div class="dropdown">
@@ -31,7 +31,7 @@ function MainMenu(props) {
       </div>
     </div>
 
-    {(props.workflowResults && props.workflowResults.length == 0) ? (
+    {(true || props.workflowResults && props.workflowResults.length == 0) ? (
     <div class="row seperator">
         <div class="menu-btn-wrapper col-md-4">
           <div class="menu-btn" onClick={() => props.changeInternalView(CONSTANTS.VIEWS.MENU_INTERNAL.CREATE_WORKFLOW)}>
@@ -80,7 +80,7 @@ function CreateWorkflowMenu(props){
         <div class="search_2">
             <div>How to do</div>
             <input type="search" name="videoTitle" placeholder="Videos" required={true} />
-            <div class="after-input2">in the 21st century</div>
+            {(props.innerWidth < 600) ? "" : <div class="after-input2">in the 21st century</div>}
         </div>
         <div class="custom_input">
             <input type="text" name="toolbox" value={props.selectedToolbox || props.textToolbox} onChange={(e) => props.searchToolbox(e.target.value)} placeholder="Select Toolbox" required={true} />
@@ -89,7 +89,7 @@ function CreateWorkflowMenu(props){
           <div class={(props.toolboxResults.length > 0 && !props.selectedToolbox) ? "dropdown-menu main open" : "dropdown-menu main closed"} aria-labelledby="dropdownMenuMain">
             {props.toolboxResults.map((el, i) =>
               <button onClick={() => props.selectToolbox(el.toolPage)} class="dropdown-item" type="button">
-              {el.toolPage}<span class="badge-new indropdown">{el.count} versions</span>
+              {el.toolPage}<span class="badge-new indropdown">{el.versions} versions</span>
               </button>
             )}
           </div>
@@ -146,7 +146,21 @@ class Menu extends Component {
 
     this.state = {
       view: null,
+      innerWidth: window.innerWidth,
     }
+  }
+
+  handleResize = e => {
+    const innerWidth = window.innerWidth;
+    this.setState({innerWidth})
+  };
+
+  componentDidMount() {
+    window.addEventListener("resize", this.handleResize);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.handleResize);
   }
 
   handleSubmit(event, source){
@@ -164,22 +178,20 @@ class Menu extends Component {
           ...data,
           timecode: []
         }
+        this.props.changeView(CONSTANTS.VIEWS.EDIT, postData)
       } else if(source == CONSTANTS.CREATE_TOOLBOX){
         postData = {
           ...data
         }
+        this.props.changeView(CONSTANTS.VIEWS.TOOLBOX, postData)
       }
-      //TODO 
-      //check if toolbox exists
-      //create new toolbox iwth initial tool
-      //fill toolContent, either directly or via filling workflowData
-      this.props.changeView(CONSTANTS.VIEWS.TOOLBOX, postData)
   }
 
   renderView(){
     console.log(this.props.toolboxResults)
     if(this.state.view === CONSTANTS.VIEWS.MENU_INTERNAL.CREATE_WORKFLOW){
       return <CreateWorkflowMenu
+                    innerWidth = {this.state.innerWidth}
                     textToolbox={this.props.textToolbox}
                     selectedToolbox={this.props.selectedToolbox}
                     selectToolbox={(toolPage) => this.props.selectToolbox(toolPage)}
@@ -196,6 +208,7 @@ class Menu extends Component {
     }
     else {
       return <MainMenu
+                    innerWidth = {this.state.innerWidth}
                     textWorkflow={this.props.textWorkflow}
                     selectedWorkflow={this.props.selectedWorkflow}
                     selectWorkflow={(workflowId, workflowName) => this.props.selectWorkflow(workflowId, workflowName)}
@@ -208,7 +221,6 @@ class Menu extends Component {
   render() {
     return (
       <div id="Menu">
-      <div id="ToolPageHeader">Workflows</div>
         <div class="outer">
         <div class="middle">
         <div class="inner">

@@ -45,7 +45,7 @@ class App extends Component {
 
       const videoUrl = currentLocation.pathname.slice(1)
       const videoUrlArr = videoUrl.split("-")
-      if(videoUrlArr.length > 0){
+      if(videoUrlArr.length == 2) {
         const videoId = videoUrlArr[1]
         const workflowData = await this.db.getWorkflow(videoId)
         if(workflowData.length > 0){
@@ -54,10 +54,20 @@ class App extends Component {
           this.setState({
             view: CONSTANTS.VIEWS.MAIN,
             workflowData: workflowData[0],
+            toolboxData: null,
           })
         }
-
-
+      } else if(videoUrlArr.length == 1 && videoUrlArr[0].length > 0){
+          const toolboxName = unescape(decodeURIComponent( atob(videoUrlArr[0] ) ) )
+          console.log("toolbox")
+          console.log(toolboxName)
+          this.setState({
+            view: CONSTANTS.VIEWS.MAIN,
+            toolboxData: {
+              name: toolboxName
+            },
+            workflowData: null
+          })
       }
     }
   }
@@ -67,6 +77,7 @@ class App extends Component {
 
   backToMenu(){
       this.setState({view: CONSTANTS.VIEWS.MENU})
+      window.location.pathname = "/"
   }
 
   async submitWorkflow(timecode, version){
@@ -76,12 +87,12 @@ class App extends Component {
       toolPageVersion: version,
       timecode: timecode,
     }
+    console.log(data)
     const videoTitle = this.state.workflowData.videoTitle
     const lastInsertedId = await this.db.submitWorkflow(data)
     console.log(lastInsertedId)
     const urlString = btoa(unescape(encodeURIComponent(videoTitle))) + "-" + lastInsertedId.insertedId.toString()
     console.log(urlString)
-    /* REVERSE unescape(decodeURIComponent( atob(urlString.split("-")[0]) ) ) */
     console.log("Submitted")
     window.location.pathname = "/"+urlString
   }
@@ -109,23 +120,35 @@ class App extends Component {
     }
   }
 
-  changeView(view, data){
+  async changeView(view, data){
     if(view == CONSTANTS.VIEWS.EDIT) {
       this.setState({view:  view, workflowData: data})
     } else if(view == CONSTANTS.VIEWS.TOOLBOX){
-      this.setState({view:  view, toolboxData: data})
+      //TODO
+      //check if toolbox exists
+      //create new toolbox iwth initial tool
+      //fill toolContent, either directly or via filling workflowData
+      const toolboxName = data["toolbox"].toLowerCase()
+      const toolboxData = await this.db.createToolbox(data)
+      if(!toolboxData){
+        console.log(toolboxData)
+        alert("Toolbox '"+toolboxName+"' already exists" )
+      } else {
+        const urlString = btoa(unescape(encodeURIComponent(toolboxName)))
+        window.location.pathname = "/"+urlString
+      }
     }
   }
 
   selectWorkflow(workflowId, workflowName){
-    this.setState({
-      selectedWorkflow: workflowName,
-      workflowResults: []
-    })
-    console.log(workflowId.id)
-    const urlString = btoa(unescape(encodeURIComponent(workflowName))) + "-" + workflowId.toString()
-    window.location.pathname = "/"+urlString
-  }
+      this.setState({
+        selectedWorkflow: workflowName,
+        workflowResults: []
+      })
+      console.log(workflowId.id)
+      const urlString = btoa(unescape(encodeURIComponent(workflowName))) + "-" + workflowId.toString()
+      window.location.pathname = "/"+urlString
+    }
   /** END Workflow autocomplete **/
 
   selectToolbox(toolbox){
@@ -141,7 +164,34 @@ class App extends Component {
       textToolbox: toolName
     })
     if(toolName.length > 0){
-      const toolboxResults = await this.db.searchToolbox(toolName)
+
+      var toolboxResults = []
+      var toolboxResultsRaw = await this.db.searchToolbox(toolName)
+      console.log(toolboxResultsRaw)
+      if(toolboxResultsRaw.length > 0 && toolboxResultsRaw[0].versions){
+        toolboxResultsRaw = toolboxResultsRaw[0]
+        var toolPageIncluded = []
+        var toolPageVersions = []
+        toolboxResultsRaw.versions.forEach((el, i) => {
+          const splitted = el.split("-");
+          const versionId = splitted[splitted.length - 1]
+          const beginning = splitted.slice(0, splitted.length - 1)[0]
+          console.log(beginning)
+          if(splitted.length > 1){
+            var idx = toolPageIncluded.indexOf(beginning)
+            console.log(idx)
+            if(idx > -1){
+              toolPageVersions[idx] += 1
+            } else {
+              toolPageIncluded.push(beginning)
+              console.log("toolPageIncluded")
+              console.log(toolPageIncluded)
+              toolPageVersions.push(1)
+            }
+          }
+        })
+        toolboxResults = toolPageIncluded.map((el,i) => ({toolPage: el, versions: toolPageVersions[i]})).sort((a,b) => {return (a.versions < b.versions) ? 1 : -1})
+      }
       this.setState({
         toolboxResults: toolboxResults,
         selectedToolbox: null
@@ -214,7 +264,7 @@ class App extends Component {
     else if(this.state.view == CONSTANTS.VIEWS.MAIN){
       return (
         <div>
-          <Main workflowData={this.state.workflowData} backToMenu={() => this.backToMenu()} db={this.db}/>
+          <Main toolboxData={this.state.toolboxData} workflowData={this.state.workflowData} backToMenu={() => this.backToMenu()} db={this.db}/>
         </div>
       )
     } else {
@@ -235,6 +285,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+      <div id="ToolPageHeader">Workflows</div>
       {this.renderView()}
       </div>
     );

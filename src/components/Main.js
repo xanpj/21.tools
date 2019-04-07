@@ -39,7 +39,8 @@ class Main extends Component {
       toolsFromDB: null,
       toolsSelected: null,
       checkInterval: null,
-      workflowData: null
+      workflowData: null,
+      toolboxData: null
     }
 
     const toolContent = null
@@ -84,22 +85,28 @@ class Main extends Component {
   async componentDidMount(){
     console.log("componentDidMount")
     if(this.state.toolPageMeta == null){
-      const TOOL_PAGE_NAME = "video"
+      var toolboxName = null;
+      console.log("this.props.toolboxData")
+      console.log(this.props.toolboxData)
+      if(this.props.toolboxData){
+        toolboxName = this.props.toolboxData.name
+      } else if(this.props.workflowData) {
+        toolboxName = this.props.workflowData.toolbox
+      }
       await this.props.db.authenticateAnonymousUser()
       var toolPage;
       console.log("this.props.workflowData")
-      if(this.props.workflowData){
-        if(this.props.workflowData.toolPageVersion){
-          console.log("WORKING")
-          console.log(this.props.workflowData)
-          toolPage = await this.props.db.getSpecificToolPageVersion(this.props.workflowData.toolbox, this.props.workflowData.toolPageVersion)
+      console.log(this.props.workflowData)
+      if(this.props.workflowData && this.props.workflowData.toolPageVersion){
+          console.log(toolboxName)
+          toolPage = await this.props.db.getSpecificToolPageVersion(toolboxName, this.props.workflowData.toolPageVersion.toString())
           console.log(toolPage)
-        } else {
-          toolPage = await this.props.db.getLastToolPageVersion(this.props.workflowData.toolbox)
-        }
+      } else {
+          toolPage = await this.props.db.getLastToolPageVersion(toolboxName)
+      }
         console.log("toolPage main")
         console.log(toolPage)
-        const allToolPageVersions = await this.props.db.getAllToolPageVersions(TOOL_PAGE_NAME)
+        const allToolPageVersions = await this.props.db.getAllToolPageVersions(toolboxName)
 
         if(toolPage && toolPage.length > 0){
           const contentHashOnMount = Utils.md5(JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA]) + "_" + JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]))
@@ -107,8 +114,8 @@ class Main extends Component {
           console.log(toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA])
           console.log(contentHashOnMount)
           this.setState({
-            workflowData: this.props.workflowData,
-            timecode: this.props.workflowData.timecode,
+            workflowData: (this.props.workflowData) ? this.props.workflowData : null,
+            timecode: (this.props.workflowData) ? this.props.workflowData.timecode : [],
             toolPageMeta: {
               name: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOL_PAGE],
               version: toolPage[0][CONSTANTS.SCHEMA_FIELD_VERSION],
@@ -125,7 +132,6 @@ class Main extends Component {
           console.log("MONGODB: pages")
           const pages = await this.props.db.getPages()
           console.log(pages)
-        }
       }
     }
   }
@@ -182,15 +188,17 @@ class Main extends Component {
         console.log("versionString")
         console.log(versionString)
 
+        versionString = versionString.toString()
         const toolDataToDb = {
           [CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: this.state.toolPageMeta.name,
-          [CONSTANTS.SCHEMA_FIELD_VERSION]: versionString.toString(),
+          [CONSTANTS.SCHEMA_FIELD_VERSION]: versionString,
           [CONSTANTS.SCHEMA_FIELD_TOOLS_DATA]: serializedToolBoxElements,
           [CONSTANTS.SCHEMA_FIELD_ANCHORS]: anchors,
         }
 
         await this.props.db.insertToolPageVersion(toolDataToDb)
         const allToolPageVersions = await this.props.db.getAllToolPageVersions(this.state.toolPageMeta.name)
+        console.log(allToolPageVersions)
         this.setState({
           toolPageMeta: {
             name: this.state.toolPageMeta.name,
@@ -429,6 +437,8 @@ class Main extends Component {
         closeContextMenu={() => this.setState({contextMenu: null})}
         contextMenuCoords={this.state.contextMenuCoords}/> : ""}
         <div class="containerer">
+          {(this.props.workflowData) ? (
+          <div>
           <div className="left">
             <div className="middle-row">
               <div className="middle-col">
@@ -449,9 +459,10 @@ class Main extends Component {
             <div className="right">
               <div className="splitter" />
             </div>
+          </div>) : ""}
 
-            <div className="right">
-              <div className="tool-box">
+            <div className={(this.props.workflowData) ? "right" : "full right"}>
+              <div className={(this.props.workflowData) ? "tool-box" : "tool-box full"}>
                 <div id="edit-tool-box">
                 <div id="menuBtn" onClick={() => this.props.backToMenu()}><i class="fas fa-arrow-circle-left"></i>Menu</div>
                   <button type="button" class={this.props.workflowMode ? "btn btn-success" : "btn btn-primary"} onClick={this.publishToolBox.bind(this)}>{this.props.workflowMode ? "Submit" : "Publish"}</button>

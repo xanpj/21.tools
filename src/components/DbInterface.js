@@ -37,13 +37,14 @@ export default class DbInterface {
     async getAllToolPageVersions(toolPageName){
       //this.insertInitial()
       return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES)
-                    .find({[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName}, {sort: {[CONSTANTS.SCHEMA_FIELD_VERSION]:-1}, limit: 1000,  projection: {[CONSTANTS.SCHEMA_FIELD_ID]: 1, [CONSTANTS.SCHEMA_FIELD_VERSION]: 1} } )
+                    .find({[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName.toLowerCase()}, {sort: {[CONSTANTS.SCHEMA_FIELD_VERSION]:-1}, limit: 1000,  projection: {[CONSTANTS.SCHEMA_FIELD_ID]: 1, [CONSTANTS.SCHEMA_FIELD_VERSION]: 1} } )
                     .toArray()
     }
 
     async getSpecificToolPageVersion(toolPageName, version){
+      //return await  this.getPages()
       return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES)
-                    .find( {[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName, [CONSTANTS.SCHEMA_FIELD_VERSION]: version} )
+                    .find( {[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName.toLowerCase(), [CONSTANTS.SCHEMA_FIELD_VERSION]: version} )
                     .toArray()
     }
 
@@ -53,8 +54,8 @@ export default class DbInterface {
                     .toArray()
     }
 
-    insertToolPageVersion(data){
-      this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES).insertOne({
+    async insertToolPageVersion(data){
+      return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES).insertOne({
        owner_id: this.client.auth.user.id,
        ...data
      })
@@ -62,7 +63,7 @@ export default class DbInterface {
 
     async getLastToolPageVersion(toolPageName){
       return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES)
-                    .find( {[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName}, {sort: {[CONSTANTS.SCHEMA_FIELD_VERSION]:-1}, limit: 1} ) //TODO change version
+                    .find( {[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName.toLowerCase()}, {sort: {[CONSTANTS.SCHEMA_FIELD_VERSION]:-1}, limit: 1} ) //TODO change version
                     .toArray()
     }
 
@@ -78,6 +79,25 @@ export default class DbInterface {
     async searchToolbox(toolbox){
       //used regex in stitch functions // returns: toolPage, count: {}
       return await this.client.callFunction("searchToolbox", [toolbox, 0])
+    }
+
+    async createToolbox(data){
+      const toolPageName = data["toolbox"]
+      const toolPageDescription = data["description"]
+      const toolboxSearchResult = await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES).find({[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName.toLowerCase()}).toArray()
+      console.log(toolboxSearchResult)
+      if(toolboxSearchResult.length == 0){
+        return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES).insertOne({
+          owner_id: this.client.auth.user.id,
+          [CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName,
+          [CONSTANTS.SCHEMA_FIELD_VERSION]: "0",
+          [CONSTANTS.SCHEMA_FIELD_DESCRIPTION]: toolPageDescription,
+          [CONSTANTS.SCHEMA_FIELD_TOOLS_DATA]: [{...CONSTANTS.TOOLPAGE_INIT_ELEMENT, content: "Toolbox " + toolPageName}],
+          [CONSTANTS.SCHEMA_FIELD_ANCHORS]: []
+        })
+      } else {
+        return false
+      }
     }
 
     async searchWorkflow(workflowName){
