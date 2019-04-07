@@ -172,7 +172,7 @@ class ContextMenu extends Component {
                </ul>
              </div>)
     } else {
-        return (<div>Switch to edit mode</div>)
+        return (<div><a class="context-menu-tool-website" target={"_blank"} href={this.props.contextMenuParam}>Visit Website</a></div>)
     }
   }
 

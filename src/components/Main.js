@@ -34,13 +34,14 @@ class Main extends Component {
       editMode: false,
       contextMenu: null,
       contextMenuCoords: null,
+      contextMenuParam: null,
       addTextData: null,
       versionDropdown: false,
       toolsFromDB: null,
       toolsSelected: null,
       checkInterval: null,
       workflowData: null,
-      toolboxData: null
+      toolboxData: null,
     }
 
     const toolContent = null
@@ -218,11 +219,11 @@ class Main extends Component {
     }
   }
 
-  showContextMenu(e) {
+  showContextMenu(e, param) {
     e.preventDefault();
     var left = e.pageX
     var top = e.pageY
-    this.setState({contextMenu: CONTEXT_MENU.ADD, contextMenuCoords: [left, top, e.layerX, e.layerY]})
+    this.setState({contextMenuParam:param, contextMenu: CONTEXT_MENU.ADD, contextMenuCoords: [left, top, e.layerX, e.layerY]})
   }
 
   deleteElement(refId){
@@ -373,14 +374,25 @@ class Main extends Component {
   }
 
   toolSelected(elId){
-    const event = this.state.videoEvent
     const timecode = this.state.timecode
+    const event = this.state.videoEvent
+    console.log(timecode)
     if(event && timecode){
-      const newElement = {
-        id: elId,
-        time: event.target.getCurrentTime()
+      if(this.state.editMode){
+          const newElement = {
+            id: elId,
+            time: event.target.getCurrentTime()
+          }
+          this.setState({timecode: [...timecode, newElement]}) //update timecode info
+        }
+      else {
+        if(timecode.length > 0){
+          const selectedEl = timecode.find(el => el.id === elId)
+          if(selectedEl){
+            this.state.videoEvent.target.seekTo(selectedEl.time) //skip to second
+          }
+        }
       }
-      this.setState({timecode: [...timecode, newElement]})
     }
   }
 
@@ -442,6 +454,7 @@ class Main extends Component {
         onAddTextSubmit={() => this.onAddTextSubmit()}
         addTextOnChange={(e) => this.addTextOnChange(e)}
         closeContextMenu={() => this.setState({contextMenu: null})}
+        contextMenuParam={this.state.contextMenuParam}
         contextMenuCoords={this.state.contextMenuCoords}/> : ""}
         <div class="containerer">
           {(this.props.workflowData) ? (
@@ -495,7 +508,7 @@ class Main extends Component {
                   addTextData={this.state.addTextData}
                   editMode={this.state.editMode}
                   deleteElement={(refId) => this.deleteElement(refId)}
-                  showContextMenu={e => this.showContextMenu(e)}
+                  showContextMenu={(e, param) => this.showContextMenu(e, param)}
                   />) : <Spinner view={CONSTANTS.VIEWS.TOOLBOX} />}
                 </div>
               </div>

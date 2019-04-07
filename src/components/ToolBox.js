@@ -12,10 +12,14 @@ const LOGO_SIZE = 30;
 class ToolBox extends Component {
   constructor(props){
     super(props)
+
+    this.showContextMenu = this.showContextMenu.bind(this)
+
     this.state = {
       editMode: props.editMode,
       activeDeleteMode: false,
-      toolContentHash: null
+      toolContentHash: null,
+      contextMenuParam: null
     }
   }
 
@@ -101,9 +105,11 @@ class ToolBox extends Component {
       if(editMode) {
         interact(toolBoxGroupsSelector).styleCursor(true)
         ToolBoxInteractions.MakeUnDraggable(toolBoxOuter)
+        toolBoxOuter.addEventListener('contextmenu', this.showContextMenu)
       } else {
         interact(toolBoxGroupsSelector).styleCursor(false)
         ToolBoxInteractions.MakeDraggable(toolBoxOuter);
+        toolBoxOuter.removeEventListener('contextmenu', this.showContextMenu)
       }
 
       const toolBoxSelector = ".tool-box-el"
@@ -181,7 +187,7 @@ class ToolBox extends Component {
       const toolBoxOuter = document.getElementById("ToolBoxWrapper")
       ToolBoxInteractions.MakeZoomable(toolBoxOuter,0.1,4,0.2,true)
       ToolBoxInteractions.MakeDraggable(toolBoxOuter);
-      toolBoxOuter.addEventListener('contextmenu', (e) => this.props.showContextMenu(e))
+      //toolBoxOuter.addEventListener('contextmenu', (e) => this.props.showContextMenu(e))
       toolBoxOuter.addEventListener('dblclick', (e) => this.activateDeleteMode(e))
       const self = this
       window.jsPlumb.ready(function() {
@@ -212,13 +218,13 @@ class ToolBox extends Component {
       }*/
   }
 
-  /*TODO:
-  Versions (y)
-  toolbox GRID
-  usage hints
-  video selection
-  video timecode
-  */
+  showContextMenu(e){
+    this.showContextMenuWithParam(e, null)
+  }
+
+  showContextMenuWithParam(e, param){
+    this.props.showContextMenu(e, param)
+  }
 
   renderLogos(){
     if(this.props.toolContent){
@@ -274,7 +280,7 @@ class ToolBox extends Component {
               left += orgEl.offsetWidth
             const refId = el.id
             const refCloseId = refId + "_close"
-            return (<div className="tool-box-el-close" id={refCloseId} key={refCloseId} onClick={(e) => {this.deleteElement(el.id)}}  style={{top: el.top, left: left}} onClick={(e) => {this.deleteElement(refId)}}><i class="fas fa-times"></i></div>)
+            return (<div className="tool-box-el-close" id={refCloseId} key={refCloseId} onClick={(e) => {this.deleteElement(el.id)}} style={{top: el.top, left: left}} onClick={(e) => {this.deleteElement(refId)}}><i class="fas fa-times"></i></div>)
           } else return ""
       })
     }
@@ -285,7 +291,7 @@ class ToolBox extends Component {
       return this.props.toolContent.map((el, i) => {
       if(el.type == "img" && el.name){
         return (
-          <div class="item-hints" style={{top: el.top, left: el.left}}>
+          <div class="item-hints" onClick={() => this.props.toolSelected(el.id)} onContextMenu={(e) => this.showContextMenuWithParam(e, el.website)} style={{top: el.top, left: el.left}}>
             <div class="hint" data-position="4">
               <div class="hint-content do--split-children">
                 <div class="hint-content-inner">

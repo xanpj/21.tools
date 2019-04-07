@@ -12,11 +12,9 @@ body {
 
 a {
   color: #333;
-  text-decoration: none;
 }
 a:hover {
   color: #111;
-  text-decoration: none;
 }
 
 .clearfix::before,
@@ -339,6 +337,11 @@ margin-bottom: 20px;
 
 #ToolPageHeader a {
   color: #fff;
+  text-decoration: none;
+}
+
+#ToolPageHeader a:hover {
+  text-decoration: none;
 }
 
 .Main {
