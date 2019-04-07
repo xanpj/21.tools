@@ -68,7 +68,7 @@ function MainMenu(props) {
           </div>
         </div>
         <div class="menu-btn-wrapper col-md-4">
-          <div class="menu-btn" onClick={() => props.changeInternalView(CONSTANTS.VIEWS.MENU_INTERNAL.REQUEST)}>
+          <div class="menu-btn" onClick={() => props.changeInternalView(CONSTANTS.VIEWS.MENU_INTERNAL.REQUEST_SUBMISSION)}>
             <div class="menu-content-container">
               <div class="badge-new">New</div>
             </div>
@@ -151,6 +151,29 @@ function CreateToolbox(props){
     </div>)
 }
 
+function RequestSubmission(props){
+  return (
+    <div>
+      <div id="menuBtnLeft" onClick={() => props.backToMenu()}><i class="fas fa-arrow-circle-left"></i>Menu</div>
+      <h2>Request a submisson</h2>
+      <small>Please make sure to check if a submission in your given field is not already existent.</small>
+      <form action={"mailto:"+CONSTANTS.MAIL_OWNER+"?subject=New submission request"} method="post" enctype="text/plain" >
+        <div class="custom_input">
+            <input type="text" name="toolbox" placeholder="Toolbox/Worfklow name" required={true} />
+        </div>
+        <div class="custom_input">
+            <input type="text" name="description" placeholder="Short Description" />
+        </div>
+        <div class="custom_input">
+            <input type="text" name="argumentation" placeholder="Argumentation" />
+        </div>
+        <div class="submit_input">
+            <button type="submit">Request a toolbox/workflow</button>
+        </div>
+      </form>
+    </div>)
+}
+
 class Menu extends Component {
 
   constructor(props){
@@ -216,6 +239,11 @@ class Menu extends Component {
       return <CreateToolbox
                     backToMenu={() => this.setState({view: null}) }
                     handleSubmit={(event) => this.handleSubmit(event, CONSTANTS.CREATE_TOOLBOX)}
+                    />
+    }
+    else if(this.state.view === CONSTANTS.VIEWS.MENU_INTERNAL.REQUEST_SUBMISSION){
+      return <RequestSubmission
+                    backToMenu={() => this.setState({view: null}) }
                     />
     }
     else {

@@ -25,10 +25,16 @@ module.exports = {
     MENU_INTERNAL: {
       CREATE_WORKFLOW: "MENU_INTERNAL.CREATE_WORKFLOW",
       CREATE_TOOLBOX: "MENU_INTERNAL.CREATE_TOOLBOX",
-      REQUEST: "MENU_INTERNAL.REQUEST"
+      REQUEST_SUBMISSION: "MENU_INTERNAL.REQUEST_SUBMISSION"
+    },
+    ABOUT_INTERNAL: {
+      ABOUT: "ABOUT",
+      CONTACT: "CONTACT",
+      IMPRINT: "IMPRINT"
     }
   },
   CREATE_WORKFLOW_MENU: "CREATE_WORKFLOW_MENU",
   CREATE_TOOLBOX: "CREATE_TOOLBOX",
-  TOOLPAGE_INIT_ELEMENT: {"id":"text_0","left":"200px","top":"200px", "height":"", "width":"","content": "", "type":"text", "name": "", "website": "", "description": ""}
+  TOOLPAGE_INIT_ELEMENT: {"id":"text_0","left":"200px","top":"200px", "height":"", "width":"","content": "", "type":"text", "name": "", "website": "", "description": ""},
+  MAIL_OWNER: "webmaster@nightlife-city.com"
 }

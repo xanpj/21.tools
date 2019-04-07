@@ -172,7 +172,7 @@ class ContextMenu extends Component {
                </ul>
              </div>)
     } else {
-        return (<div>Inspector</div>)
+        return (<div>Switch to edit mode</div>)
     }
   }
 

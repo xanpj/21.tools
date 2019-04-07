@@ -149,8 +149,9 @@ class Main extends Component {
       alert("Please leave edit mode first")
     } else {
       console.log(this.props.toolContent)
-      const contentHashOnMount = Utils.md5(JSON.stringify(this.props.toolContent) + "_" + JSON.stringify(this.props.toolConnections))
-      const contentChanged = contentHashOnMount !== this.state.contentHashOnMount
+      const contentHashNow = Utils.md5(JSON.stringify(this.props.toolContent) + "_" + JSON.stringify(this.props.toolConnections))
+      const contentChanged = contentHashNow !== this.state.contentHashOnMount
+
       var versionString = ""
 
       if(contentChanged) {
@@ -198,13 +199,17 @@ class Main extends Component {
 
         await this.props.db.insertToolPageVersion(toolDataToDb)
         const allToolPageVersions = await this.props.db.getAllToolPageVersions(this.state.toolPageMeta.name)
+        const contentHashNow = Utils.md5(JSON.stringify(this.props.toolContent) + "_" + JSON.stringify(this.props.toolConnections))
+
         console.log(allToolPageVersions)
         this.setState({
           toolPageMeta: {
             name: this.state.toolPageMeta.name,
             version: versionString
           },
-          allToolPageVersions: allToolPageVersions
+          allToolPageVersions: allToolPageVersions,
+          contentHashOnMount: contentHashNow  //update contentHashOnMount
+
         })
       }
       if(this.props.workflowMode){
@@ -325,12 +330,13 @@ class Main extends Component {
         toolContent: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA],
         toolConnections: toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]
       })
-
+      const contentHashNow = Utils.md5(JSON.stringify(this.props.toolContent) + "_" + JSON.stringify(this.props.toolConnections))
       this.setState({
         toolPageMeta: {
           name: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOL_PAGE],
           version: toolPage[0][CONSTANTS.SCHEMA_FIELD_VERSION]
-        }
+        },
+        contentHashOnMount: contentHashNow
       })
 
       this.setVideoIconHighlights()
@@ -399,8 +405,9 @@ class Main extends Component {
   }
 
   render() {
-    /*var video = document.createElement('video-player');
-    var curtime = video.currentTime;*/
+    const contentHashOnMount = Utils.md5(JSON.stringify(this.props.toolContent) + "_" + JSON.stringify(this.props.toolConnections))
+    const contentChanged = contentHashOnMount !== this.state.contentHashOnMount
+
     var versionOutput = "Versions"
     if(this.state.toolPageMeta){
       versionOutput = (this.state.toolPageMeta.name + " v" + this.state.toolPageMeta.version)
@@ -465,7 +472,7 @@ class Main extends Component {
               <div className={(this.props.workflowData) ? "tool-box" : "tool-box full"}>
                 <div id="edit-tool-box">
                 <div id="menuBtn" onClick={() => this.props.backToMenu()}><i class="fas fa-arrow-circle-left"></i>Menu</div>
-                  <button type="button" class={this.props.workflowMode ? "btn btn-success" : "btn btn-primary"} onClick={this.publishToolBox.bind(this)}>{this.props.workflowMode ? "Submit" : "Publish"}</button>
+                  {(contentChanged || this.props.workflowMode ) ? (<button type="button" class={this.props.workflowMode ? "btn btn-success" : "btn btn-primary"} onClick={this.publishToolBox.bind(this)}>{this.props.workflowMode ? "Submit" : "Publish"}</button>) : ""}
                   <button type="button" class="btn btn-light" onClick={this.onEditToolBox.bind(this)}><i class="far fa-edit"></i></button>
                   <div class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" onClick={() => this.setState({versionDropdown: !this.state.versionDropdown}) } id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

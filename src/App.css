@@ -10,6 +10,15 @@ body {
   background-color: #EEEEEE; /*rgba(240, 240, 240, 0.8);*/
 }
 
+a {
+  color: #333;
+  text-decoration: none;
+}
+a:hover {
+  color: #111;
+  text-decoration: none;
+}
+
 .clearfix::before,
 .clearfix::after {
   content: " ";
@@ -62,7 +71,7 @@ body {
 /** MENU **/
 .outer {
   display: table;
-  position: absolute;
+  /*position: absolute; TODO*/
   left: 0;
   height: 90%;
   width: 100%;
@@ -91,7 +100,7 @@ body {
   width: 100%;
 }
 
-.search_2 input, .custom_input input {
+.search_2 input, .custom_input input, .custom_input textarea {
   width: 90%;
   padding: 10px 90px;
   padding-right: 20px;
@@ -101,7 +110,7 @@ body {
   height: 40px;
 }
 
-.search input {
+.search input, .search textarea{
   font-weight: bold;
   width: 100%; /*90% if search button enabled*/
   padding: 10px 95px;
@@ -117,13 +126,17 @@ body {
   padding-right: 10px;
 }
 
-.search_2 input {
+.search_2 input, .search textarea {
   width: 100%;
 }
 
-.custom_input input {
+.custom_input input, .custom_input textarea {
   padding: 10px 10px;
   width: 100%
+}
+
+.custom_input textarea {
+  min-height: 100px;
 }
 
 .custom_input {
@@ -322,6 +335,10 @@ margin-bottom: 20px;
   width: 100%;
   background-color: #000;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#ToolPageHeader a {
+  color: #fff;
 }
 
 .Main {
@@ -1114,4 +1131,59 @@ left: 150px;
 
 .hint-content-inner {
   padding: 8px;
+}
+
+/** About **/
+#About {
+  position: absolute;
+  margin-top: 50px;
+  width: 100%;
+  text-align: center;
+}
+
+.about-btn-wrapper {
+  padding: 0;
+}
+
+.about-btn {
+  flex: none;
+  align-items: none;
+  padding: 10px;
+  border: 1px solid #333;
+  background-color: #eee;
+  font-size: 14px;
+  text-align: center;
+}
+
+.about-btn:hover {
+  background-color: #dedede;
+  cursor:pointer;
+}
+
+.about-btn.active {
+  background-color: #dedede;
+}
+
+.about-wrapper {
+  margin: 0px auto;
+  margin-top: 10%;
+  width: 95%;
+  border: 1px solid #ccc;
+  padding: 100px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+#Imprint {
+  text-align: left;
+}
+
+/** FOOTER **/
+#Footer {
+  position: fixed;
+  bottom: 5px;
+  right: 10px;
+  text-decoration:underline;
+  font-size: 14px;
+  z-index: 15;
 }

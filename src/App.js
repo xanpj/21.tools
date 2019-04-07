@@ -5,6 +5,7 @@ import './App.css';
 import CONSTANTS from './constants'
 import Menu from './components/Menu'
 import Main from './components/Main'
+import About from './components/About'
 import Spinner from './components/Spinner'
 import DbInterface from './components/DbInterface'
 
@@ -43,31 +44,37 @@ class App extends Component {
           view: CONSTANTS.VIEWS.LOADING,
         })
 
-      const videoUrl = currentLocation.pathname.slice(1)
-      const videoUrlArr = videoUrl.split("-")
-      if(videoUrlArr.length == 2) {
-        const videoId = videoUrlArr[1]
-        const workflowData = await this.db.getWorkflow(videoId)
-        if(workflowData.length > 0){
-          console.log("workflowData")
-          console.log(workflowData)
-          this.setState({
-            view: CONSTANTS.VIEWS.MAIN,
-            workflowData: workflowData[0],
-            toolboxData: null,
-          })
+    if(currentLocation.pathname === "/about"){
+      this.setState({
+        view: CONSTANTS.VIEWS.ABOUT
+      })
+    } else {
+        const videoUrl = currentLocation.pathname.slice(1)
+        const videoUrlArr = videoUrl.split("-")
+        if(videoUrlArr.length == 2) {
+          const videoId = videoUrlArr[1]
+          const workflowData = await this.db.getWorkflow(videoId)
+          if(workflowData.length > 0){
+            console.log("workflowData")
+            console.log(workflowData)
+            this.setState({
+              view: CONSTANTS.VIEWS.MAIN,
+              workflowData: workflowData[0],
+              toolboxData: null,
+            })
+          }
+        } else if(videoUrlArr.length == 1 && videoUrlArr[0].length > 0){
+            const toolboxName = unescape(decodeURIComponent( atob(videoUrlArr[0] ) ) )
+            console.log("toolbox")
+            console.log(toolboxName)
+            this.setState({
+              view: CONSTANTS.VIEWS.MAIN,
+              toolboxData: {
+                name: toolboxName
+              },
+              workflowData: null
+            })
         }
-      } else if(videoUrlArr.length == 1 && videoUrlArr[0].length > 0){
-          const toolboxName = unescape(decodeURIComponent( atob(videoUrlArr[0] ) ) )
-          console.log("toolbox")
-          console.log(toolboxName)
-          this.setState({
-            view: CONSTANTS.VIEWS.MAIN,
-            toolboxData: {
-              name: toolboxName
-            },
-            workflowData: null
-          })
       }
     }
   }
@@ -229,6 +236,9 @@ class App extends Component {
     if(this.state.view == CONSTANTS.VIEWS.LOADING){
         return (<Spinner />)
     }
+    else if(this.state.view == CONSTANTS.VIEWS.ABOUT){
+      return (<About backToMenu={() => this.backToMenu()} />)
+    }
     else if(this.state.view == CONSTANTS.VIEWS.TOOLBOX){
       return (<div>
               <Main toolboxData={this.state.toolboxData}
@@ -304,8 +314,9 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-      <div id="ToolPageHeader">Workflows</div>
+      <div id="ToolPageHeader"><a href="/">Workflows</a></div>
       {this.renderView()}
+      <div id="Footer"><a href="/about">About</a></div>
       </div>
     );
   }
