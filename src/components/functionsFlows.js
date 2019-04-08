@@ -247,7 +247,19 @@ export function toggleDraggable(instance, selector, editMode, toolContent, callB
       const parentNode = tempLogo.parentNode
       if(e.el.id.includes("logo") && parentNode.id.includes("container")){
         const parentParentNode = tempLogo.parentNode.parentNode
+        var removeElFound = false
+        var removedElWidth = tempLogo.width
+        //shift left all images after removed one
+        Array.from(parentNode.children).forEach((innerEl, i) => {
+          if(removeElFound){
+            innerEl.style.left = (parseInt(innerEl.style.left) - removedElWidth - (PADDING/2)) + "px"; //only working with same width items
+          }
+          if(innerEl.id == e.el.id){
+            removeElFound = true
+          }
+        })
         parentNode.removeChild(tempLogo)
+
         instance.revalidate(parentNode.id)
         parentParentNode.appendChild(tempLogo)
       }
@@ -261,17 +273,29 @@ export function toggleDraggable(instance, selector, editMode, toolContent, callB
         const containerId = Serialization.getEnclosingContainerId(toolBoxElements, tempLogo)
         const targetToolId = Serialization.getEnclosingToolId(toolBoxElements, tempLogo)
         if(containerId !== null){
+          const containerToolDom = document.getElementById(containerId)
+          const containerChildren = Array.from(containerToolDom.children)
+          if(containerChildren.length > 0){
+            const lastToolDom = containerChildren[containerChildren.length - 1]
+            const targetToolDom = document.getElementById(targetToolId)
+            const sourceToolDom = document.getElementById(sourceToolId)
+            const lastToolLeft = lastToolDom.style.left
+            sourceToolDom.style.top = lastToolDom.style.top
+            //shift right the source (selected) image
+            sourceToolDom.style.left = (parseInt(lastToolLeft) + (sourceToolDom.width) + (PADDING/2)) + "px"; //only working with same width items
+          }
           document.getElementById(containerId).appendChild(tempLogo)
           instance.revalidate(containerId)
         } else if(targetToolId !== null){
-           newlyJoinedTools = [sourceToolId, targetToolId]
-          const targetToolDom = document.getElementById(targetToolId)
-          const sourceToolDom = document.getElementById(sourceToolId)
-          const sourceToolLeft = sourceToolDom.style.left
-          sourceToolDom.style.left = (parseInt(sourceToolLeft) + targetToolDom.width + PADDING) + "px"
-          //addContainer
-          //document.getElementById(containerId).appendChild(tempLogo)
-          //instance.revalidate(containerId)
+            newlyJoinedTools = [sourceToolId, targetToolId]
+            const targetToolDom = document.getElementById(targetToolId)
+            const sourceToolDom = document.getElementById(sourceToolId)
+            const sourceToolLeft = sourceToolDom.style.left
+            sourceToolDom.style.top = targetToolDom.style.top
+            sourceToolDom.style.left = (parseInt(sourceToolLeft) + targetToolDom.width + (PADDING/2)) + "px"
+            //addContainer
+            //document.getElementById(containerId).appendChild(tempLogo)
+            //instance.revalidate(containerId)
         }
       }
       callBackOnStop(newlyJoinedTools)

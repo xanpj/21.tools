@@ -44,8 +44,21 @@ class ContextMenu extends Component {
     const data = {}
     for (let element of form.elements) {
        if (element.tagName === 'BUTTON') { continue; }
-       data[element.name] = element.value;
+       else {
+         if(element.name == "website"){
+           const val = element.value
+            //naive url checker
+            if(val.indexOf("https://") * val.indexOf("http://") * val.indexOf("www.") === 0){
+              data[element.name] = element.value;
+            } else {
+              data[element.name] = "https://" + element.value;
+            }
+         } else {
+            data[element.name] = element.value;
+          }
+       }
     }
+
 
     const self = this;
     function resize(url, callback){
@@ -160,7 +173,6 @@ class ContextMenu extends Component {
       }
     }
   }
-
 
   renderMenu(){
     if(this.props.editMode){
