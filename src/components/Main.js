@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import YouTube from 'react-youtube';
 import { connect } from "react-redux";
-import { actionSetToolContent, actionAddToolElement, actionDeleteToolElement, actionSetFlowInstance} from "../actions/flowActions";
+import { actionSetToolContent,
+        actionAddToolElement,
+        actionDeleteToolElement,
+        actionSetFlowInstance,
+        actionSetToolboxHeader } from "../actions/flowActions";
 
 import ToolBox from './ToolBox'
 import ContextMenu from './ContextMenu'
@@ -128,11 +132,16 @@ class Main extends Component {
             allToolPageVersions: allToolPageVersions,
             contentHashOnMount: contentHashOnMount,
           })
-
+          //TODO
           this.props.actionSetToolContent({
             toolContent: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA],
             toolConnections: toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS],
           })
+          console.log("HERE")
+          console.log(this.props.workflowData)
+          this.props.actionSetToolboxHeader(
+            (this.props.toolboxData) ? toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOL_PAGE] + " (toolbox)" : "How to do " + this.props.workflowData.videoTitle + " in the 21st century"
+          )
 
       } else {
         this.setState({
@@ -425,7 +434,7 @@ class Main extends Component {
     const contentHashOnMount = Utils.md5(JSON.stringify(this.props.toolContent) + "_" + JSON.stringify(this.props.toolConnections))
     const contentChanged = contentHashOnMount !== this.state.contentHashOnMount
 
-    var versionOutput = "Versions"
+    var versionOutput = "Toolbox"
     if(this.state.toolPageMeta){
       versionOutput = (this.state.toolPageMeta.name + " v" + this.state.toolPageMeta.version)
       if(versionOutput.length > 8){
@@ -499,7 +508,7 @@ class Main extends Component {
                     <div class={this.state.versionDropdown ? "dropdown-menu open" : "dropdown-menu closed"} aria-labelledby="dropdownMenu2">
                       {(this.state.allToolPageVersions) ? this.state.allToolPageVersions.map((el, i) =>
                         <button class="dropdown-item" onClick={() => this.changeToolPageVersion(el._id)} type="button">
-                        {this.state.toolPageMeta.name + " v" + el.version}</button>
+                        {this.state.toolPageMeta.name + " (toolbox) v" + el.version}</button>
                       ) : ""/*_id.getTimestamp().toLocaleString()*/}
                     </div>
                   </div>
@@ -533,6 +542,7 @@ const mapDispatchToProps = dispatch => ({
   actionSetFlowInstance: (payload) => dispatch(actionSetFlowInstance(payload)),
   actionDeleteToolElement: (payload) => dispatch(actionDeleteToolElement(payload)),
   actionSetToolContent: (payload) => dispatch(actionSetToolContent(payload)),
-  actionAddToolElement: (payload) => dispatch(actionAddToolElement(payload))
+  actionAddToolElement: (payload) => dispatch(actionAddToolElement(payload)),
+  actionSetToolboxHeader: (payload) => dispatch(actionSetToolboxHeader(payload))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

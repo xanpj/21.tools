@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from "react-redux";
 import logo from './logo.svg';
 import './App.css';
 
@@ -313,7 +314,10 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-      <div id="ToolPageHeader"><a href="/">Workflows</a></div>
+      <div id="ToolPageHeader">
+        <div class="header-element logo"><a href="/"><img class="img-logo" src="logo.png" /></a></div>
+        <div class="header-element">{this.props.toolboxHeader}</div>
+      </div>
       {this.renderView()}
       <div id="Footer"><a href="/about">About</a></div>
       </div>
@@ -321,4 +325,7 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = state => ({
+  ...state
+});
+export default connect(mapStateToProps, null)(App);

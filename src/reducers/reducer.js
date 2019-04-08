@@ -5,11 +5,17 @@ const defaultState = {
   flowInstance: null,
   toolContent: null,
   toolConnections: null,
-  toolContentHash: null
+  toolContentHash: null,
+  toolboxHeader: null
 }
 
 export default (state = defaultState, action) => {
   switch (action.type) {
+    case CONSTANTS.ACTION_SET_TOOLBOX_HEADER:
+      return {
+        ...state,
+        toolboxHeader: action.payload
+      }
     case CONSTANTS.ACTION_SET_FLOW_INSTANCE:
       return {
         ...state,
