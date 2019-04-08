@@ -622,12 +622,25 @@ width: 100%;
   overflow-y: scroll;
 }
 
+.dropdown-menu.dropdown-menu-toolbox.open {
+  width: 250px;
+  left: -150px;
+  max-height: 200px;
+  overflow-y: auto;
+  text-align: right;
+}
+
 .dropdown-item {
   padding: .25rem 1.0rem;
 }
 
 .dropdown-item:hover {
-    background-color: #CCC;
+  background-color: #CCC;
+}
+
+.dropdown-item.dropdown-item-default:focus, .dropdown-item.dropdown-item-default:hover {
+  background-color: transparent !important;
+  color: #000;
 }
 
 #edit-tool-box i:hover{

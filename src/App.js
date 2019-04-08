@@ -148,10 +148,18 @@ class App extends Component {
       console.log(workflowResults)
       workflowResults = onlyWorkflowResults.slice(0,5).concat(toolboxResultsAsWorkflowResults.slice(0,5))
       console.log(workflowResults)
-      this.setState({
-        workflowResults: workflowResults,
-        selectedWorkflow: null
-      })
+      if(workflowResults && workflowResults.length > 0){
+        this.setState({
+          workflowResults: workflowResults,
+          selectedWorkflow: null
+        })
+      } else {
+        this.setState({
+          workflowResults: [{videoTitle: "Nothing Found", default: true}],
+          selectedWorkflow: null
+        })
+      }
+
     } else {
       this.setState({
         workflowResults: [],
@@ -164,11 +172,9 @@ class App extends Component {
     if(view == CONSTANTS.VIEWS.EDIT) {
       this.setState({view:  view, workflowData: data})
     } else if(view == CONSTANTS.VIEWS.TOOLBOX){
-      //TODO
-      //check if toolbox exists
-      //create new toolbox iwth initial tool
       //fill toolContent, either directly or via filling workflowData
       const toolboxName = data["toolbox"].toLowerCase()
+      console.log(data)
       const toolboxData = await this.db.createToolbox(data)
       if(!toolboxData){
         console.log(toolboxData)

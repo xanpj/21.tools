@@ -505,7 +505,7 @@ class Main extends Component {
                     <button class="btn btn-secondary dropdown-toggle" type="button" onClick={() => this.setState({versionDropdown: !this.state.versionDropdown}) } id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       {versionOutput}
                     </button>
-                    <div class={this.state.versionDropdown ? "dropdown-menu open" : "dropdown-menu closed"} aria-labelledby="dropdownMenu2">
+                    <div class={this.state.versionDropdown ? "dropdown-menu dropdown-menu-toolbox open" : "dropdown-menu closed"} aria-labelledby="dropdownMenu2">
                       {(this.state.allToolPageVersions) ? this.state.allToolPageVersions.map((el, i) =>
                         <button class="dropdown-item" onClick={() => this.changeToolPageVersion(el._id)} type="button">
                         {this.state.toolPageMeta.name + " (toolbox) v" + el.version}</button>

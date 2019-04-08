@@ -90,12 +90,13 @@ export default class DbInterface {
       const toolboxSearchResult = await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES).find({[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName.toLowerCase()}).toArray()
       console.log(toolboxSearchResult)
       if(toolboxSearchResult.length == 0){
+        const toolPageNameLower = toolPageName.toLowerCase()
         return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES).insertOne({
           owner_id: this.client.auth.user.id,
-          [CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName,
+          [CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageNameLower,
           [CONSTANTS.SCHEMA_FIELD_VERSION]: "0",
           [CONSTANTS.SCHEMA_FIELD_DESCRIPTION]: toolPageDescription,
-          [CONSTANTS.SCHEMA_FIELD_TOOLS_DATA]: [{...CONSTANTS.TOOLPAGE_INIT_ELEMENT, content: "Toolbox " + toolPageName}],
+          [CONSTANTS.SCHEMA_FIELD_TOOLS_DATA]: [{...CONSTANTS.TOOLPAGE_INIT_ELEMENT, content: "Toolbox " + toolPageNameLower}],
           [CONSTANTS.SCHEMA_FIELD_ANCHORS]: []
         })
       } else {

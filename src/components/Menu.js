@@ -4,6 +4,7 @@ import CONSTANTS from './../constants'
 
 function MainMenu(props) {
   var firstToolbox = 0
+  var firstWorkflow = 0
   return (
     <div>
       <div class="row">
@@ -21,19 +22,24 @@ function MainMenu(props) {
         <div class="dropdown">
           <div class={(props.workflowResults && props.workflowResults.length > 0) ? "dropdown-menu main open" : "dropdown-menu main closed"} aria-labelledby="dropdownMenuMain">
             {props.workflowResults.map((el, i) => {
+              firstWorkflow += (el.toolbox) ? 1 : 0
               firstToolbox += (el.toolPage) ? 1 : 0
-              return (el.toolbox) ? (
+              return (el.default) ?
+              (<div class="dropdown-item dropdown-item-default">
+              {el.videoTitle}
+              </div>)
+              : ((el.toolbox) ? (
                 <button onClick={() => props.selectWorkflow(el._id, el.videoTitle)} class="dropdown-item" type="button">
                 {el.videoTitle}<span class="badge-new indropdown">{el.toolbox}</span>
                 </button>
               ) : (
                 <div>
-                {(firstToolbox == 1) ? <span class="line-seperator" /> : ""}
+                {(firstToolbox == 1 && firstWorkflow > 0) ? <span class="line-seperator" /> : ""}
                 <button onClick={() => props.selectWorkflow(null, el.toolPage)} class="dropdown-item" type="button">
                 {el.toolPage} (Toolbox)<span class="badge-grey indropdown">versions: {el.versions}</span>
                 </button>
                 </div>
-              )
+              ))
             }
             )}
           </div>
