@@ -500,7 +500,7 @@ class Main extends Component {
                 <div id="edit-tool-box">
                 <div id="menuBtn" onClick={() => this.props.backToMenu()}><i class="fas fa-arrow-circle-left"></i>Menu</div>
                   {(!this.state.contentNotFound && (contentChanged || this.props.workflowMode )) ? (<button type="button" class={this.props.workflowMode ? "btn btn-success" : "btn btn-primary"} onClick={this.publishToolBox.bind(this)}>{this.props.workflowMode ? "Submit" : "Publish"}</button>) : ""}
-                  <button type="button" class="btn btn-light" onClick={this.onEditToolBox.bind(this)}><i class="far fa-edit"></i></button>
+                  <button type="button" class="btn btn-light" onClick={this.onEditToolBox.bind(this)}>{(this.state.editMode) ?  <img width="18" height="15" src="spinner-ripple.svg" /> : <i class="far fa-edit"></i>}</button>
                   <div class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" onClick={() => this.setState({versionDropdown: !this.state.versionDropdown}) } id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       {versionOutput}

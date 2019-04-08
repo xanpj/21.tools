@@ -24,10 +24,22 @@ class ToolsDatabase extends Component {
     for (let element of form.elements) {
        if (element.tagName === 'BUTTON') { continue; }
        {
+         var finalValue = element.value
+
+         //naive url checker
+         if(element.name == "website"){
+            const val = element.value
+            if(val.indexOf("https://") * val.indexOf("http://") * val.indexOf("www.") === 0){
+              finalValue = element.value;
+            } else {
+              finalValue = "https://" + element.value;
+            }
+         }
+
          if(!data[element.name]){
-           data[element.name] = [element.value]
+           data[element.name] = [finalValue]
          } else {
-           data[element.name].push(element.value);
+           data[element.name].push(finalValue);
          }
        }
     }
@@ -57,7 +69,7 @@ class ToolsDatabase extends Component {
           reader.onload = function (readerEvent) {
               var image = new Image();
               image.onload = function (imageEvent) {
-
+                  var topOffset = 0;
                   // Resize the image
                   var canvas = document.createElement('canvas'),
                       max_size = 100,// TODO : pull max size from a site config
@@ -67,6 +79,7 @@ class ToolsDatabase extends Component {
                       if (width > max_size) {
                           height *= max_size / width;
                           width = max_size;
+                          topOffset = (max_size - height) / 2
                       }
                   } else {
                       if (height > max_size) {
@@ -74,9 +87,9 @@ class ToolsDatabase extends Component {
                           height = max_size;
                       }
                   }
-                  canvas.width = width;
-                  canvas.height = height;
-                  canvas.getContext('2d').drawImage(image, 0, 0, width, height);
+                  canvas.width = max_size //width; // makes sure it scales well
+                  canvas.height = max_size //height; // makes sure it scales well
+                  canvas.getContext('2d').drawImage(image, 0, topOffset, width, height);
                   var dataUrl = canvas.toDataURL('image/png');
                   const data = {
                     imgPreview: dataUrl,

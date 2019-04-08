@@ -45,9 +45,9 @@ class ContextMenu extends Component {
     for (let element of form.elements) {
        if (element.tagName === 'BUTTON') { continue; }
        else {
+         //naive url checker
          if(element.name == "website"){
            const val = element.value
-            //naive url checker
             if(val.indexOf("https://") * val.indexOf("http://") * val.indexOf("www.") === 0){
               data[element.name] = element.value;
             } else {
