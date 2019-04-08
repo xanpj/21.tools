@@ -933,6 +933,10 @@ width: 100%;
   text-align:center;
 }
 
+.img-preview-explainer {
+  max-width: 300px;
+}
+
 #logo0 {
 left: 150px;
 }

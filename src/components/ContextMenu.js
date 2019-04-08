@@ -65,6 +65,7 @@ class ContextMenu extends Component {
       var image = new Image();
       image.crossOrigin = "anonymous";  // This enables CORS
       image.onload = function () {
+        var topOffset = 0
         var canvas = document.createElement('canvas'),
             max_size = 100,// TODO : pull max size from a site config
             width = image.width,
@@ -73,6 +74,7 @@ class ContextMenu extends Component {
             if (width > max_size) {
                 height *= max_size / width;
                 width = max_size;
+                topOffset = (max_size - height) / 2
             }
         } else {
             if (height > max_size) {
@@ -80,10 +82,10 @@ class ContextMenu extends Component {
                 height = max_size;
             }
         }
-        canvas.width = width;
-        canvas.height = height;
+        canvas.width = max_size//width; // makes sure it scales well
+        canvas.height = max_size//height; // makes sure it scales well
         var ctx = canvas.getContext('2d');
-        ctx.drawImage(image, 0, 0, width, height);
+        ctx.drawImage(image, 0, topOffset, width, height);
         var dataUrl = canvas.toDataURL("image/png");
         self.setState({
           file: "img",
@@ -126,7 +128,7 @@ class ContextMenu extends Component {
           reader.onload = function (readerEvent) {
               var image = new Image();
               image.onload = function (imageEvent) {
-
+                  var topOffset = 0
                   // Resize the image
                   var canvas = document.createElement('canvas'),
                       max_size = 100,// TODO : pull max size from a site config
@@ -136,6 +138,7 @@ class ContextMenu extends Component {
                       if (width > max_size) {
                           height *= max_size / width;
                           width = max_size;
+                          topOffset = (max_size - height) / 2
                       }
                   } else {
                       if (height > max_size) {
@@ -143,9 +146,9 @@ class ContextMenu extends Component {
                           height = max_size;
                       }
                   }
-                  canvas.width = width;
-                  canvas.height = height;
-                  canvas.getContext('2d').drawImage(image, 0, 0, width, height);
+                  canvas.width = max_size //width; // makes sure it scales well
+                  canvas.height = max_size //height; // makes sure it scales well
+                  canvas.getContext('2d').drawImage(image, 0, topOffset, width, height);
                   var dataUrl = canvas.toDataURL('image/png');
                   self.setState({
                     file: "img",
@@ -208,7 +211,8 @@ class ContextMenu extends Component {
                 </div>
               </div>) : (
               <div class="context-menu-img-preview">
-                <img id="img-preview" width="30" height="30" src={this.state.imgPreviewUrl} />
+                <img id="img-preview" height="30" src={this.state.imgPreviewUrl} />
+                <div class="img-preview-explainer"><small>Please make sure to upload quadratic, transparent icons to preserve the size and color.<br />If the url upload fails, try again with a different url.</small></div>
                 <form onSubmit={this.uploadToDb} noValidate>
                   <div class="md-form file-path-wrapper">
                     <input class="file-path validate" value={name} onChange={(e) => this.setState({imgData: {...this.state.imgData, name: e.target.value}})} name="name" type="text" placeholder="Tool name" required={true} />

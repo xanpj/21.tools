@@ -234,7 +234,7 @@ class ToolBox extends Component {
             return (<img id={el.id} key={el.id} onMouseOver={() => this.tooltipImgInfo()} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={(el.content.indexOf('data:image') > -1) ? el.content : require("../img/"+el.content)} />)
           */
           if(el.type == "img")
-            return (<img id={el.id} key={el.id} onClick={() => this.props.toolSelected(el.id)} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={(el.content.indexOf('data:image') > -1) ? el.content : require("../img/"+el.content)} />)
+            return (<img id={el.id} key={el.id} onClick={() => this.props.toolSelected(el.id)} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={(el.content.indexOf('data:image') > -1) ? el.content : ""} />)
           else if(el.type == "text")
             return (<div id={el.id} key={el.id} style={{top: el.top, left: el.left}} className="tool-box-text-el tool-box-el-hack tool-box-el">{el.content}</div>)
           else if(el.type == "container")
