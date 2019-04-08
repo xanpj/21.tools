@@ -150,7 +150,6 @@ class ToolBox extends Component {
   componentWillReceiveProps(nextProps) {
     if(nextProps.toolContentHash !== this.state.toolContentHash){
       //FlowActions.detachElement(this.props.flowInstance, "logo_2")
-      alert(nextProps.toolContentHash)
       this.setState({toolContentHash: nextProps.toolContentHash})
       this.forceUpdate()
     }

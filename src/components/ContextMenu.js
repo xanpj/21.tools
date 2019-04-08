@@ -199,9 +199,9 @@ class ContextMenu extends Component {
                 <img id="img-preview" width="30" height="30" src={this.state.imgPreviewUrl} />
                 <form onSubmit={this.uploadToDb} noValidate>
                   <div class="md-form file-path-wrapper">
-                    <input class="file-path validate" value={name} onChange={(e) => this.setState({imgData: {...this.state.imgData, name: e.target.value}})} name="name" type="text" placeholder="Tool name" />
+                    <input class="file-path validate" value={name} onChange={(e) => this.setState({imgData: {...this.state.imgData, name: e.target.value}})} name="name" type="text" placeholder="Tool name" required={true} />
                     <div class="seperator" />
-                    <input class="file-path validate" value={website} onChange={(e) => this.setState({imgData: {...this.state.imgData, website: e.target.value}})} name="website" type="text" placeholder="Official website" />
+                    <input class="file-path validate" value={website} onChange={(e) => this.setState({imgData: {...this.state.imgData, website: e.target.value}})} name="website" type="text" placeholder="Official website" required={true} />
                     <div class="seperator" />
                     <textarea class="file-path validate" value={description} onChange={(e) => this.setState({imgData: {...this.state.imgData, description: e.target.value}})} name="description" type="text" placeholder="(Optional) Description" />
                   </div>

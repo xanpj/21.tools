@@ -67,10 +67,13 @@ export default class DbInterface {
                     .toArray()
     }
 
+    async uploadToToolDatabase(data){
+      return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_DATABASE)
+      .insertMany(data.map(el => ({owner_id: this.client.auth.user.id, ...el}) ))
+    }
+
     async searchToolDatabase(toolName){
-      console.log("searchToolDatabase")
       const regex =  new RegExp(toolName, 'i')
-      console.log(regex)
       return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_DATABASE)
                     .find( {[CONSTANTS.SCHEMA_FIELD_NAME]: regex}, {limit: 1000} ) //TODO change version
                     .toArray()

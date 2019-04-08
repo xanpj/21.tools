@@ -7,6 +7,7 @@ import { actionSetToolContent, actionAddToolElement, actionDeleteToolElement, ac
 import ToolBox from './ToolBox'
 import ContextMenu from './ContextMenu'
 import Spinner from './Spinner'
+import NotFound from './NotFound'
 import * as Serialization from './functionsSerialization'
 import * as Positions from '../resources/InfographicPositions';
 import * as Utils from '../utils'
@@ -42,6 +43,7 @@ class Main extends Component {
       checkInterval: null,
       workflowData: null,
       toolboxData: null,
+      contentNotFound: false,
     }
 
     const toolContent = null
@@ -108,6 +110,8 @@ class Main extends Component {
         console.log("toolPage main")
         console.log(toolPage)
         const allToolPageVersions = await this.props.db.getAllToolPageVersions(toolboxName)
+        console.log(this.props.workflowData)
+        console.log(allToolPageVersions)
 
         if(toolPage && toolPage.length > 0){
           const contentHashOnMount = Utils.md5(JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA]) + "_" + JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]))
@@ -130,9 +134,10 @@ class Main extends Component {
             toolConnections: toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS],
           })
 
-          console.log("MONGODB: pages")
-          const pages = await this.props.db.getPages()
-          console.log(pages)
+      } else {
+        this.setState({
+          contentNotFound: true
+        })
       }
     }
   }
@@ -485,7 +490,7 @@ class Main extends Component {
               <div className={(this.props.workflowData) ? "tool-box" : "tool-box full"}>
                 <div id="edit-tool-box">
                 <div id="menuBtn" onClick={() => this.props.backToMenu()}><i class="fas fa-arrow-circle-left"></i>Menu</div>
-                  {(contentChanged || this.props.workflowMode ) ? (<button type="button" class={this.props.workflowMode ? "btn btn-success" : "btn btn-primary"} onClick={this.publishToolBox.bind(this)}>{this.props.workflowMode ? "Submit" : "Publish"}</button>) : ""}
+                  {(!this.state.contentNotFound && (contentChanged || this.props.workflowMode )) ? (<button type="button" class={this.props.workflowMode ? "btn btn-success" : "btn btn-primary"} onClick={this.publishToolBox.bind(this)}>{this.props.workflowMode ? "Submit" : "Publish"}</button>) : ""}
                   <button type="button" class="btn btn-light" onClick={this.onEditToolBox.bind(this)}><i class="far fa-edit"></i></button>
                   <div class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" onClick={() => this.setState({versionDropdown: !this.state.versionDropdown}) } id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -509,7 +514,7 @@ class Main extends Component {
                   editMode={this.state.editMode}
                   deleteElement={(refId) => this.deleteElement(refId)}
                   showContextMenu={(e, param) => this.showContextMenu(e, param)}
-                  />) : <Spinner view={CONSTANTS.VIEWS.TOOLBOX} />}
+                  />) : (this.props.workflowNotFound || this.state.contentNotFound) ? <NotFound /> :  <Spinner view={CONSTANTS.VIEWS.TOOLBOX} />}
                 </div>
               </div>
             </div>

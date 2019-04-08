@@ -51,6 +51,16 @@ a:hover {
    left: 40.5%;
 }
 
+.not-found {
+  font-size: 30px;
+  color:  #663333;
+  position: absolute;
+  text-align: center;
+   z-index: 15;
+   top: 40.5%;
+   left: 39%;
+}
+
 /** UPLOAD **/
 #UploadHeader {
   position: absolute;
@@ -1179,6 +1189,17 @@ left: 150px;
 
 #Imprint {
   text-align: left;
+}
+
+/** ToolsDatabase **/
+.tools-database-table {width: 100%}
+.tools-database-table .tg  {border-collapse:collapse;border-spacing:0;width: 100%;}
+.tools-database-table .tg td{padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tools-database-table .tg th{font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tools-database-table .tg .tg-0lax{max-width: 200px;text-align:left;vertical-align:middle}
+
+.form-btn-container .btn {
+  margin: 0 auto;
 }
 
 /** FOOTER **/

@@ -6,6 +6,7 @@ import CONSTANTS from './constants'
 import Menu from './components/Menu'
 import Main from './components/Main'
 import About from './components/About'
+import ToolsDatabase from './components/ToolsDatabase'
 import Spinner from './components/Spinner'
 import DbInterface from './components/DbInterface'
 
@@ -24,7 +25,8 @@ class App extends Component {
       textToolbox: "",
       workflowResults: [],
       selectedWorkflow: "",
-      textWorkflow: ""
+      textWorkflow: "",
+      workflowNotFound: null
     }
 
     this.db = new DbInterface()
@@ -34,7 +36,6 @@ class App extends Component {
   }
 
   async componentWillMount(){
-    //5ca8507120a84470fdb90363
     /** params from URL **/
     var currentLocation = window.location
     await this.db.authenticateAnonymousUser()
@@ -43,27 +44,45 @@ class App extends Component {
         this.setState({
           view: CONSTANTS.VIEWS.LOADING,
         })
-
     if(currentLocation.pathname === "/about"){
       this.setState({
         view: CONSTANTS.VIEWS.ABOUT
       })
-    } else {
+    }
+    else if(currentLocation.pathname === "/toolsdatabase"){
+      this.setState({
+        view: CONSTANTS.VIEWS.TOOLSDATABASE
+      })
+    }
+    else {
         const videoUrl = currentLocation.pathname.slice(1)
         const videoUrlArr = videoUrl.split("-")
         if(videoUrlArr.length == 2) {
           const videoId = videoUrlArr[1]
-          const workflowData = await this.db.getWorkflow(videoId)
-          if(workflowData.length > 0){
-            console.log("workflowData")
-            console.log(workflowData)
+          try {
+            const workflowData = await this.db.getWorkflow(videoId)
+            if(workflowData.length > 0){
+              console.log("workflowData")
+              console.log(workflowData)
+              this.setState({
+                view: CONSTANTS.VIEWS.MAIN,
+                workflowData: workflowData[0],
+                toolboxData: null,
+              })
+            } else {
+              this.setState({
+                view: CONSTANTS.VIEWS.MAIN,
+                workflowNotFound: true
+              })
+            }
+          } catch(err){
             this.setState({
               view: CONSTANTS.VIEWS.MAIN,
-              workflowData: workflowData[0],
-              toolboxData: null,
+              workflowNotFound: true
             })
-          }
+        }
         } else if(videoUrlArr.length == 1 && videoUrlArr[0].length > 0){
+          try {
             const toolboxName = unescape(decodeURIComponent( atob(videoUrlArr[0] ) ) )
             console.log("toolbox")
             console.log(toolboxName)
@@ -74,6 +93,12 @@ class App extends Component {
               },
               workflowData: null
             })
+          } catch(err){
+            this.setState({
+              view: CONSTANTS.VIEWS.MAIN,
+              workflowNotFound: true
+            })
+          }
         }
       }
     }
@@ -239,9 +264,13 @@ class App extends Component {
     else if(this.state.view == CONSTANTS.VIEWS.ABOUT){
       return (<About backToMenu={() => this.backToMenu()} />)
     }
+    else if(this.state.view == CONSTANTS.VIEWS.TOOLSDATABASE){
+      return (<ToolsDatabase backToMenu={() => this.backToMenu()} db={this.db} />)
+    }
     else if(this.state.view == CONSTANTS.VIEWS.TOOLBOX){
       return (<div>
-              <Main toolboxData={this.state.toolboxData}
+              <Main workflowNotFound={this.state.workflowNotFound}
+                    toolboxData={this.state.toolboxData}
                     workflowData = {null}
                     backToMenu={() => this.backToMenu()}
                     submitWorkflow={(timecode, version) => this.submitWorkflow(timecode, version)}
@@ -258,42 +287,12 @@ class App extends Component {
                     submitWorkflow={(timecode, version) => this.submitWorkflow(timecode, version)}
                     workflowMode={true}
                     db={this.db} />
-
-        {/*<div id="UploadHeader">
-          <form>
-          <div class="form-row">
-          <label>Form header</label>
-          </div>
-            <div class="form-row">
-              <div class="form-group col-md-2">
-                <input type="email" class="form-control" id="inputEmail4" placeholder="Youtube video ID" />
-              </div>
-              <div class="form-group col-md-2">
-                <input type="text" class="form-control" id="inputPassword4" placeholder="Video title" />
-              </div>
-              <div class="form-group col-md-2">
-                <input type="email" class="form-control" id="inputEmail4" placeholder="Email" />
-              </div>
-              <div class="form-group col-md-2">
-                <input type="text" class="form-control" id="inputPassword4" placeholder="Website" />
-              </div>
-              <div class="form-group col-md-2">
-                <input type="text" class="form-control" id="inputPassword4" placeholder="Tags" />
-              </div>
-
-              <div class="form-group col-md-2">
-                <button type="submit" class="btn btn-primary">Upload</button>
-              </div>
-
-            </div>
-          </form>
-          </div>*/}
     </div>
     )}
     else if(this.state.view == CONSTANTS.VIEWS.MAIN){
       return (
         <div>
-          <Main toolboxData={this.state.toolboxData} workflowData={this.state.workflowData} backToMenu={() => this.backToMenu()} db={this.db}/>
+          <Main workflowNotFound={this.state.workflowNotFound} toolboxData={this.state.toolboxData} workflowData={this.state.workflowData} backToMenu={() => this.backToMenu()} db={this.db}/>
         </div>
       )
     } else {
