@@ -230,11 +230,9 @@ class ToolBox extends Component {
       console.log("this.props.toolContent")
       console.log(this.props.toolContent)
       return this.props.toolContent.map((el, i) => {
-          /*if(el.type == "img")
-            return (<img id={el.id} key={el.id} onMouseOver={() => this.tooltipImgInfo()} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={(el.content.indexOf('data:image') > -1) ? el.content : require("../img/"+el.content)} />)
-          */
+          const imgClasses = this.props.toolboxMode ? "tool-box-logo-el tool-box-el-hack tool-box-el el-used" : "tool-box-logo-el tool-box-el-hack tool-box-el"
           if(el.type == "img")
-            return (<img id={el.id} key={el.id} onClick={() => this.props.toolSelected(el.id)} style={{top: el.top, left: el.left}} className="tool-box-logo-el tool-box-el-hack tool-box-el" src={(el.content.indexOf('data:image') > -1) ? el.content : ""} />)
+            return (<img id={el.id} key={el.id} onClick={() => this.props.toolSelected(el.id)} style={{top: el.top, left: el.left}} className={imgClasses} src={(el.content.indexOf('data:image') > -1) ? el.content : ""} />)
           else if(el.type == "text")
             return (<div id={el.id} key={el.id} style={{top: el.top, left: el.left}} className="tool-box-text-el tool-box-el-hack tool-box-el">{el.content}</div>)
           else if(el.type == "container")

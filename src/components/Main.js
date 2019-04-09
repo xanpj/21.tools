@@ -517,6 +517,7 @@ class Main extends Component {
                 <div id="ToolBoxWrapper">
                 {(this.props.toolContent !== null) ?
                   (<ToolBox
+                  toolboxMode = {this.props.toolboxData ? true : false}
                   workflowMode={this.props.workflowMode}
                   toolSelected={(elId) => this.toolSelected(elId)}
                   setVideoIconHighlights={() => this.setVideoIconHighlights()}
