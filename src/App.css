@@ -53,7 +53,7 @@ a:hover {
 
 .not-found {
   font-size: 30px;
-  color:  #663333;
+  color:  #000000;
   position: absolute;
   text-align: center;
    z-index: 15;
@@ -823,16 +823,39 @@ width: 100%;
 #ContextMenu {
   position: absolute;
   z-index: 5;
-  /*border: 1px solid #000000;*/
+  font-size: 14px;
   background-color: #FFFFFF;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.1);
+}
+
+#ContextMenu button {
+  font-size: 13px !important;
+}
+
+#ContextMenu.detailedView {
   padding: 15px;
 }
 
+
 .closeContextMenuBtn {
-  margin-top: -5px;
-  margin-bottom: 5px;
+  padding-top: 10px;
+  padding-right: 10px;
 }
+
+.detailedView .closeContextMenuBtn {
+  margin-top: -10px;
+  margin-bottom: 5px;
+  margin-right: -5px;
+}
+
+.context-menu-tool-website {
+  padding: 10px;
+  padding-top:5px;
+}
+
+.closeContextMenuBtn {
+}
+
 .closeContextMenuBtn i:hover {
   text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
   cursor:pointer;
@@ -864,14 +887,28 @@ width: 100%;
   background-color: #111;
 }
 
+.list-group-item {
+  min-width: 100px;
+  text-align: left;
+  padding: 7px;
+  padding-left: 10px;
+}
+
+.list-group {
+    margin-top: 5px;
+    margin-bottom:5px;
+}
+
 .list-group .list-group-item {
   background-color: #FFFFFF;
+  border: none;
+  border-radius: 0;
 }
 
 .list-group .list-group-item:hover {
   z-index: 2;
   color: #fff;
-  background-color: #007bff;
+  background-color: #CCC;
   border-color: #007bff;
   cursor:pointer;
 }
@@ -1191,6 +1228,10 @@ left: 150px;
   margin-top: 50px;
   width: 100%;
   text-align: center;
+}
+
+#AboutInternal {
+  text-align: left;
 }
 
 .about-btn-wrapper {

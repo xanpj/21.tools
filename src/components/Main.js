@@ -497,22 +497,23 @@ class Main extends Component {
 
             <div className={(this.props.workflowData) ? "right" : "full right"}>
               <div className={(this.props.workflowData) ? "tool-box" : "tool-box full"}>
+                {(!this.props.toolContent) ? "" : (
                 <div id="edit-tool-box">
-                <div id="menuBtn" onClick={() => this.props.backToMenu()}><i class="fas fa-arrow-circle-left"></i>Menu</div>
-                  {(!this.state.contentNotFound && (contentChanged || this.props.workflowMode )) ? (<button type="button" class={this.props.workflowMode ? "btn btn-success" : "btn btn-primary"} onClick={this.publishToolBox.bind(this)}>{this.props.workflowMode ? "Submit" : "Publish"}</button>) : ""}
-                  <button type="button" class="btn btn-light" onClick={this.onEditToolBox.bind(this)}>{(this.state.editMode) ?  <img width="18" height="15" src="spinner-ripple.svg" /> : <i class="far fa-edit"></i>}</button>
-                  <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" onClick={() => this.setState({versionDropdown: !this.state.versionDropdown}) } id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      {versionOutput}
-                    </button>
-                    <div class={this.state.versionDropdown ? "dropdown-menu dropdown-menu-toolbox open" : "dropdown-menu closed"} aria-labelledby="dropdownMenu2">
-                      {(this.state.allToolPageVersions) ? this.state.allToolPageVersions.map((el, i) =>
-                        <button class="dropdown-item" onClick={() => this.changeToolPageVersion(el._id)} type="button">
-                        {this.state.toolPageMeta.name + " (toolbox) v" + el.version}</button>
-                      ) : ""/*_id.getTimestamp().toLocaleString()*/}
+                  <div id="menuBtn" onClick={() => this.props.backToMenu()}><i class="fas fa-arrow-circle-left"></i>Menu</div>
+                    {(!this.state.contentNotFound && (contentChanged || this.props.workflowMode )) ? (<button type="button" class={this.props.workflowMode ? "btn btn-success" : "btn btn-primary"} onClick={this.publishToolBox.bind(this)}>{this.props.workflowMode ? "Submit" : "Publish"}</button>) : ""}
+                    <button type="button" class="btn btn-light" onClick={this.onEditToolBox.bind(this)}>{(this.state.editMode) ?  <img width="18" height="15" src="spinner-ripple.svg" /> : <i class="far fa-edit"></i>}</button>
+                    <div class="dropdown">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" onClick={() => this.setState({versionDropdown: !this.state.versionDropdown}) } id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {versionOutput}
+                      </button>
+                      <div class={this.state.versionDropdown ? "dropdown-menu dropdown-menu-toolbox open" : "dropdown-menu closed"} aria-labelledby="dropdownMenu2">
+                        {(this.state.allToolPageVersions) ? this.state.allToolPageVersions.map((el, i) =>
+                          <button class="dropdown-item" onClick={() => this.changeToolPageVersion(el._id)} type="button">
+                          {this.state.toolPageMeta.name + " (toolbox) v" + el.version}</button>
+                        ) : ""/*_id.getTimestamp().toLocaleString()*/}
+                      </div>
                     </div>
-                  </div>
-                </div>
+                </div>)}
                 <div id="ToolBoxWrapper">
                 {(this.props.toolContent !== null) ?
                   (<ToolBox

@@ -181,13 +181,13 @@ class ContextMenu extends Component {
     if(this.props.editMode){
       return (<div>
                 <ul class="list-group">
-                 <li class="list-group-item" onClick={() => this.setState({view: VIEW.IMG})}><i class="fas fa-plus" /><i class="far fa-image" /></li>
-                 <li class="list-group-item" onClick={() => this.props.addGroup()}><i class="fas fa-plus" /><i class="far fa-square" /></li>
-                 <li class="list-group-item" onClick={() => this.setState({view: VIEW.TEXT})}><i class="fas fa-plus" /><i class="fas fa-font" /></li>
+                 <li class="list-group-item" onClick={() => this.setState({view: VIEW.IMG})}>Add icon</li>
+                 <li class="list-group-item" onClick={() => this.props.addGroup()}>Add box</li>
+                 <li class="list-group-item" onClick={() => this.setState({view: VIEW.TEXT})}>Add text</li>
                </ul>
              </div>)
     } else {
-        return (<div><a class="context-menu-tool-website" target={"_blank"} href={this.props.contextMenuParam}>Visit Website</a></div>)
+        return (<div class="context-menu-tool-website"><a target={"_blank"} href={this.props.contextMenuParam}>Visit Website</a></div>)
     }
   }
 
@@ -260,7 +260,7 @@ class ContextMenu extends Component {
 
   render() {
     return (
-      <div id="ContextMenu" style={{left: this.props.contextMenuCoords[0],top:this.props.contextMenuCoords[1]}}>
+      <div id="ContextMenu" class={(this.state.view !== VIEW.MENU) ? "detailedView" : ""} style={{left: this.props.contextMenuCoords[0],top:this.props.contextMenuCoords[1]}}>
         <div class="closeContextMenuBtn" style={{textAlign:"right"}} onClick={() => this.props.closeContextMenu()}>
           <i class="fas fa-times"></i>
         </div>
