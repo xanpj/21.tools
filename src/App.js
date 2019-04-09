@@ -318,11 +318,12 @@ class App extends Component {
   }
 
   render() {
+    const title = (this.props.toolboxHeader) ? this.props.toolboxHeader.charAt(0).toUpperCase() + this.props.toolboxHeader.slice(1) : ""
     return (
       <div className="App">
       <div id="ToolPageHeader">
         <div class="header-element logo"><a href="/"><img class="img-logo" src="logo.png" /></a></div>
-        <div class="header-element">{this.props.toolboxHeader}</div>
+        <div class="header-element">{title}</div>
       </div>
       {this.renderView()}
       <div id="Footer"><a href="/about">About</a></div>

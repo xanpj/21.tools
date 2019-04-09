@@ -24,7 +24,7 @@ function AboutInternal(props){
             {/*<YouTube
              videoId={"2GwzlT2M59A"}
              opts={ytOpts} />*/}
-             <b>Worfklows</b> eliminates the painful research on google for building an overview about how to accomplish a specific task with 21st century tools.
+             <b>21.tools</b> eliminates the painful research on google for building an overview about how to accomplish a specific task with 21st century tools.
              Curated toolboxes and comprehensible videos presenting experts' workflows make it easier to navigate in the complexity of state-of-the-art tools used in a specific domain.
          </div>
 }
