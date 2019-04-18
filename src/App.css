@@ -77,6 +77,11 @@ a:hover {
 }
 
 /** MENU **/
+.menu-bottom-links{
+    margin-top: 5px;
+    font-size: 14px;
+    text-align: center;
+}
 .outer {
   display: table;
   /*position: absolute; TODO*/

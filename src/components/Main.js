@@ -48,6 +48,7 @@ class Main extends Component {
       workflowData: null,
       toolboxData: null,
       contentNotFound: false,
+      loading: false,
     }
 
     const toolContent = null
@@ -169,7 +170,9 @@ class Main extends Component {
 
       var versionString = ""
 
+      this.setState({loading: true})
       if(contentChanged) {
+        //publishing starts
         const toolBoxElements = document.getElementsByClassName('tool-box-el')
         const serializedToolBoxElements = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements)
 
@@ -224,10 +227,11 @@ class Main extends Component {
           },
           allToolPageVersions: allToolPageVersions,
           contentHashOnMount: contentHashNow  //update contentHashOnMount
-
         })
+        this.setState({loading: false})
       }
       if(this.props.workflowMode){
+          //window relocation will occur, so no reset of loading state necessary
           this.props.submitWorkflow(this.state.timecode, versionString || this.state.toolPageMeta.version)
       }
     }
@@ -513,9 +517,15 @@ class Main extends Component {
                         ) : ""/*_id.getTimestamp().toLocaleString()*/}
                       </div>
                     </div>
+                    {
+                    (this.props.workflowMode) ?
+                    <a href={CONSTANTS.VIDEO_WORKFLOW_SUBMIT_TUTORIAL} target="_blank"><small>How to submit the workflow?</small></a>
+                    :
+                    <a href={CONSTANTS.VIDEO_TOOLBOX_EDIT_TUTORIAL} target="_blank"><small>How to edit the toolbox?</small></a>
+                    }
                 </div>)}
                 <div id="ToolBoxWrapper">
-                {(this.props.toolContent !== null) ?
+                {(this.props.toolContent !== null && !this.state.loading) ?
                   (<ToolBox
                   toolboxMode = {this.props.toolboxData ? true : false}
                   workflowMode={this.props.workflowMode}

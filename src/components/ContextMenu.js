@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import CONSTANTS from './../constants'
+
 const VIEW = {
   MENU: 0,
   IMG: 1,
@@ -63,7 +65,7 @@ class ContextMenu extends Component {
     const self = this;
     function resize(url, callback){
       var image = new Image();
-      image.crossOrigin = "anonymous";  // This enables CORS
+      image.crossOrigin = "Anonymous";  // This enables CORS
       image.onload = function () {
         var topOffset = 0
         var canvas = document.createElement('canvas'),
@@ -95,6 +97,7 @@ class ContextMenu extends Component {
         });
         callback(dataUrl)
       }
+        //proxy because of cors
         image.src = url;
     }
 
@@ -213,11 +216,11 @@ class ContextMenu extends Component {
               <div class="context-menu-img-preview">
                 <img id="img-preview" height="30" src={this.state.imgPreviewUrl} />
                 <div class="img-preview-explainer"><small>Please make sure to upload quadratic, transparent icons to preserve the size and color.<br />If the url upload fails, try again with a different url.</small></div>
-                <form onSubmit={this.uploadToDb} noValidate>
+                <form onSubmit={this.uploadToDb}>
                   <div class="md-form file-path-wrapper">
-                    <input class="file-path validate" value={name} onChange={(e) => this.setState({imgData: {...this.state.imgData, name: e.target.value}})} name="name" type="text" placeholder="Tool name" required={true} />
+                    <input class="file-path validate" required={true} value={name} onChange={(e) => this.setState({imgData: {...this.state.imgData, name: e.target.value}})} name="name" type="text" placeholder="Tool name" required={true} />
                     <div class="seperator" />
-                    <input class="file-path validate" value={website} onChange={(e) => this.setState({imgData: {...this.state.imgData, website: e.target.value}})} name="website" type="text" placeholder="Official website" required={true} />
+                    <input class="file-path validate" required={true} value={website} onChange={(e) => this.setState({imgData: {...this.state.imgData, website: e.target.value}})} name="website" type="text" placeholder="Official website" required={true} />
                     <div class="seperator" />
                     <textarea class="file-path validate" value={description} onChange={(e) => this.setState({imgData: {...this.state.imgData, description: e.target.value}})} name="description" type="text" placeholder="(Optional) Description" />
                   </div>

@@ -38,5 +38,10 @@ module.exports = {
   CREATE_WORKFLOW_MENU: "CREATE_WORKFLOW_MENU",
   CREATE_TOOLBOX: "CREATE_TOOLBOX",
   TOOLPAGE_INIT_ELEMENT: {"id":"text_0","left":"200px","top":"200px", "height":"", "width":"","content": "", "type":"text", "name": "", "website": "", "description": ""},
-  MAIL_OWNER: "webmaster@nightlife-city.com"
+  MAIL_OWNER: "webmaster@nightlife-city.com",
+  VIDEO_TOOLBOX_EDIT_TUTORIAL: "https://youtu.be/1c-juZp5vQc",
+  VIDEO_WORKFLOW_SUBMIT_TUTORIAL: "https://youtu.be/4kYQ89v2atQ",
+  VIDEO_REQUEST_TUTORIAL: "https://youtu.be/4kYQ89v2atQ",
+  PROXY_URL: "http://cors.io/?"
+
 }

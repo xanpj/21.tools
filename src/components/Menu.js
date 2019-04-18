@@ -50,41 +50,49 @@ function MainMenu(props) {
     </div>
 
     {(true || props.workflowResults && props.workflowResults.length == 0) ? (
-    <div class="row seperator">
-        <div class="menu-btn-wrapper col-md-4">
-          <div class="menu-btn" onClick={() => props.changeInternalView(CONSTANTS.VIEWS.MENU_INTERNAL.CREATE_WORKFLOW)}>
-            <div class="menu-content-container">
-              <i class="fas fa-file-video"></i>
-            </div>
-            <div class="menu-content-container">
-              <b>New workflow</b>
-              <p>Submit a youtube video explaining one of your 21st century workflows.</p>
-            </div>
-          </div>
-        </div>
-        <div class="menu-btn-wrapper col-md-4">
-          <div class="menu-btn" onClick={() => props.changeInternalView(CONSTANTS.VIEWS.MENU_INTERNAL.CREATE_TOOLBOX)}>
-            <div class="menu-content-container">
-              <i class="far fa-edit"></i>
-            </div>
-            <div class="menu-content-container">
-              <b>New toolbox</b>
-              <p>Create a toolbox for common 21st century tasks in your field of expertise.</p>
+    <div>
+      <div class="row seperator">
+          <div class="menu-btn-wrapper col-md-4">
+            <div class="menu-btn" onClick={() => props.changeInternalView(CONSTANTS.VIEWS.MENU_INTERNAL.CREATE_WORKFLOW)}>
+              <div class="menu-content-container">
+                <i class="fas fa-file-video"></i>
+              </div>
+              <div class="menu-content-container">
+                <b>New workflow</b>
+                <p>Submit a youtube video explaining one of your 21st century workflows.</p>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="menu-btn-wrapper col-md-4">
-          <div class="menu-btn" onClick={() => props.changeInternalView(CONSTANTS.VIEWS.MENU_INTERNAL.REQUEST_SUBMISSION)}>
-            <div class="menu-content-container">
-              <div class="badge-new">New</div>
-            </div>
-            <div class="menu-content-container">
-              <b>Request submission</b>
-              <p>Request a 21st century workflow/toolbox from an expert.</p>
+          <div class="menu-btn-wrapper col-md-4">
+            <div class="menu-btn" onClick={() => props.changeInternalView(CONSTANTS.VIEWS.MENU_INTERNAL.CREATE_TOOLBOX)}>
+              <div class="menu-content-container">
+                <i class="far fa-edit"></i>
+              </div>
+              <div class="menu-content-container">
+                <b>New toolbox</b>
+                <p>Create a toolbox for common 21st century tasks in your field of expertise.</p>
+              </div>
             </div>
           </div>
-        </div>
-    </div>) : <div style={{height:"123px"}}></div>}
+          <div class="menu-btn-wrapper col-md-4">
+            <div class="menu-btn" onClick={() => props.changeInternalView(CONSTANTS.VIEWS.MENU_INTERNAL.REQUEST_SUBMISSION)}>
+              <div class="menu-content-container">
+                <div class="badge-new">New</div>
+              </div>
+              <div class="menu-content-container">
+                <b>Request submission</b>
+                <p>Request a 21st century workflow/toolbox from an expert.</p>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="row menu-bottom-links">
+        <div class="col-md-4"><a href={CONSTANTS.VIDEO_WORKFLOW_SUBMIT_TUTORIAL} target="_blank">How to submit a workflow?</a></div>
+        <div class="col-md-4"><a href={CONSTANTS.VIDEO_TOOLBOX_EDIT_TUTORIAL} target="_blank">How to edit the toolbox?</a></div>
+        <div class="col-md-4"><a href={CONSTANTS.VIDEO_REQUEST_TUTORIAL} target="_blank">What is a request?</a></div>
+      </div>
+    </div>
+  ) : <div style={{height:"123px"}}></div>}
 
   </div>)
 }
