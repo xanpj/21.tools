@@ -35,6 +35,7 @@ class ToolBox extends Component {
     const instance = this.props.flowInstance
     if(instance){
       const toolBoxGroupsSelector = ".tool-box-group-el"
+      const toolboxWrapper = document.getElementById('ToolBoxWrapper')
       const self = this
       interact(toolBoxGroupsSelector).resizable({
         // resize from all edges and corners
@@ -61,15 +62,19 @@ class ToolBox extends Component {
         }
       })
       .on('resizemove', function (event) {
-        console.log(self.state.editMode)
         if(self.state.editMode){
           var target = event.target,
               x = (parseFloat(target.getAttribute('data-x')) || 0),
               y = (parseFloat(target.getAttribute('data-y')) || 0);
 
           // update the element's style
-          target.style.width  = event.rect.width + 'px';
-          target.style.height = event.rect.height + 'px';
+          //toolboxWrapper.style.transform
+          var matrix = new DOMMatrix(toolboxWrapper.style.transform)
+          target.style.width  = (event.rect.width / matrix.m11) + 'px';
+          target.style.height = (event.rect.height / matrix.m22) +  'px';
+
+          console.log("current height and width")
+          console.log(event)
 
           // translate when resizing from top or left edges
           if(event.edges.right || event.edges.bottom){
@@ -94,6 +99,9 @@ class ToolBox extends Component {
           const newTop = (parseFloat(orgTop) +  parseFloat(target.dataset.y)) + "px"
           target.style.left = newLeft
           target.style.top = newTop
+          console.log("new left+top")
+          console.log(target.style.left)
+          console.log(target.style.top)
           target.style.webkitTransform = target.style.transform = '';
           target.setAttribute('data-x', 0);
           target.setAttribute('data-y', 0);
