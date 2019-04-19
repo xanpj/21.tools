@@ -31,7 +31,7 @@ class ToolBox extends Component {
 
 
   toggleEditable(editMode){
-    console.log("toggleEditable")
+
     const instance = this.props.flowInstance
     if(instance){
       const toolBoxGroupsSelector = ".tool-box-group-el"
@@ -73,8 +73,8 @@ class ToolBox extends Component {
           target.style.width  = (event.rect.width / matrix.m11) + 'px';
           target.style.height = (event.rect.height / matrix.m22) +  'px';
 
-          console.log("current height and width")
-          console.log(event)
+
+
 
           // translate when resizing from top or left edges
           if(event.edges.right || event.edges.bottom){
@@ -99,9 +99,9 @@ class ToolBox extends Component {
           const newTop = (parseFloat(orgTop) +  parseFloat(target.dataset.y)) + "px"
           target.style.left = newLeft
           target.style.top = newTop
-          console.log("new left+top")
-          console.log(target.style.left)
-          console.log(target.style.top)
+
+
+
           target.style.webkitTransform = target.style.transform = '';
           target.setAttribute('data-x', 0);
           target.setAttribute('data-y', 0);
@@ -125,26 +125,26 @@ class ToolBox extends Component {
       FlowActions.toggleDraggable(instance, toolBoxSelector, editMode, this.props.toolContent, (newlyJoinedTools) => {/*
         const toolBoxElements = document.getElementsByClassName('tool-box-el')
         const newToolContent = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements)
-        console.log("Positions.film")
-        console.log(Positions.film)
-        console.log(newToolContent)
+
+
+
         const newToolContent2 = Positions.film.map(el => {
           if(el.id == "container_0"){
            return {...el, left: "20px"}
          } else return el
        })
         newToolContent2.splice(2, 1)
-        console.log(newToolContent2)
+
         this.props.actionSetToolContent(newToolContent2)*/
         //this.props.actionSetToolContent(newToolContent2)
         const toolBoxElements = document.getElementsByClassName('tool-box-el')
         const preElements = this.props.toolContent.map(el => el.id)
         const newToolContent = Serialization.serializeToolBoxElements(this.props.toolContent, toolBoxElements, newlyJoinedTools)
         const postElements = newToolContent.filter(el => preElements.indexOf(el.id) == -1)
-        console.log("ToSaveFromSerialized")
-        console.log(newToolContent)
+
+
         this.props.actionSetToolContent({toolContent: newToolContent})
-        console.log("Worked")
+
 
         FlowActions.updatePosses(instance, newToolContent)
       })
@@ -181,16 +181,16 @@ class ToolBox extends Component {
      }
 
   componentDidMount() {
-    console.log("this.props.flowInstance")
-    console.log(this.props.flowInstance)
-    console.log("this.props.toolContent")
-    console.log(this.props.toolContent)
-    console.log(this.props.toolConnections)
+
+
+
+
+
     /** this needs to be set everytime again to set scroll listeners **/
 
     /** **/
     if(this.props.toolContent && this.props.toolConnections){
-      console.log("setting up flowinstance")
+
       const toolBoxOuter = document.getElementById("ToolBoxWrapper")
       ToolBoxInteractions.MakeZoomable(toolBoxOuter,0.1,4,0.2,true)
       ToolBoxInteractions.MakeDraggable(toolBoxOuter);
@@ -235,8 +235,8 @@ class ToolBox extends Component {
 
   renderLogos(){
     if(this.props.toolContent){
-      console.log("this.props.toolContent")
-      console.log(this.props.toolContent)
+
+
       return this.props.toolContent.map((el, i) => {
           const imgClasses = this.props.toolboxMode ? "tool-box-logo-el tool-box-el-hack tool-box-el el-used" : "tool-box-logo-el tool-box-el-hack tool-box-el"
           if(el.type == "img")

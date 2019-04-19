@@ -24,7 +24,7 @@ const instanceConfig = {
   container: "canvas",
   dragOptions: {
     drag: function(el) {
-      console.log(el.el.id)
+
     }
   }*/
 }
@@ -61,7 +61,7 @@ const endpointConfig = {
     //dropOptions: dropOptions,
     /*dragOptions: {
       drag: function(el) {
-        console.log(el.el.id)
+
       }
     },*/
     onMaxConnections: function (info) {
@@ -227,8 +227,8 @@ export function updatePosses(instance, toolContent){
   //TODO POSSE for close button
   /*
   const closeSelector = "#logo_2_close"
-  console.log("UPDATE_POSSES")
-  console.log(jsPlumb.getSelector(closeSelector))
+
+
   instance.draggable(jsPlumb.getSelector(closeSelector))
   instance.setDraggable(jsPlumb.getSelector(closeSelector), false);
   instance.addToPosse(["logo_2"], "aa"); // TODO uuid

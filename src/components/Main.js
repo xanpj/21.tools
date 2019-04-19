@@ -63,17 +63,17 @@ class Main extends Component {
     // Get the <video> element with id="myVideo"
 
     /** Highlight all used icons **/
-    console.log("setVideoIconHighlights")
+
     //if(!this.state.videoInitialized){
       const state = this.state
       const timecode = state.timecode
-      console.log("timecode")
-      console.log(timecode)
+
+
       timecode.forEach((el, i) => {
-        console.log(el.id)
+
         const logo_el = document.getElementById(el.id)
-        console.log("logo_el")
-        console.log(logo_el)
+
+
         if(logo_el){
           logo_el.classList.add("el-used")
         }
@@ -85,17 +85,17 @@ class Main extends Component {
 
   componentWillUnmount(){
     if(this.state.checkInterval){
-      console.log("unmounted")
+
       clearInterval(this.state.checkInterval)
     }
   }
 
   async componentDidMount(){
-    console.log("componentDidMount")
+
     if(this.state.toolPageMeta == null){
       var toolboxName = null;
-      console.log("this.props.toolboxData")
-      console.log(this.props.toolboxData)
+
+
       if(this.props.toolboxData){
         toolboxName = this.props.toolboxData.name
       } else if(this.props.workflowData) {
@@ -103,26 +103,26 @@ class Main extends Component {
       }
       await this.props.db.authenticateAnonymousUser()
       var toolPage;
-      console.log("this.props.workflowData")
-      console.log(this.props.workflowData)
+
+
       if(this.props.workflowData && this.props.workflowData.toolPageVersion){
-          console.log(toolboxName)
+
           toolPage = await this.props.db.getSpecificToolPageVersion(toolboxName, this.props.workflowData.toolPageVersion.toString())
-          console.log(toolPage)
+
       } else {
           toolPage = await this.props.db.getLastToolPageVersion(toolboxName)
       }
-        console.log("toolPage main")
-        console.log(toolPage)
+
+
         const allToolPageVersions = await this.props.db.getAllToolPageVersions(toolboxName)
-        console.log(this.props.workflowData)
-        console.log(allToolPageVersions)
+
+
 
         if(toolPage && toolPage.length > 0){
           const contentHashOnMount = Utils.md5(JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA]) + "_" + JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]))
-          console.log("contentHashOnMount")
-          console.log(toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA])
-          console.log(contentHashOnMount)
+
+
+
           this.setState({
             workflowData: (this.props.workflowData) ? this.props.workflowData : null,
             timecode: (this.props.workflowData) ? this.props.workflowData.timecode : [],
@@ -138,8 +138,8 @@ class Main extends Component {
             toolContent: toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA],
             toolConnections: toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS],
           })
-          console.log("HERE")
-          console.log(this.props.workflowData)
+
+
           this.props.actionSetToolboxHeader(
             (this.props.toolboxData) ? toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOL_PAGE] + " (toolbox)" : "How to do " + this.props.workflowData.videoTitle + " in the 21st century"
           )
@@ -164,7 +164,7 @@ class Main extends Component {
     if(this.state.editMode){
       alert("Please leave edit mode first")
     } else {
-      console.log(this.props.toolContent)
+
       const contentHashNow = Utils.md5(JSON.stringify(this.props.toolContent) + "_" + JSON.stringify(this.props.toolConnections))
       const contentChanged = contentHashNow !== this.state.contentHashOnMount
 
@@ -204,8 +204,8 @@ class Main extends Component {
             versionString = currVersionArr.join(".") + "." + "1"
           }
         }
-        console.log("versionString")
-        console.log(versionString)
+
+
 
         versionString = versionString.toString()
         const toolDataToDb = {
@@ -219,7 +219,7 @@ class Main extends Component {
         const allToolPageVersions = await this.props.db.getAllToolPageVersions(this.state.toolPageMeta.name)
         const contentHashNow = Utils.md5(JSON.stringify(this.props.toolContent) + "_" + JSON.stringify(this.props.toolConnections))
 
-        console.log(allToolPageVersions)
+
         this.setState({
           toolPageMeta: {
             name: this.state.toolPageMeta.name,
@@ -329,7 +329,7 @@ class Main extends Component {
       description: formData.description || "",
       type: "img"
     }
-    console.log(addIconData)
+
     this.props.actionAddToolElement(addIconData)
     this.setState({
       contextMenu: null,
@@ -394,7 +394,7 @@ class Main extends Component {
   toolSelected(elId){
     const timecode = this.state.timecode
     const event = this.state.videoEvent
-    console.log(timecode)
+
     if(event && timecode){
       if(this.state.editMode){
           const newElement = {
@@ -459,8 +459,8 @@ class Main extends Component {
         origin:'http://localhost:3000' //TODO
       }
     }
-    console.log("Youtube")
-    console.log(this.state.workflowData)
+
+
     return (
       <div className="Main" >
       {(this.state.contextMenu) ? <ContextMenu

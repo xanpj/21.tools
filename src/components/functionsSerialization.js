@@ -186,12 +186,12 @@ export function serializeToolBoxElements(orgToolContent, toolBoxElements, newlyJ
       }
     }
   }
-  console.log("SERIALIZATION")
-  console.log(toolBoxElementsToSerialized)
+
+
   const toolBoxElementsToSerializedFinal = [toolBoxElementsToSerialized.filter(el => el.type == "img").sort(idSort),
                                       toolBoxElementsToSerialized.filter(el => el.type == "text").sort(idSort),
                                       toolBoxElementsToSerialized.filter(el => el.type == "container").sort(idSort),
                                       toolBoxElementsToSerialized.filter(el => el.type == "group").sort(idSort)]
-  console.log(toolBoxElementsToSerializedFinal)
+
   return toolBoxElementsToSerializedFinal.flat()
 }

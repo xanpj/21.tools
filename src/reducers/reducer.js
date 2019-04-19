@@ -32,8 +32,8 @@ export default (state = defaultState, action) => {
         const newToolContent = state.toolContent
         newToolContent.push(action.payload)
         const toolContentHash = Utils.md5(JSON.stringify(newToolContent))
-        console.log("reducer")
-        console.log(newToolContent)
+
+
         return {
           ...state,
           toolContent: newToolContent,
@@ -52,7 +52,7 @@ export default (state = defaultState, action) => {
             var newEl = el
             if(el.type=="container"){
               var contents = el.content.split(",").map(el => el.trim())
-              console.log(contents)
+
               const elIndex = contents.indexOf(refId)
               contents.splice(elIndex, 1)
               if(elIndex > -1){

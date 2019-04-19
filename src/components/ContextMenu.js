@@ -21,7 +21,7 @@ img.onload = function () {
     var ctx = canvas.getContext("2d");
     ctx.drawImage(this, 0, 0);
     var dataURL = canvas.toDataURL("image/png");
-    console.log(dataURL)
+
 };
 img.src = url;
 }*/

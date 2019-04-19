@@ -88,7 +88,7 @@ export default class DbInterface {
       const toolPageName = data["toolbox"]
       const toolPageDescription = data["description"]
       const toolboxSearchResult = await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES).find({[CONSTANTS.SCHEMA_FIELD_TOOL_PAGE]: toolPageName.toLowerCase()}).toArray()
-      console.log(toolboxSearchResult)
+
       if(toolboxSearchResult.length == 0){
         const toolPageNameLower = toolPageName.toLowerCase()
         return await this.db.collection(CONSTANTS.SCHEMA_TABLE_TOOL_PAGES).insertOne({

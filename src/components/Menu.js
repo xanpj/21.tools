@@ -220,7 +220,7 @@ class Menu extends Component {
        if (element.tagName === 'BUTTON') { continue; }
        data[element.name] = element.value;
      }
-      console.log(data)
+
       var postData = null;
       if(source == CONSTANTS.CREATE_WORKFLOW_MENU){
         postData = {
@@ -237,7 +237,7 @@ class Menu extends Component {
   }
 
   renderView(){
-    console.log(this.props.toolboxResults)
+
     if(this.state.view === CONSTANTS.VIEWS.MENU_INTERNAL.CREATE_WORKFLOW){
       return <CreateWorkflowMenu
                     innerWidth = {this.state.innerWidth}

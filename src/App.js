@@ -40,7 +40,7 @@ class App extends Component {
     /** params from URL **/
     var currentLocation = window.location
     await this.db.authenticateAnonymousUser()
-    console.log(currentLocation)
+
     if(currentLocation.pathname !== "/"){
         this.setState({
           view: CONSTANTS.VIEWS.LOADING,
@@ -63,8 +63,8 @@ class App extends Component {
           try {
             const workflowData = await this.db.getWorkflow(videoId)
             if(workflowData.length > 0){
-              console.log("workflowData")
-              console.log(workflowData)
+
+
               this.setState({
                 view: CONSTANTS.VIEWS.MAIN,
                 workflowData: workflowData[0],
@@ -85,8 +85,8 @@ class App extends Component {
         } else if(videoUrlArr.length == 1 && videoUrlArr[0].length > 0){
           try {
             const toolboxName = unescape(decodeURIComponent( atob(videoUrlArr[0] ) ) )
-            console.log("toolbox")
-            console.log(toolboxName)
+
+
             this.setState({
               view: CONSTANTS.VIEWS.MAIN,
               toolboxData: {
@@ -114,26 +114,26 @@ class App extends Component {
   }
 
   async submitWorkflow(timecode, version){
-    console.log(this.state.workflowData)
+
     const data = {
       ...this.state.workflowData,
       toolPageVersion: version,
       timecode: timecode,
     }
-    console.log(data)
+
     const videoTitle = this.state.workflowData.videoTitle
     const lastInsertedId = await this.db.submitWorkflow(data)
-    console.log(lastInsertedId)
+
     const urlString = btoa(unescape(encodeURIComponent(videoTitle))) + "-" + lastInsertedId.insertedId.toString()
-    console.log(urlString)
-    console.log("Submitted")
+
+
     window.location.pathname = "/"+urlString
   }
 
   /** Workflow autocomplete **/
   async searchWorkflow(workflowName){
-    console.log("workflowName")
-    console.log(workflowName)
+
+
     this.setState({
       textWorkflow: workflowName
     })
@@ -142,12 +142,12 @@ class App extends Component {
       const onlyWorkflowResults  = await this.db.searchWorkflow(workflowName)
       const toolboxResultsAsWorkflowResultsRaw = await this.db.searchToolbox(workflowName)
       const toolboxResultsAsWorkflowResults = this.toolboxResultsTransformer(toolboxResultsAsWorkflowResultsRaw)
-      console.log("toolboxResultsAsWorkflowResults")
-      console.log(toolboxResultsAsWorkflowResults)
-      console.log("workflowResults")
-      console.log(workflowResults)
+
+
+
+
       workflowResults = onlyWorkflowResults.slice(0,5).concat(toolboxResultsAsWorkflowResults.slice(0,5))
-      console.log(workflowResults)
+
       if(workflowResults && workflowResults.length > 0){
         this.setState({
           workflowResults: workflowResults,
@@ -174,10 +174,10 @@ class App extends Component {
     } else if(view == CONSTANTS.VIEWS.TOOLBOX){
       //fill toolContent, either directly or via filling workflowData
       const toolboxName = data["toolbox"].toLowerCase()
-      console.log(data)
+
       const toolboxData = await this.db.createToolbox(data)
       if(!toolboxData){
-        console.log(toolboxData)
+
         alert("Toolbox '"+toolboxName+"' already exists" )
       } else {
         const urlString = btoa(unescape(encodeURIComponent(toolboxName)))
@@ -193,7 +193,7 @@ class App extends Component {
         selectedWorkflow: workflowName,
         workflowResults: []
       })
-      console.log(workflowId.id)
+
       const urlString = btoa(unescape(encodeURIComponent(workflowName))) + "-" + workflowId.toString()
       window.location.pathname = "/"+urlString
     } else { //toolbox was selected
@@ -242,13 +242,13 @@ class App extends Component {
 
   /** Toolbox autocomplete **/
   async searchToolbox(toolName){
-    console.log(toolName)
+
     this.setState({
       textToolbox: toolName
     })
     if(toolName.length > 0){
       var toolboxResultsRaw = await this.db.searchToolbox(toolName)
-      console.log(toolboxResultsRaw)
+
       const toolboxResults = this.toolboxResultsTransformer(toolboxResultsRaw)
       this.setState({
         toolboxResults: toolboxResults,
@@ -286,8 +286,8 @@ class App extends Component {
               </div>)
     }
     else if(this.state.view == CONSTANTS.VIEWS.EDIT){
-      console.log("this.state.workflowData eDIT")
-      console.log(this.state.workflowData)
+
+
       return (<div>
               <Main workflowData={this.state.workflowData}
                     backToMenu={() => this.backToMenu()}

@@ -114,14 +114,14 @@ class ToolsDatabase extends Component {
       }
     } else {
       value = e.target.value
-      console.log("value")
-      console.log(value)
+
+
     }
   }
 
 
   render() {
-    console.log(this.state)
+
     return (
         <div id="ToolsDatabase">
           <div class="outer">
