@@ -107,7 +107,8 @@ export default class DbInterface {
     async searchWorkflow(workflowName){
       const regex = new RegExp(workflowName, 'i')
       //return await this.db.collection(CONSTANTS.SCHEMA_TABLE_WORKFLOWS).find({}).toArray()
-      return await this.db.collection(CONSTANTS.SCHEMA_TABLE_WORKFLOWS)
+      const workflows = []
+      const workflows1 = await this.db.collection(CONSTANTS.SCHEMA_TABLE_WORKFLOWS)
                     .find(  {[CONSTANTS.SCHEMA_FIELD_VIDEO_TITLE]: regex},
                             { limit: 1000,
                               projection: {
@@ -119,9 +120,38 @@ export default class DbInterface {
                             }
                           )
                     .toArray()
-                    //TODO change version
+      const workflows1Ids = workflows1.map((el, i) => el[CONSTANTS.SCHEMA_FIELD_ID])
+      const workflows2 = await this.db.collection(CONSTANTS.SCHEMA_TABLE_WORKFLOWS)
+                    .find(  {[CONSTANTS.SCHEMA_FIELD_TOOLBOX]: regex, [CONSTANTS.SCHEMA_FIELD_ID] : { $nin: workflows1Ids } },
+                            { limit: 1000,
+                              projection: {
+                                [CONSTANTS.SCHEMA_FIELD_ID]: 1,
+                                [CONSTANTS.SCHEMA_FIELD_VIDEO_TITLE]: 1,
+                                [CONSTANTS.SCHEMA_FIELD_TOOLBOX]: 1,
+                                [CONSTANTS.SCHEMA_FIELD_TOOLPAGE_VERSION]: 1
+                              }
+                            }
+                          )
+                    .toArray()
+
+    return workflows1.concat(workflows2)
     }
 
+    async getWorkflowsForToolbox(toolboxName){
+      return await this.db.collection(CONSTANTS.SCHEMA_TABLE_WORKFLOWS)
+                    .find(  {[CONSTANTS.SCHEMA_FIELD_TOOLBOX]: toolboxName},
+                            { limit: 1000,
+                              projection: {
+                                [CONSTANTS.SCHEMA_FIELD_ID]: 1,
+                                [CONSTANTS.SCHEMA_FIELD_VIDEO_TITLE]: 1,
+                                [CONSTANTS.SCHEMA_FIELD_YOUTUBE_ID]: 1,
+                                [CONSTANTS.SCHEMA_FIELD_FULL_NAME]: 1,
+                                [CONSTANTS.SCHEMA_FIELD_TOOLPAGE_VERSION]: 1
+                              }
+                            }
+                          )
+                    .toArray()
+    }
 
 
     insertInitial(){

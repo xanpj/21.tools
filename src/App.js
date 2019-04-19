@@ -21,10 +21,10 @@ class App extends Component {
       data: null,
       workflowData: null,
       toolboxData: null,
-      toolboxResults: [],
+      toolboxResults: null,
       selectedToolbox: "",
       textToolbox: "",
-      workflowResults: [],
+      workflowResults: null,
       selectedWorkflow: "",
       textWorkflow: "",
       workflowNotFound: null
@@ -133,7 +133,6 @@ class App extends Component {
   /** Workflow autocomplete **/
   async searchWorkflow(workflowName){
 
-
     this.setState({
       textWorkflow: workflowName
     })
@@ -142,9 +141,6 @@ class App extends Component {
       const onlyWorkflowResults  = await this.db.searchWorkflow(workflowName)
       const toolboxResultsAsWorkflowResultsRaw = await this.db.searchToolbox(workflowName)
       const toolboxResultsAsWorkflowResults = this.toolboxResultsTransformer(toolboxResultsAsWorkflowResultsRaw)
-
-
-
 
       workflowResults = onlyWorkflowResults.slice(0,5).concat(toolboxResultsAsWorkflowResults.slice(0,5))
 
@@ -162,7 +158,7 @@ class App extends Component {
 
     } else {
       this.setState({
-        workflowResults: [],
+        workflowResults: null,
         selectedWorkflow: null
       })
     }
@@ -256,7 +252,7 @@ class App extends Component {
       })
     } else {
       this.setState({
-        toolboxResults: [],
+        toolboxResults: null,
         selectedToolbox: null
       })
     }

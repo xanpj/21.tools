@@ -14,14 +14,14 @@ function MainMenu(props) {
         <div class="search">
           <form action="" noValidate>
             <div>How to do</div>
-            <input type="search" class={(props.innerWidth < 600) ? "searchSmallScreen" : ""} value={props.selectedWorkflow || props.textWorkflow} onChange={(e) => props.searchWorkflow(e.target.value)} placeholder="XYZ" />
+            <input type="search" class={(props.innerWidth < 600) ? "searchSmallScreen" : ""} value={props.selectedWorkflow || props.textWorkflow} onChange={(e) => props.searchWorkflow(e.target.value)} placeholder="..." />
               {(props.innerWidth < 600) ? "" : <div class="after-input">in the 21st century</div>}
             {/*<button type="submit" onClick={() => props.selectWorkflow(el._id, el.videoTitle)}><i class="fas fa-search"></i></button>*/}
           </form>
         </div>
         <div class="dropdown">
           <div class={(props.workflowResults && props.workflowResults.length > 0) ? "dropdown-menu main open" : "dropdown-menu main closed"} aria-labelledby="dropdownMenuMain">
-            {props.workflowResults.map((el, i) => {
+            {(props.workflowResults) ? props.workflowResults.map((el, i) => {
               firstWorkflow += (el.toolbox) ? 1 : 0
               firstToolbox += (el.toolPage) ? 1 : 0
               return (el.default) ?
@@ -40,8 +40,7 @@ function MainMenu(props) {
                 </button>
                 </div>
               ))
-            }
-            )}
+            }) : ""}
           </div>
         </div>
 
@@ -113,11 +112,11 @@ function CreateWorkflowMenu(props){
         </div>
         <div class="dropdown">
           <div class={(props.toolboxResults.length > 0 && !props.selectedToolbox) ? "dropdown-menu main open" : "dropdown-menu main closed"} aria-labelledby="dropdownMenuMain">
-            {props.toolboxResults.map((el, i) =>
+            {(props.toolboxResults) ? props.toolboxResults.map((el, i) =>
               <button onClick={() => props.selectToolbox(el.toolPage)} class="dropdown-item" type="button">
               {el.toolPage}<span class="badge-new indropdown">{el.versions} versions</span>
               </button>
-            )}
+            ) : ""}
           </div>
         </div>
 

@@ -45,10 +45,12 @@ class Main extends Component {
       toolsFromDB: null,
       toolsSelected: null,
       checkInterval: null,
+      workflowsForToolbox: null,
       workflowData: null,
       toolboxData: null,
       contentNotFound: false,
       loading: false,
+      bottombox: false
     }
 
     const toolContent = null
@@ -106,24 +108,21 @@ class Main extends Component {
 
 
       if(this.props.workflowData && this.props.workflowData.toolPageVersion){
-
           toolPage = await this.props.db.getSpecificToolPageVersion(toolboxName, this.props.workflowData.toolPageVersion.toString())
-
       } else {
           toolPage = await this.props.db.getLastToolPageVersion(toolboxName)
       }
-
-
         const allToolPageVersions = await this.props.db.getAllToolPageVersions(toolboxName)
 
-
+        /** get similar workflows **/
+        const workflowsForToolbox = await this.props.db.getWorkflowsForToolbox(toolboxName)
+        console.log(workflowsForToolbox)
+        /** END get similar workflows **/
 
         if(toolPage && toolPage.length > 0){
           const contentHashOnMount = Utils.md5(JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_TOOLS_DATA]) + "_" + JSON.stringify(toolPage[0][CONSTANTS.SCHEMA_FIELD_ANCHORS]))
-
-
-
           this.setState({
+            workflowsForToolbox: workflowsForToolbox,
             workflowData: (this.props.workflowData) ? this.props.workflowData : null,
             timecode: (this.props.workflowData) ? this.props.workflowData.timecode : [],
             toolPageMeta: {
@@ -204,8 +203,6 @@ class Main extends Component {
             versionString = currVersionArr.join(".") + "." + "1"
           }
         }
-
-
 
         versionString = versionString.toString()
         const toolDataToDb = {
@@ -434,6 +431,21 @@ class Main extends Component {
     }
   }
 
+  renderWorkflowThumbnails(){
+    if(!this.state.workflowsForToolbox){
+      return ""
+    } else {
+      return this.state.workflowsForToolbox.map((el, i) =>
+      <a href={"/"+btoa(unescape(encodeURIComponent(el[CONSTANTS.SCHEMA_FIELD_VIDEO_TITLE]))) + "-" + el[CONSTANTS.SCHEMA_FIELD_ID].toString()}>
+        <li key={i} class="workflow-thumbnail">
+          <div class="workflow-thumbnail-video"><img width="194" height="110" src={"https://img.youtube.com/vi/"+el[CONSTANTS.SCHEMA_FIELD_YOUTUBE_ID]+"/mqdefault.jpg"} /></div>
+          <div class="workflow-thumbnail-title">{"How to do "+el[CONSTANTS.SCHEMA_FIELD_VIDEO_TITLE]+" in the 21st century"}</div>
+          <div class="workflow-thumbnail-artist">{el[CONSTANTS.SCHEMA_FIELD_FULL_NAME]}</div>
+        </li>
+      </a>)
+    }
+  }
+
   render() {
     const contentHashOnMount = Utils.md5(JSON.stringify(this.props.toolContent) + "_" + JSON.stringify(this.props.toolConnections))
     const contentChanged = contentHashOnMount !== this.state.contentHashOnMount
@@ -540,6 +552,19 @@ class Main extends Component {
               </div>
             </div>
 
+        </div>
+        <div id="MainBottom" class={(this.state.bottombox) ? "high" : "low"}>
+          <div class="main-bottom-header">
+            <button onClick={() => this.setState({bottombox: !this.state.bottombox})} class="main-bottom-button menu-btn">
+              <span>{this.props.toolboxData ? "Workflows using this toolbox" : "Similar workflows"}</span>
+              <i class="fas fa-arrow-alt-circle-up"></i>
+              </button>
+            </div>
+          {(this.state.bottombox) ? (<div class="main-bottom-box-wrapper">
+            <ul class="main-bottom-box">
+              {this.renderWorkflowThumbnails()}
+            </ul>
+          </div>) : ""}
         </div>
       </div>
     );
